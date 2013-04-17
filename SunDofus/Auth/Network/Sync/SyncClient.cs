@@ -82,7 +82,7 @@ namespace SunDofus.Auth.Network.Sync
                 {
                     case "SAI":
 
-                        Authentication(int.Parse(packet[1]), packet[2], int.Parse(packet[3]));
+                        Authentication(int.Parse(packet[1]), packet[2], int.Parse(packet[3]), packet[4]);
 
                         return;
 
@@ -165,13 +165,13 @@ namespace SunDofus.Auth.Network.Sync
             }
         }
 
-        private void Authentication(int serverId, string serverIp, int serverPort)
+        private void Authentication(int serverId, string serverIp, int serverPort, string pass)
         {
             if (Entities.Requests.ServersRequests.Cache.Any(x => x.ID == serverId && x.IP == serverIp && x.Port == serverPort && x.State == 0))
             {
                 var requieredServer = Entities.Requests.ServersRequests.Cache.First(x => x.ID == serverId && x.IP == serverIp && x.Port == serverPort && x.State == 0);
 
-                if (!myIp().Contains(serverIp))
+                if (!myIp().Contains(serverIp) || pass != requieredServer.PassKey)
                 {
                     Disconnect();
                     return;

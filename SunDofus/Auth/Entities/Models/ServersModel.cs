@@ -14,6 +14,7 @@ namespace SunDofus.Auth.Entities.Models
         private int opeID;
 
         private string _IP;
+        private string _passKey;
 
         public int ID
         {
@@ -59,6 +60,17 @@ namespace SunDofus.Auth.Entities.Models
             set
             {
                 _IP = value;
+            }
+        }
+        public string PassKey
+        {
+            get
+            {
+                return _passKey;
+            }
+            set
+            {
+                _passKey = value;
             }
         }
 

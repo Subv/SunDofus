@@ -39,6 +39,7 @@ namespace SunDofus.Auth.Entities.Requests
                         server.ID = sqlReader.GetInt16("Id");
                         server.IP = sqlReader.GetString("Ip");
                         server.Port = sqlReader.GetInt16("Port");
+                        server.PassKey = sqlReader.GetString("PassKey");
                     }
 
                     lock (_servers)

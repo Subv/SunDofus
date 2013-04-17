@@ -27,6 +27,7 @@ namespace SunDofus.World.Entities.Cache
                     server.ID = sqlReader.GetInt16("Id");
                     server.IP = sqlReader.GetString("Ip");
                     server.Port = sqlReader.GetInt16("Port");
+                    server.PassKey = sqlReader.GetString("PassKey");
 
                     lock (AuthsList)
                         AuthsList.Add(server);

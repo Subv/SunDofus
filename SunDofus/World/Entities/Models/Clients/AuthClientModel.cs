@@ -11,5 +11,6 @@ namespace SunDofus.World.Entities.Models.Clients
         public int Port;
 
         public string IP;
+        public string PassKey;
     }
 }

@@ -89,9 +89,9 @@ namespace SunDofus.World.Network.Authentication
 
                     case "HCS":
 
-                        Send(string.Format("SAI|{0}|{1}|{2}", Utilities.Config.GetIntElement("ServerId"),
-                            Utilities.Config.GetStringElement("ServerIp"),
-                            Utilities.Config.GetIntElement("ServerPort")), true);
+                        Send(string.Format("SAI|{0}|{1}|{2}|{3}", Utilities.Config.GetIntElement("ServerId"),
+                            Utilities.Config.GetStringElement("ServerIp"), Utilities.Config.GetIntElement("ServerPort"),
+                            this.Model.PassKey), true);
                         break;
 
                     case "HCSS":
