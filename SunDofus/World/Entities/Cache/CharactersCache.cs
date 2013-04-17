@@ -79,7 +79,7 @@ namespace SunDofus.World.Entities.Cache
                 P.Add(new MySqlParameter("@stats", character.SqlStats()));
                 P.Add(new MySqlParameter("@items", ""));
                 P.Add(new MySqlParameter("@spells", ""));
-                P.Add(new MySqlParameter("@exp", 0));
+                P.Add(new MySqlParameter("@exp", "0"));
 
                 sqlCommand.ExecuteNonQuery();
 

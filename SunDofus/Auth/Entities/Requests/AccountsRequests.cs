@@ -39,6 +39,8 @@ namespace SunDofus.Auth.Entities.Requests
 
                 sqlReader.Close();
 
+                account.Characters = LoadCharacters(account.ID);
+
                 return account;
             }
         }
@@ -72,6 +74,8 @@ namespace SunDofus.Auth.Entities.Requests
 
                 sqlReader.Close();
 
+                account.Characters = LoadCharacters(account.ID);
+
                 return account;
             }
         }
@@ -80,7 +84,32 @@ namespace SunDofus.Auth.Entities.Requests
         {
             var dico = new Dictionary<int, List<string>>();
 
-            //Parse
+            lock (DatabaseProvider.ConnectionLocker)
+            {
+                var sqlText = "SELECT * FROM dyn_accounts WHERE id=@id";
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+
+                var sqlReader = sqlCommand.ExecuteReader();
+
+                if (sqlReader.Read())
+                {
+                    var baseStr = sqlReader.GetString("characters");
+
+                    foreach (var charac in baseStr.Split(':'))
+                    {
+                        var infos = charac.Split(',');
+                        var serverID = int.Parse(infos[1]);
+
+                        if (!dico.ContainsKey(serverID))
+                            dico.Add(serverID, new List<string>());
+
+                        dico[serverID].Add(infos[0]);
+                    }
+                }
+
+                sqlReader.Close();
+            }
 
             return dico;
         }

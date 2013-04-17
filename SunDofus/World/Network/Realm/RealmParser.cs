@@ -179,62 +179,62 @@ namespace SunDofus.World.Network.Realm
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Feca");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Feca");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Feca");
-                            return;
+                            break;
                         case 2:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Osa");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Osa");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Osa");
-                            return;
+                            break;
                         case 3:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Enu");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Enu");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Enu");
-                            return;
+                            break;
                         case 4:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Sram");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Sram");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Sram");
-                            return;
+                            break;
                         case 5:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Xel");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Xel");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Xel");
-                            return;
+                            break;
                         case 6:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Eca");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Eca");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Eca");
-                            return;
+                            break;
                         case 7:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Eni");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Eni");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Eni");
-                            return;
+                            break;
                         case 8:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Iop");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Iop");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Iop");
-                            return;
+                            break;
                         case 9:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Cra");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Cra");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Cra");
-                            return;
+                            break;
                         case 10:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Sadi");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Sadi");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Sadi");
-                            return;
+                            break;
                         case 11:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Sacri");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Sacri");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Sacri");
-                            return;
+                            break;
                         case 12:
                             character.MapID = Utilities.Config.GetIntElement("StartMap_Panda");
                             character.MapCell = Utilities.Config.GetIntElement("StartCell_Panda");
                             character.Dir = Utilities.Config.GetIntElement("StartDir_Panda");
-                            return;
+                            break;
                     }
 
                     character.CharactPoint = (character.Level - 1) * 5;
@@ -263,9 +263,9 @@ namespace SunDofus.World.Network.Realm
 
                     Network.ServersHandler.AuthLinks.Send(string.Format("SNAC|{0}|{1}", Client.Infos.ID, character.Name));
 
-                    Client.Send("TB");
                     Client.Send("AAK");
                     SendCharacterList("");
+                    Client.Send("TB");
                 }
                 else
                 {
