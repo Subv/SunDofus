@@ -11,11 +11,12 @@ namespace SunDofus.Auth.Entities.Requests
     {
         public static Models.AccountsModel LoadAccount(string username)
         {
+            var account = new Models.AccountsModel();
+
             DatabaseProvider.CheckConnection();
 
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var account = new Models.AccountsModel();
 
                 var sqlText = "SELECT * FROM dyn_accounts WHERE username=@username";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -40,18 +41,19 @@ namespace SunDofus.Auth.Entities.Requests
                 sqlReader.Close();
 
                 account.Characters = LoadCharacters(account.ID);
-
-                return account;
             }
+
+            return account;
         }
 
         public static Models.AccountsModel LoadAccount(int accountID)
         {
+            var account = new Models.AccountsModel();
+
             DatabaseProvider.CheckConnection();
 
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var account = new Models.AccountsModel();
 
                 var sqlText = "SELECT * FROM dyn_accounts WHERE id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -75,9 +77,9 @@ namespace SunDofus.Auth.Entities.Requests
                 sqlReader.Close();
 
                 account.Characters = LoadCharacters(account.ID);
-
-                return account;
             }
+
+            return account;
         }
 
         public static Dictionary<int, List<string>> LoadCharacters(int accID)
@@ -86,7 +88,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM dyn_accounts WHERE id=@id";
+                var sqlText = "SELECT serverID, characterName FROM dyn_accounts_char WHERE accountID=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
                 sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
 
@@ -94,18 +96,14 @@ namespace SunDofus.Auth.Entities.Requests
 
                 if (sqlReader.Read())
                 {
-                    var baseStr = sqlReader.GetString("characters");
+                    var serverID = sqlReader.GetInt16("serverID");
+                    var charName = sqlReader.GetString("characterName");
 
-                    foreach (var charac in baseStr.Split(':'))
-                    {
-                        var infos = charac.Split(',');
-                        var serverID = int.Parse(infos[1]);
+                    if (!dico.ContainsKey(serverID))
+                        dico.Add(serverID, new List<string>());
 
-                        if (!dico.ContainsKey(serverID))
-                            dico.Add(serverID, new List<string>());
-
-                        dico[serverID].Add(infos[0]);
-                    }
+                    if (!dico[serverID].Contains(charName))
+                        dico[serverID].Add(charName);
                 }
 
                 sqlReader.Close();
@@ -116,12 +114,12 @@ namespace SunDofus.Auth.Entities.Requests
 
         public static int GetAccountID(string pseudo)
         {
+            var accountID = -1;
+
             DatabaseProvider.CheckConnection();
 
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var accountID = -1;
-
                 var sqlText = "SELECT id FROM dyn_accounts WHERE pseudo=@pseudo";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
@@ -133,9 +131,9 @@ namespace SunDofus.Auth.Entities.Requests
                     accountID = sqlReader.GetInt32("id");
 
                 sqlReader.Close();
-
-                return accountID;
             }
+
+            return accountID;
         }
 
         public static void ResetConnectedValue()

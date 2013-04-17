@@ -86,8 +86,8 @@ namespace SunDofus.Auth.Network.Auth
         {
             Utilities.Loggers.InfosLogger.Write(string.Format("New closed client connection <{0}> !", this.myIp()));
 
-            lock (ServersHandler.AuthServer.GetClients)
-                ServersHandler.AuthServer.GetClients.Remove(this);
+            lock (ServersHandler.AuthServer.Clients)
+                ServersHandler.AuthServer.Clients.Remove(this);
         }
 
         private void PacketReceived(string datas)
@@ -113,8 +113,8 @@ namespace SunDofus.Auth.Network.Auth
                     return;
 
                 case AccountState.OnCheckingQueue:
-                    Send(string.Format("Af{0}|{1}|0|2", (AuthQueue.GetClients.IndexOf(this) + 1),
-                        (AuthQueue.GetClients.Count > 2 ? AuthQueue.GetClients.Count : 3)));
+                    Send(string.Format("Af{0}|{1}|0|2", (AuthQueue.Clients.IndexOf(this) + 1),
+                        (AuthQueue.Clients.Count > 2 ? AuthQueue.Clients.Count : 3)));
                     return;
 
                 case AccountState.OnServersList:
@@ -127,7 +127,7 @@ namespace SunDofus.Auth.Network.Auth
         {
             if (datas.Contains(Utilities.Config.GetStringElement("Login_Version")))
             {
-                if (AuthQueue.GetClients.Count >= Utilities.Config.GetIntElement("Max_Clients_inQueue"))
+                if (AuthQueue.Clients.Count >= Utilities.Config.GetIntElement("Max_Clients_inQueue"))
                 {
                     Send("M00\0");
                     this.Disconnect();
@@ -156,51 +156,55 @@ namespace SunDofus.Auth.Network.Auth
             {
                 case 'F':
 
-                        if (Entities.Requests.ServersRequests.Cache.Any(x => x.GetClients.Contains(initialPacket.Substring(2))))
-                        {
-                            packet = string.Format("AF{0}", Entities.Requests.ServersRequests.Cache.First(x => x.GetClients.Contains(initialPacket.Substring(2))).ID);
-                            Send(packet);
-                        }
-                        Send("AF");
+                    if (Entities.Requests.ServersRequests.Cache.Any(x => x.GetClients.Contains(initialPacket.Substring(2))))
+                    {
+                        packet = string.Format("AF{0}", 
+                            Entities.Requests.ServersRequests.Cache.First(x => x.GetClients.Contains(initialPacket.Substring(2))).ID);
+
+                        Send(packet);
+                    }
+                    Send("AF");
 
                     return;
 
                 case 'x':
 
-                        packet = string.Format("AxK{0}", Account.SubscriptionTime());
+                    packet = string.Format("AxK{0}", Account.SubscriptionTime());
 
-                        foreach (var server in Entities.Requests.ServersRequests.Cache)
-                        {
-                            if (!Account.Characters.ContainsKey(server.ID))
-                                Account.Characters.Add(server.ID, new List<string>());
+                    foreach (var server in Entities.Requests.ServersRequests.Cache)
+                    {
+                        if (!Account.Characters.ContainsKey(server.ID))
+                            Account.Characters.Add(server.ID, new List<string>());
 
-                            packet += string.Format("|{0},{1}", server.ID, Account.Characters[server.ID].Count);
-                        }
+                        packet = string.Format("{0}|{1},{2}", packet, server.ID, Account.Characters[server.ID].Count);
+                    }
 
-                        Send(packet);
+                    Send(packet);
 
                     return;
 
                 case 'X':
 
-                        var id = 0;
+                    var id = 0;
 
-                        if (!int.TryParse(initialPacket.Substring(2), out id))
-                            return;
+                    if (!int.TryParse(initialPacket.Substring(2), out id))
+                        return;
 
-                        if (ServersHandler.SyncServer.GetClients.Any(x => x.Server.ID == id))
-                        {
-                            var server = ServersHandler.SyncServer.GetClients.First(x => x.Server.ID == id);
-                            var key = Utilities.Basic.RandomString(16);
+                    if (ServersHandler.SyncServer.Clients.Any(x => x.Server.ID == id))
+                    {
+                        var server = ServersHandler.SyncServer.Clients.First(x => x.Server.ID == id);
+                        var key = Utilities.Basic.RandomString(16);
 
-                            server.SendTicket(key, this);
+                        server.SendTicket(key, this);
 
-                            packet = string.Format("AYK{0}:{1};{2}", server.Server.IP, server.Server.Port, key);
-                            Send(packet);
-                            return;
-                        }
-
+                        packet = string.Format("AYK{0}:{1};{2}", server.Server.IP, server.Server.Port, key);
+                        Send(packet);
+                    }
+                    else
+                    {
                         Send("BN");
+                        this.Disconnect();
+                    }
 
                     return;
             }

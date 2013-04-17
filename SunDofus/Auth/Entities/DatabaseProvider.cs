@@ -45,7 +45,7 @@ namespace SunDofus.Auth.Entities
             Utilities.Loggers.StatusLogger.Write("Connected to the Realm_Database !");
 
             _timer = new Timer();
-            _timer.Interval = 20000;
+            _timer.Interval = 60000;
             _timer.Elapsed += new ElapsedEventHandler(UpdateConnection);
             _timer.Start();
 

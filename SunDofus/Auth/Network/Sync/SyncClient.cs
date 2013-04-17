@@ -14,14 +14,13 @@ namespace SunDofus.Auth.Network.Sync
         private State _state;
         private object _packetLocker;
 
-        public SyncClient(SilverSocket socket)
-            : base(socket)
+        public SyncClient(SilverSocket socket) : base(socket)
         {
-            this.ReceivedDatas += new ReceiveDatasHandler(this.PacketsReceived);
-            this.DisconnectedSocket += new DisconnectedSocketHandler(this.Disconnected);
-
             _state = State.OnAuthentication;
             _packetLocker = new object();
+
+            this.ReceivedDatas += new ReceiveDatasHandler(this.PacketsReceived);
+            this.DisconnectedSocket += new DisconnectedSocketHandler(this.Disconnected);
 
             Server = null;
 
@@ -31,18 +30,17 @@ namespace SunDofus.Auth.Network.Sync
         public void SendTicket(string key, Auth.AuthClient client)
         {
             var Builder = new StringBuilder();
-            {
-                Builder.Append("ANTS|");
-                Builder.Append(key).Append("|");
-                Builder.Append(client.Account.ID).Append("|");
-                Builder.Append(client.Account.Pseudo).Append("|");
-                Builder.Append(client.Account.Question).Append("|");
-                Builder.Append(client.Account.Answer).Append("|");
-                Builder.Append(client.Account.Level).Append("|");
-                Builder.Append(string.Join(",", client.Account.Characters[Server.ID].ToArray())).Append("|");
-                Builder.Append(client.Account.SubscriptionTime()).Append("|");
-                Builder.Append(string.Join("+", Entities.Requests.GiftsRequests.GetGiftsByAccountID(client.Account.ID)));
-            }
+
+            Builder.Append("ANTS|");
+            Builder.Append(key).Append("|");
+            Builder.Append(client.Account.ID).Append("|");
+            Builder.Append(client.Account.Pseudo).Append("|");
+            Builder.Append(client.Account.Question).Append("|");
+            Builder.Append(client.Account.Answer).Append("|");
+            Builder.Append(client.Account.Level).Append("|");
+            Builder.Append(string.Join(",", client.Account.Characters[Server.ID].ToArray())).Append("|");
+            Builder.Append(client.Account.SubscriptionTime()).Append("|");
+            Builder.Append(string.Join("+", Entities.Requests.GiftsRequests.GetGiftsByAccountID(client.Account.ID)));
 
             Send(Builder.ToString());
         }
@@ -52,7 +50,7 @@ namespace SunDofus.Auth.Network.Sync
             lock(_packetLocker)
                 this.SendDatas(message);
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to {0} : {1}", myIp(), message));
+            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to the Sync {0} : {1}", myIp(), message));
         }
 
         private void PacketsReceived(string datas)
@@ -68,8 +66,8 @@ namespace SunDofus.Auth.Network.Sync
             ChangeState(State.OnDisconnected);
             Utilities.Loggers.InfosLogger.Write(string.Format("New closed sync connection <{0}> !", this.myIp()));
 
-            lock (ServersHandler.SyncServer.GetClients)
-                ServersHandler.SyncServer.GetClients.Remove(this);
+            lock (ServersHandler.SyncServer.Clients)
+                ServersHandler.SyncServer.Clients.Remove(this);
         }
 
         private void Parse(string datas)
@@ -214,7 +212,7 @@ namespace SunDofus.Auth.Network.Sync
                     break;
             }
 
-            ServersHandler.AuthServer.GetClients.ForEach(x => x.RefreshHosts());
+            ServersHandler.AuthServer.Clients.ForEach(x => x.RefreshHosts());
         }
 
         private void ParseListConnected(string _datas)

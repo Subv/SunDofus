@@ -264,8 +264,8 @@ namespace SunDofus.World.Network.Realm
                     Network.ServersHandler.AuthLinks.Send(string.Format("SNAC|{0}|{1}", Client.Infos.ID, character.Name));
 
                     Client.Send("AAK");
-                    SendCharacterList("");
                     Client.Send("TB");
+                    SendCharacterList("");
                 }
                 else
                 {

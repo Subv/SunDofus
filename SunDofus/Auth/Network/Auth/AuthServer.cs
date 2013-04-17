@@ -10,7 +10,7 @@ namespace SunDofus.Auth.Network.Auth
     {
         private List<AuthClient> _clients;
 
-        public List<AuthClient> GetClients
+        public List<AuthClient> Clients
         {
             get
             {
@@ -41,8 +41,8 @@ namespace SunDofus.Auth.Network.Auth
 
             Utilities.Loggers.InfosLogger.Write(string.Format("New inputted realm connection <{0}> !", socket.IP));
 
-            lock (GetClients)
-                GetClients.Add(new AuthClient(socket));
+            lock (Clients)
+                Clients.Add(new AuthClient(socket));
         }
 
         private void OnListeningServer(string remote)

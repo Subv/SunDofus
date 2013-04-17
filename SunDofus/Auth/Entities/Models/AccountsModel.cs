@@ -129,21 +129,5 @@ namespace SunDofus.Auth.Entities.Models
 
             return (long)time;
         }
-
-        public string CharactersString()
-        {
-            var str = "";
-
-            foreach (var i in Characters.Keys)
-            {
-                if (Characters[i].Count < 1)
-                    continue;
-
-                foreach (var character in Characters[i])
-                    str += string.Format("{0},{1}:", character, i);
-            }
-
-            return (str == "" ? str : str.Substring(0, str.Length - 1));
-        }
     }
 }

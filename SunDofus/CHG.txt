@@ -12,7 +12,6 @@
 [09.02.2013] Ajout du parsage de la liste des connectés sur le Realm dans la table "Connected"
 [09.02.2013] Reset automatiquement de la liste lors du démarage de l'émulateur pour éviter le mauvais affichage des connectés
 [12.02.2013] Ajout de tous les paramètres en configuration
-[15.04.2013] Réecriture du code, amélioration des performances et mise aux normes
 
 /!\ GAME
 
@@ -65,3 +64,5 @@
 /!\ GLOBAL
 
 [16.04.2013] Modification du code (mise en place d'une seule application le realm et le world, possibilité de multiserveurs distants)
+[16.04.2013] Rectification du bug sur la création des personnages
+[16.04.2013] Ajout d'un "PassKey" entre les worlds et realms (question sécurité pour la connexion pour le multi-server)

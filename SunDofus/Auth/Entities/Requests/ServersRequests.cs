@@ -34,13 +34,13 @@ namespace SunDofus.Auth.Entities.Requests
 
                 while (sqlReader.Read())
                 {
-                    var server = new Models.ServersModel();
+                    var server = new Models.ServersModel()
                     {
-                        server.ID = sqlReader.GetInt16("Id");
-                        server.IP = sqlReader.GetString("Ip");
-                        server.Port = sqlReader.GetInt16("Port");
-                        server.PassKey = sqlReader.GetString("PassKey");
-                    }
+                        ID = sqlReader.GetInt16("Id"),
+                        IP = sqlReader.GetString("Ip"),
+                        Port = sqlReader.GetInt16("Port"),
+                        PassKey = sqlReader.GetString("PassKey"),
+                    };
 
                     lock (_servers)
                         _servers.Add(server);

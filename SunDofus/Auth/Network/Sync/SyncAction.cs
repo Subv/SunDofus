@@ -10,25 +10,31 @@ namespace SunDofus.Auth.Network.Sync
     {
         public static void UpdateCharacters(int accountID, string character, int serverID, bool add = true)
         {
+            if (accountID == -1)
+                return;
+
             lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
             {
-                var account = SunDofus.Auth.Entities.Requests.AccountsRequests.LoadAccount(accountID);
-
-                if (account == null)
-                    return;
-
                 if (add)
-                    account.Characters[serverID].Add(character);
+                {
+                    var sqlText = "INSERT INTO dyn_accounts_char VALUES (@charname, @server, @account)";
+                    var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@charname", character));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@server", serverID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@account", accountID));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
                 else
-                    account.Characters[serverID].Remove(character);
+                {
+                    var sqlText = "DELETE FROM dyn_accounts_char WHERE characterName=@charname";
+                    var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
 
-                var sqlText = "UPDATE dyn_accounts SET characters=@Characters WHERE Id=@id";
-                var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
+                    sqlCommand.Parameters.Add(new MySqlParameter("@charname", character));
 
-                sqlCommand.Parameters.Add(new MySqlParameter("@id", accountID));
-                sqlCommand.Parameters.Add(new MySqlParameter("@Characters", account.CharactersString()));
-
-                sqlCommand.ExecuteNonQuery();
+                    sqlCommand.ExecuteNonQuery();
+                }
             }
         }
 

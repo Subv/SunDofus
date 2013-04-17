@@ -10,7 +10,7 @@ namespace SunDofus.Auth.Network.Sync
     {
         private List<SyncClient> _clients;
 
-        public List<SyncClient> GetClients
+        public List<SyncClient> Clients
         {
             get
             {
@@ -39,8 +39,8 @@ namespace SunDofus.Auth.Network.Sync
 
             Utilities.Loggers.InfosLogger.Write(string.Format("New inputted sync connection <{0}> !", socket.IP));
 
-            lock (GetClients)
-                GetClients.Add(new SyncClient(socket));
+            lock (Clients)
+                Clients.Add(new SyncClient(socket));
         }
 
         private void OnListeningServer(string remote)

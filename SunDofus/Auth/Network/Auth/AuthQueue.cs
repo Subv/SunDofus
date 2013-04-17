@@ -10,7 +10,7 @@ namespace SunDofus.Auth.Network.Auth
     {
         private static List<AuthClient> _clients;
 
-        public static List<AuthClient> GetClients
+        public static List<AuthClient> Clients
         {
             get
             {
