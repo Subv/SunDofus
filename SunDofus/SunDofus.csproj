@@ -66,6 +66,10 @@
     <Compile Include="Auth\Entities\Requests\AccountsRequests.cs" />
     <Compile Include="Auth\Entities\Requests\GiftsRequests.cs" />
     <Compile Include="Auth\Entities\Requests\ServersRequests.cs" />
+    <Compile Include="Auth\Network\Sync\Packets\HelloConnectPacket.cs" />
+    <Compile Include="Auth\Network\Sync\Packets\HelloConnectSuccessPacket.cs" />
+    <Compile Include="Auth\Network\Sync\Packets\MasterPacket.cs" />
+    <Compile Include="Auth\Network\Sync\Packets\TransferPacket.cs" />
     <Compile Include="Master\TCPClient.cs" />
     <Compile Include="Master\TCPServer.cs" />
     <Compile Include="Auth\Network\Auth\AuthClient.cs" />
@@ -110,6 +114,16 @@
     <Compile Include="World\Network\Authentication\AuthenticationClient.cs" />
     <Compile Include="World\Network\Authentication\AuthenticationsKeys.cs" />
     <Compile Include="World\Network\Authentication\AuthenticationsLinks.cs" />
+    <Compile Include="World\Network\Authentication\Packets\AuthenticationPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\ClientConnectedPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\ClientDisconnectedPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\CreatedCharacterPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\DeletedCharacterPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\DeletedGiftPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\ListOfConnectedPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\MasterPacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\StartMaintenancePacket.cs" />
+    <Compile Include="World\Network\Authentication\Packets\StopMaintenancePacket.cs" />
     <Compile Include="World\Network\Realm\RealmClient.cs" />
     <Compile Include="World\Network\Realm\RealmCommand.cs" />
     <Compile Include="World\Network\Realm\RealmParser.cs" />

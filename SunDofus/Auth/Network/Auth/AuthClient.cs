@@ -10,8 +10,7 @@ namespace SunDofus.Auth.Network.Auth
     class AuthClient : Master.TCPClient
     {
         public AccountsModel Account;
-
-        private AccountState _state;
+        public AccountState State;
 
         private object _packetLocker;
         private string _actualInfos;
@@ -71,7 +70,7 @@ namespace SunDofus.Auth.Network.Auth
                 Account = requestedAccount;
 
                 Utilities.Loggers.InfosLogger.Write(string.Format("Client {0} authentified !", Account.Pseudo));
-                _state = AccountState.OnServersList;
+                State = AccountState.OnServersList;
 
                 SendInformations();
             }
@@ -106,7 +105,7 @@ namespace SunDofus.Auth.Network.Auth
                 return;
             }
 
-            switch (_state)
+            switch (State)
             {
                 case AccountState.OnCheckingVersion:
                     ParseVersionPacket(datas);
@@ -134,7 +133,7 @@ namespace SunDofus.Auth.Network.Auth
                 }
                 else
                 {
-                    _state = AccountState.OnCheckingQueue;
+                    State = AccountState.OnCheckingQueue;
                     AuthQueue.AddinQueue(this);
                 }
             }
@@ -210,7 +209,7 @@ namespace SunDofus.Auth.Network.Auth
             }
         }
 
-        private enum AccountState
+        public enum AccountState
         {
             OnCheckingVersion,
             OnCheckingQueue,

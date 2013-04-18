@@ -14,21 +14,19 @@ namespace SunDofus.World.Realm.World
 
         public static void SaveChararacters()
         {
-            Network.ServersHandler.AuthLinks.Send("SSM");
+            Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.StartMaintenancePacket().GetPacket());
+
+            Characters.CharactersManager.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1164"));
 
             foreach (var character in Characters.CharactersManager.CharactersList)
             {
-                if (character.isConnected)
-                    character.NetworkClient.Send("Im1164");
-
                 Entities.Cache.CharactersCache.SaveCharacter(character);
                 System.Threading.Thread.Sleep(100);
-
-                if (character.isConnected)
-                    character.NetworkClient.Send("Im1165");
             }
 
-            Network.ServersHandler.AuthLinks.Send("STM");
+            Characters.CharactersManager.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1165"));
+
+            Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.StopMaintenancePacket().GetPacket());
         }
     }
 }

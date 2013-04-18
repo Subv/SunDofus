@@ -51,7 +51,7 @@ namespace SunDofus.World.Network.Realm
             {
                 if (!SunDofus.World.Realm.Characters.CharactersManager.CharactersList.Any(x => x.Name == name))
                 {
-                    Network.ServersHandler.AuthLinks.Send(string.Format("SDAC|{0}|{1}", Infos.ID, name));
+                    Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.DeletedCharacterPacket().GetPacket(Infos.ID, name));
                     continue;
                 }
 
@@ -104,7 +104,7 @@ namespace SunDofus.World.Network.Realm
 
             if (isAuth == true)
             {
-                Network.ServersHandler.AuthLinks.Send(string.Format("SND|{0}", Infos.Pseudo));
+                Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.ClientDisconnectedPacket().GetPacket(Infos.Pseudo));
 
                 if (Player != null)
                 {

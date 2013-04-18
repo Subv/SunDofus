@@ -7,7 +7,7 @@ namespace SunDofus.World.Network.Authentication
 {
     class AuthenticationsKeys
     {
-        public static List<AuthenticationsKeys> m_keys = new List<AuthenticationsKeys>();
+        public static List<AuthenticationsKeys> Keys = new List<AuthenticationsKeys>();
 
         private string _key;
 

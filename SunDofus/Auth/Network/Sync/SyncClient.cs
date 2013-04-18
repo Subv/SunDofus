@@ -24,25 +24,16 @@ namespace SunDofus.Auth.Network.Sync
 
             Server = null;
 
-            Send("HCS");
+            Send(new Packets.HelloConnectPacket().GetPacket());
         }
 
         public void SendTicket(string key, Auth.AuthClient client)
         {
-            var Builder = new StringBuilder();
+            var datas = new object[] { key, client.Account.ID, client.Account.Pseudo, client.Account.Question,
+                client.Account.Answer, client.Account.Level, string.Join(",", client.Account.Characters[Server.ID].ToArray()),
+                client.Account.SubscriptionTime(), string.Join("+", Entities.Requests.GiftsRequests.GetGiftsByAccountID(client.Account.ID)) };
 
-            Builder.Append("ANTS|");
-            Builder.Append(key).Append("|");
-            Builder.Append(client.Account.ID).Append("|");
-            Builder.Append(client.Account.Pseudo).Append("|");
-            Builder.Append(client.Account.Question).Append("|");
-            Builder.Append(client.Account.Answer).Append("|");
-            Builder.Append(client.Account.Level).Append("|");
-            Builder.Append(string.Join(",", client.Account.Characters[Server.ID].ToArray())).Append("|");
-            Builder.Append(client.Account.SubscriptionTime()).Append("|");
-            Builder.Append(string.Join("+", Entities.Requests.GiftsRequests.GetGiftsByAccountID(client.Account.ID)));
-
-            Send(Builder.ToString());
+            Send(new Packets.TransferPacket().GetPacket(datas));
         }
 
         public void Send(string message)
@@ -75,85 +66,68 @@ namespace SunDofus.Auth.Network.Sync
             try
             {
                 var packet = datas.Split('|');
+                var packetNummer = Utilities.Basic.HexToDeci(packet[0]);
 
-                switch (packet[0])
+                switch (packetNummer)
                 {
-                    case "SAI":
-
+                    case 20:
                         Authentication(int.Parse(packet[1]), packet[2], int.Parse(packet[3]), packet[4]);
-
                         return;
 
-                    case "SDAC":
-
-                        if(_state == State.OnConnected)
-                            SyncAction.UpdateCharacters(int.Parse(packet[1]), packet[2], Server.ID, false);
-
-                        return;
-
-                    case "SNAC":
-
-                        if (_state == State.OnConnected)
-                            SyncAction.UpdateCharacters(int.Parse(packet[1]), packet[2], Server.ID);
-
-                        return;
-
-                    case "SNC":
-
-                        if (_state == State.OnConnected)
-                        {
-                            if (!Server.GetClients.Contains(packet[1]))
-                            {
-                                lock(Server.GetClients)
-                                    Server.GetClients.Add(packet[1]);
-
-                                SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(packet[1]), true);
-                            }
-                        }
-
-                        return;
-
-                    case "SND":
-
-                        if (_state == State.OnConnected)
-                        {
-                            if (Server.GetClients.Contains(packet[1]))
-                            {
-                                lock(Server.GetClients)
-                                    Server.GetClients.Remove(packet[1]);
-
-                                SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(packet[1]), false);
-                            }
-                        }
-
-                        return;
-
-                    case "SNDG":
-
-                        if (_state == State.OnConnected)
-                            SyncAction.DeleteGift(int.Parse(packet[1]), int.Parse(packet[2]));
-
-                        return;
-
-                    case "SNLC":
-
+                    case 40:
                         if (_state == State.OnConnected)
                             ParseListConnected(datas);
-
                         return;
 
-                    case "SSM":
-
+                    case 50:
                         if (_state == State.OnConnected)
                             ChangeState(State.OnMaintenance);
-
                         return;
 
-                    case "STM":
-
+                    case 60:
                         if (_state == State.OnMaintenance)
                             ChangeState(State.OnConnected);
+                        return;
 
+                    case 80:
+                        if (_state == State.OnConnected)
+                            return;
+
+                        if (!Server.GetClients.Contains(packet[1]))
+                        {
+                            lock (Server.GetClients)
+                                Server.GetClients.Add(packet[1]);
+
+                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(packet[1]), true);
+                        }
+                        return;
+
+                    case 90:
+                        if (_state != State.OnConnected)
+                            return;
+
+                        if (Server.GetClients.Contains(packet[1]))
+                        {
+                            lock (Server.GetClients)
+                                Server.GetClients.Remove(packet[1]);
+
+                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(packet[1]), false);
+                        }
+                        return;
+
+                    case 100:
+                        if (_state == State.OnConnected)
+                            SyncAction.UpdateCharacters(int.Parse(packet[1]), packet[2], Server.ID);
+                        return;
+
+                    case 110:
+                        if (_state == State.OnConnected)
+                            SyncAction.UpdateCharacters(int.Parse(packet[1]), packet[2], Server.ID, false);
+                        return;
+
+                    case 120:
+                        if (_state == State.OnConnected)
+                            SyncAction.DeleteGift(int.Parse(packet[1]), int.Parse(packet[2]));
                         return;
                 }
             }
@@ -176,10 +150,9 @@ namespace SunDofus.Auth.Network.Sync
                 }
 
                 Server = requieredServer;
+                Send(new Packets.HelloConnectSuccessPacket().GetPacket());
 
-                Send("HCSS");
                 ChangeState(SyncClient.State.OnConnected);
-
                 Utilities.Loggers.InfosLogger.Write(string.Format("Sync <{0}> authentified !", this.myIp()));
             }
             else
@@ -212,7 +185,8 @@ namespace SunDofus.Auth.Network.Sync
                     break;
             }
 
-            ServersHandler.AuthServer.Clients.ForEach(x => x.RefreshHosts());
+            ServersHandler.AuthServer.Clients.Where(x => x.State
+                == SunDofus.Auth.Network.Auth.AuthClient.AccountState.OnServersList).ToList().ForEach(x => x.RefreshHosts());
         }
 
         private void ParseListConnected(string _datas)

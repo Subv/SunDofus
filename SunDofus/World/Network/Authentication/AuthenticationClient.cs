@@ -77,32 +77,31 @@ namespace SunDofus.World.Network.Authentication
         private void ParsePacket(string datas)
         {
             var infos = datas.Split('|');
+            var packetNummer = Utilities.Basic.HexToDeci(infos[0]);
 
             try
             {
-                switch (infos[0])
+                switch (packetNummer)
                 {
-                    case "ANTS":
 
-                        AuthenticationsKeys.m_keys.Add(new AuthenticationsKeys(datas));
-                        break;
+                    case 10:
+                        var objects = new object[] { Utilities.Config.GetIntElement("ServerId"), Utilities.Config.GetStringElement("ServerIp"),
+                            Utilities.Config.GetIntElement("ServerPort"), this.Model.PassKey };
 
-                    case "HCS":
+                        Send(new Packets.AuthenticationPacket().GetPacket(objects), true);
+                        return;
 
-                        Send(string.Format("SAI|{0}|{1}|{2}|{3}", Utilities.Config.GetIntElement("ServerId"),
-                            Utilities.Config.GetStringElement("ServerIp"), Utilities.Config.GetIntElement("ServerPort"),
-                            this.Model.PassKey), true);
-                        break;
-
-                    case "HCSS":
-
+                    case 30:
                         isLogged = true;
                         Utilities.Loggers.InfosLogger.Write("Connected with the @AuthenticationServer@ !");
 
                         if (ServersHandler.RealmServer.PseudoClients.Count > 0)
-                            Send(string.Format("SNLC|{0}", string.Join("|", ServersHandler.RealmServer.PseudoClients.Values)));
+                            Send(new Packets.ListOfConnectedPacket().GetPacket(ServersHandler.RealmServer.PseudoClients.Values));
+                        return;
 
-                        break;
+                    case 70:
+                        AuthenticationsKeys.Keys.Add(new AuthenticationsKeys(datas));
+                        return;
                 }
             }
             catch (Exception e)

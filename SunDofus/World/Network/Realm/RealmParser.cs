@@ -93,11 +93,11 @@ namespace SunDofus.World.Network.Realm
 
         private void ParseTicket(string datas)
         {
-            lock (Network.Authentication.AuthenticationsKeys.m_keys)
+            lock (Network.Authentication.AuthenticationsKeys.Keys)
             {
-                if (Network.Authentication.AuthenticationsKeys.m_keys.Any(x => x.Key == datas))
+                if (Network.Authentication.AuthenticationsKeys.Keys.Any(x => x.Key == datas))
                 {
-                    var key = Network.Authentication.AuthenticationsKeys.m_keys.First(x => x.Key == datas);
+                    var key = Network.Authentication.AuthenticationsKeys.Keys.First(x => x.Key == datas);
 
                     if (ServersHandler.RealmServer.Clients.Any(x => x.isAuth == true && x.Infos.Pseudo == key.Infos.Pseudo))
                         ServersHandler.RealmServer.Clients.First(x => x.isAuth == true && x.Infos.Pseudo == key.Infos.Pseudo).Disconnect();
@@ -108,9 +108,9 @@ namespace SunDofus.World.Network.Realm
 
                     Client.isAuth = true;
 
-                    Network.Authentication.AuthenticationsKeys.m_keys.Remove(key);
+                    Network.Authentication.AuthenticationsKeys.Keys.Remove(key);
 
-                    Network.ServersHandler.AuthLinks.Send(string.Format("SNC|{0}", Client.Infos.Pseudo));
+                    Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.ClientConnectedPacket().GetPacket(Client.Infos.Pseudo));
 
                     lock (ServersHandler.RealmServer.PseudoClients)
                     {
@@ -261,7 +261,7 @@ namespace SunDofus.World.Network.Realm
                     lock(Client.Characters)
                         Client.Characters.Add(character);
 
-                    Network.ServersHandler.AuthLinks.Send(string.Format("SNAC|{0}|{1}", Client.Infos.ID, character.Name));
+                    Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.CreatedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
 
                     Client.Send("AAK");
                     Client.Send("TB");
@@ -303,7 +303,7 @@ namespace SunDofus.World.Network.Realm
                 lock(Client.Characters)
                     Client.Characters.Remove(character);
 
-                Network.ServersHandler.AuthLinks.Send(string.Format("SDAC|{0}|{1}", Client.Infos.ID, character.Name));
+                Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.DeletedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
                 Entities.Cache.CharactersCache.DeleteCharacter(character.Name);
 
                 SendCharacterList("");
@@ -371,7 +371,7 @@ namespace SunDofus.World.Network.Realm
                         Client.Characters.First(x => x.ID == idChar).ItemsInventary.AddItem(myGift.Item, true);
 
                         Client.Send("AG0");
-                        Network.ServersHandler.AuthLinks.Send(string.Format("SNDG|{0}|{1}", myGift.ID, Client.Infos.ID));
+                        Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.DeletedGiftPacket().GetPacket(myGift.ID, Client.Infos.ID));
 
                         lock(Client.Infos.Gifts)
                             Client.Infos.Gifts.Remove(myGift);
