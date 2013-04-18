@@ -38,15 +38,15 @@ namespace SunDofus.Auth.Network.Sync
 
         public void Send(string message)
         {
-            lock(_packetLocker)
-                this.SendDatas(message);
+            Utilities.Loggers.InfosLogger.Write(string.Format("Send to Sync [{0}] : {1}", myIp(), message));
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to the Sync {0} : {1}", myIp(), message));
+            lock (_packetLocker)
+                this.SendDatas(message);
         }
 
         private void PacketsReceived(string datas)
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Receive from sync <{0}> : [{1}]", myIp(), datas));
+            Utilities.Loggers.InfosLogger.Write(string.Format("Received from sync [{0}] : {1}", myIp(), datas));
 
             lock (_packetLocker)
                 Parse(datas);
@@ -61,22 +61,22 @@ namespace SunDofus.Auth.Network.Sync
                 ServersHandler.SyncServer.Clients.Remove(this);
         }
 
-        private void Parse(string datas)
+        private void Parse(string packet)
         {
             try
             {
-                var packet = datas.Split('|');
-                var packetNummer = Utilities.Basic.HexToDeci(packet[0]);
+                var datas = packet.Split('|');
+                var nummer = Utilities.Basic.HexToDeci(datas[0]);
 
-                switch (packetNummer)
+                switch (nummer)
                 {
                     case 20:
-                        Authentication(int.Parse(packet[1]), packet[2], int.Parse(packet[3]), packet[4]);
+                        Authentication(int.Parse(datas[1]), datas[2], int.Parse(datas[3]), datas[4]);
                         return;
 
                     case 40:
                         if (_state == State.OnConnected)
-                            ParseListConnected(datas);
+                            ParseListConnected(packet);
                         return;
 
                     case 50:
@@ -93,12 +93,12 @@ namespace SunDofus.Auth.Network.Sync
                         if (_state == State.OnConnected)
                             return;
 
-                        if (!Server.GetClients.Contains(packet[1]))
+                        if (!Server.GetClients.Contains(datas[1]))
                         {
                             lock (Server.GetClients)
-                                Server.GetClients.Add(packet[1]);
+                                Server.GetClients.Add(datas[1]);
 
-                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(packet[1]), true);
+                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas[1]), true);
                         }
                         return;
 
@@ -106,28 +106,28 @@ namespace SunDofus.Auth.Network.Sync
                         if (_state != State.OnConnected)
                             return;
 
-                        if (Server.GetClients.Contains(packet[1]))
+                        if (Server.GetClients.Contains(datas[1]))
                         {
                             lock (Server.GetClients)
-                                Server.GetClients.Remove(packet[1]);
+                                Server.GetClients.Remove(datas[1]);
 
-                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(packet[1]), false);
+                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas[1]), false);
                         }
                         return;
 
                     case 100:
                         if (_state == State.OnConnected)
-                            SyncAction.UpdateCharacters(int.Parse(packet[1]), packet[2], Server.ID);
+                            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID);
                         return;
 
                     case 110:
                         if (_state == State.OnConnected)
-                            SyncAction.UpdateCharacters(int.Parse(packet[1]), packet[2], Server.ID, false);
+                            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID, false);
                         return;
 
                     case 120:
                         if (_state == State.OnConnected)
-                            SyncAction.DeleteGift(int.Parse(packet[1]), int.Parse(packet[2]));
+                            SyncAction.DeleteGift(int.Parse(datas[1]), int.Parse(datas[2]));
                         return;
                 }
             }

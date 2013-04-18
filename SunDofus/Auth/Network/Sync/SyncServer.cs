@@ -37,7 +37,7 @@ namespace SunDofus.Auth.Network.Sync
             if (socket == null) 
                 return;
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("New inputted sync connection <{0}> !", socket.IP));
+            Utilities.Loggers.InfosLogger.Write(string.Format("New imputed sync connection <{0}> !", socket.IP));
 
             lock (Clients)
                 Clients.Add(new SyncClient(socket));

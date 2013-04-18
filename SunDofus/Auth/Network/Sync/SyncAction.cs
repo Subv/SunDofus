@@ -57,6 +57,9 @@ namespace SunDofus.Auth.Network.Sync
 
         public static void DeleteGift(int giftID, int accountID)
         {
+            if (accountID == -1)
+                return;
+
             lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "DELETE FROM dyn_gifts WHERE id=@id";

@@ -39,7 +39,7 @@ namespace SunDofus.Auth.Network.Auth
             if (socket == null) 
                 return;
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("New inputted realm connection <{0}> !", socket.IP));
+            Utilities.Loggers.InfosLogger.Write(string.Format("New imputed client connection <{0}> !", socket.IP));
 
             lock (Clients)
                 Clients.Add(new AuthClient(socket));

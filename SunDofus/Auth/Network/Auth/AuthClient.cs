@@ -27,14 +27,6 @@ namespace SunDofus.Auth.Network.Auth
             Send(string.Format("HC{0}", _key));
         }
 
-        public void Send(string message)
-        {
-            lock(_packetLocker)
-                this.SendDatas(message);
-
-            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to <{0}> : {1}", myIp(), message));
-        }
-
         public void SendInformations()
         {
             Send(string.Format("Ad{0}",Account.Pseudo));
@@ -69,7 +61,7 @@ namespace SunDofus.Auth.Network.Auth
             {
                 Account = requestedAccount;
 
-                Utilities.Loggers.InfosLogger.Write(string.Format("Client {0} authentified !", Account.Pseudo));
+                Utilities.Loggers.InfosLogger.Write(string.Format("Client <{0}> authentified !", Account.Pseudo));
                 State = AccountState.OnServersList;
 
                 SendInformations();
@@ -81,20 +73,28 @@ namespace SunDofus.Auth.Network.Auth
             }
         }
 
+        public void Send(string message)
+        {
+            Utilities.Loggers.InfosLogger.Write(string.Format("Send to [{0}] : {1}", myIp(), message));
+
+            lock (_packetLocker)
+                this.SendDatas(message);
+        }
+
+        private void PacketReceived(string datas)
+        {
+            Utilities.Loggers.InfosLogger.Write(string.Format("Receive from client [{0}] : {1}", this.myIp(), datas));
+
+            lock (_packetLocker)
+                Parse(datas);
+        }
+
         private void Disconnected()
         {
             Utilities.Loggers.InfosLogger.Write(string.Format("New closed client connection <{0}> !", this.myIp()));
 
             lock (ServersHandler.AuthServer.Clients)
                 ServersHandler.AuthServer.Clients.Remove(this);
-        }
-
-        private void PacketReceived(string datas)
-        {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Receive from client <{0}> : [{1}]", this.myIp(), datas));
-
-            lock (_packetLocker)
-                Parse(datas);
         }
 
         private void Parse(string datas)
@@ -144,21 +144,21 @@ namespace SunDofus.Auth.Network.Auth
             }
         }
 
-        private void ParseListPacket(string initialPacket)
+        private void ParseListPacket(string datas)
         {
-            if (initialPacket.Substring(0, 1) != "A")
+            if (datas.Substring(0, 1) != "A")
                 return;
 
             var packet = string.Empty;
 
-            switch (initialPacket[1])
+            switch (datas[1])
             {
                 case 'F':
 
-                    if (Entities.Requests.ServersRequests.Cache.Any(x => x.GetClients.Contains(initialPacket.Substring(2))))
+                    if (Entities.Requests.ServersRequests.Cache.Any(x => x.GetClients.Contains(datas.Substring(2))))
                     {
                         packet = string.Format("AF{0}", 
-                            Entities.Requests.ServersRequests.Cache.First(x => x.GetClients.Contains(initialPacket.Substring(2))).ID);
+                            Entities.Requests.ServersRequests.Cache.First(x => x.GetClients.Contains(datas.Substring(2))).ID);
 
                         Send(packet);
                     }
@@ -186,7 +186,7 @@ namespace SunDofus.Auth.Network.Auth
 
                     var id = 0;
 
-                    if (!int.TryParse(initialPacket.Substring(2), out id))
+                    if (!int.TryParse(datas.Substring(2), out id))
                         return;
 
                     if (ServersHandler.SyncServer.Clients.Any(x => x.Server.ID == id))

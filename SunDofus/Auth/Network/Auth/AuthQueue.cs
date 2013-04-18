@@ -17,7 +17,9 @@ namespace SunDofus.Auth.Network.Auth
                 return _clients;
             }
         }
+
         private static Timer _reloadTimer;
+        private static bool _isRunning;
 
         public static void Start()
         {
@@ -31,6 +33,7 @@ namespace SunDofus.Auth.Network.Auth
                 _reloadTimer.Start();
             }
 
+            _isRunning = true;
             Utilities.Loggers.StatusLogger.Write("Queue for the servers' list started !");
         }
 
@@ -40,6 +43,12 @@ namespace SunDofus.Auth.Network.Auth
 
             lock(_clients)
                 _clients.Add(client);
+
+            if (!_isRunning)
+            {
+                _isRunning = true;
+                _reloadTimer.Start();
+            }
         }
 
         private static void RefreshQueue(object sender, EventArgs e)
@@ -52,7 +61,11 @@ namespace SunDofus.Auth.Network.Auth
             lock (_clients)
                 _clients.Remove(_clients[0]);
 
-            Utilities.Loggers.InfosLogger.Write("Queue refreshed !");
+            if (_clients.Count <= 0)
+            {
+                _isRunning = false;
+                _reloadTimer.Stop();
+            }
         }
     }
 }
