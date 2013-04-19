@@ -111,10 +111,10 @@ namespace SunDofus.World.Realm.Maps.Monsters
             var key = _base.Keys.ToList()[Utilities.Basic.Rand(0, _base.Count - 1)];
             var value = _base[key][Utilities.Basic.Rand(0, _base[key].Count - 1)];
 
-            if (!Entities.Cache.MonstersCache.MonstersList.Any(x => x.ID == key))
+            if (!Entities.Requests.MonstersRequests.MonstersList.Any(x => x.ID == key))
                 return null;
 
-            return new Monster(Entities.Cache.MonstersCache.MonstersList.First(x => x.ID == key), value);
+            return new Monster(Entities.Requests.MonstersRequests.MonstersList.First(x => x.ID == key), value);
         }
 
         private void RefreshMappos()

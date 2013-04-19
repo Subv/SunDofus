@@ -36,7 +36,7 @@ namespace SunDofus.World.Realm.World
         {
             if (client.Player.CanSendinTrade() == true)
             {
-                foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.isAuth == true))
+                foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.Authentified == true))
                     character.Send(string.Format("cMK:|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
 
                 client.Player.RefreshTrade();
@@ -49,7 +49,7 @@ namespace SunDofus.World.Realm.World
         {
             if (client.Player.CanSendinRecruitment() == true)
             {
-                foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.isAuth == true))
+                foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.Authentified == true))
                     character.Send(string.Format("cMK?|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
 
                 client.Player.RefreshRecruitment();
@@ -71,7 +71,7 @@ namespace SunDofus.World.Realm.World
         {
             if (client.Infos.GMLevel > 0)
             {
-                foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.isAuth == true && x.Infos.GMLevel > 0))
+                foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.Authentified == true && x.Infos.GMLevel > 0))
                     character.Send(string.Format("cMK@|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
             }
         }

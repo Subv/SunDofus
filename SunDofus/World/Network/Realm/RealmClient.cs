@@ -10,15 +10,27 @@ namespace SunDofus.World.Network.Realm
 {
     class RealmClient : Master.TCPClient
     {
-        public bool isAuth;
+        private bool _isAuth;
+
+        public bool Authentified
+        {
+            get
+            {
+                return _isAuth;
+            }
+            set
+            {
+                _isAuth = value;
+            }
+        }
 
         public Character Player;
         public List<Character> Characters;
         public AccountModel Infos;
-        public RealmCommand Commander;
+        public RealmClientCommander Commander;
 
         private object _packetLocker;
-        private RealmParser _parser;
+        private RealmClientParser _parser;
 
         public RealmClient(SilverSocket socket) :  base(socket)
         {
@@ -28,11 +40,11 @@ namespace SunDofus.World.Network.Realm
             this.ReceivedDatas += new ReceiveDatasHandler(this.ReceivedPackets);
 
             Characters = new List<SunDofus.World.Realm.Characters.Character>();
-            Commander = new RealmCommand(this);
-            _parser = new RealmParser(this);
+            Commander = new RealmClientCommander(this);
+            _parser = new RealmClientParser(this);
 
             Player = null;
-            isAuth = false;
+            _isAuth = false;
 
             Send("HG");
         }
@@ -42,7 +54,7 @@ namespace SunDofus.World.Network.Realm
             lock(_packetLocker)
                 this.SendDatas(message);
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to @<{0}>@ : {1}", myIp(), message));
+            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to <{0}> : {1}", myIp(), message));
         }
 
         public void ParseCharacters()
@@ -51,7 +63,7 @@ namespace SunDofus.World.Network.Realm
             {
                 if (!SunDofus.World.Realm.Characters.CharactersManager.CharactersList.Any(x => x.Name == name))
                 {
-                    Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.DeletedCharacterPacket().GetPacket(Infos.ID, name));
+                    Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedCharacterPacket().GetPacket(Infos.ID, name));
                     continue;
                 }
 
@@ -66,10 +78,10 @@ namespace SunDofus.World.Network.Realm
 
             foreach (var gift in Infos.Gifts)
             {
-                if (Entities.Cache.ItemsCache.ItemsList.Any(x => x.ID == gift.ItemID) == false)
+                if (Entities.Requests.ItemsRequests.ItemsList.Any(x => x.ID == gift.ItemID) == false)
                     return;
 
-                var item = new SunDofus.World.Realm.Characters.Items.CharacterItem(Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == gift.ItemID));
+                var item = new SunDofus.World.Realm.Characters.Items.CharacterItem(Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == gift.ItemID));
 
                 item.GeneratItem();
 
@@ -102,9 +114,9 @@ namespace SunDofus.World.Network.Realm
         {
             Utilities.Loggers.InfosLogger.Write(string.Format("New closed client @<{0}>@ connection !", myIp()));
 
-            if (isAuth == true)
+            if (_isAuth == true)
             {
-                Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.ClientDisconnectedPacket().GetPacket(Infos.Pseudo));
+                Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.ClientDisconnectedPacket().GetPacket(Infos.Pseudo));
 
                 if (Player != null)
                 {
@@ -188,7 +200,7 @@ namespace SunDofus.World.Network.Realm
                 }
             }
 
-            if (isAuth)
+            if (_isAuth)
             {
                 lock (ServersHandler.RealmServer.PseudoClients)
                     ServersHandler.RealmServer.PseudoClients.Remove(Infos.Pseudo);

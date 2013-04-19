@@ -10,14 +10,14 @@ using SunDofus.World.Realm.World;
 
 namespace SunDofus.World.Network.Realm
 {
-    class RealmParser
+    class RealmClientParser
     {
         public RealmClient Client;
 
         private delegate void Packets(string _string);
         private Dictionary<string, Packets> RegisteredPackets;
 
-        public RealmParser(RealmClient client)
+        public RealmClientParser(RealmClient client)
         {
             Client = client;
 
@@ -93,24 +93,24 @@ namespace SunDofus.World.Network.Realm
 
         private void ParseTicket(string datas)
         {
-            lock (Network.Authentication.AuthenticationsKeys.Keys)
+            lock (Network.Auth.AuthKeys.Keys)
             {
-                if (Network.Authentication.AuthenticationsKeys.Keys.Any(x => x.Key == datas))
+                if (Network.Auth.AuthKeys.Keys.Any(x => x.Key == datas))
                 {
-                    var key = Network.Authentication.AuthenticationsKeys.Keys.First(x => x.Key == datas);
+                    var key = Network.Auth.AuthKeys.Keys.First(x => x.Key == datas);
 
-                    if (ServersHandler.RealmServer.Clients.Any(x => x.isAuth == true && x.Infos.Pseudo == key.Infos.Pseudo))
-                        ServersHandler.RealmServer.Clients.First(x => x.isAuth == true && x.Infos.Pseudo == key.Infos.Pseudo).Disconnect();
+                    if (ServersHandler.RealmServer.Clients.Any(x => x.Authentified == true && x.Infos.Pseudo == key.Infos.Pseudo))
+                        ServersHandler.RealmServer.Clients.First(x => x.Authentified == true && x.Infos.Pseudo == key.Infos.Pseudo).Disconnect();
 
                     Client.Infos = key.Infos;
                     Client.Infos.ParseCharacters();
                     Client.ParseCharacters();
 
-                    Client.isAuth = true;
+                    Client.Authentified = true;
 
-                    Network.Authentication.AuthenticationsKeys.Keys.Remove(key);
+                    Network.Auth.AuthKeys.Keys.Remove(key);
 
-                    Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.ClientConnectedPacket().GetPacket(Client.Infos.Pseudo));
+                    Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.ClientConnectedPacket().GetPacket(Client.Infos.Pseudo));
 
                     lock (ServersHandler.RealmServer.PseudoClients)
                     {
@@ -162,7 +162,7 @@ namespace SunDofus.World.Network.Realm
                 {
                     var character = new Character();
 
-                    character.ID = Entities.Cache.CharactersCache.GetNewID();
+                    character.ID = Entities.Requests.CharactersRequests.GetNewID();
                     character.Name = characterDatas[0];
                     character.Level = Utilities.Config.GetIntElement("StartLevel");
                     character.Class = int.Parse(characterDatas[1]);
@@ -239,7 +239,7 @@ namespace SunDofus.World.Network.Realm
 
                     character.CharactPoint = (character.Level - 1) * 5;
                     character.SpellPoint = (character.Level - 1);
-                    character.Exp = Entities.Cache.LevelsCache.ReturnLevel(character.Level).Character;
+                    character.Exp = Entities.Requests.LevelsRequests.ReturnLevel(character.Level).Character;
                     character.Kamas = (long)Utilities.Config.GetIntElement("StartKamas");
 
 
@@ -252,8 +252,7 @@ namespace SunDofus.World.Network.Realm
                     }
 
                     character.SpellsInventary.LearnSpells();
-
-                    Entities.Cache.CharactersCache.CreateCharacter(character);
+                    character.isNewCharacter = true;
 
                     lock(CharactersManager.CharactersList)
                         CharactersManager.CharactersList.Add(character);
@@ -261,7 +260,7 @@ namespace SunDofus.World.Network.Realm
                     lock(Client.Characters)
                         Client.Characters.Add(character);
 
-                    Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.CreatedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
+                    Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.CreatedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
 
                     Client.Send("AAK");
                     Client.Send("TB");
@@ -303,8 +302,8 @@ namespace SunDofus.World.Network.Realm
                 lock(Client.Characters)
                     Client.Characters.Remove(character);
 
-                Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.DeletedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
-                Entities.Cache.CharactersCache.DeleteCharacter(character.Name);
+                Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
+                Entities.Requests.CharactersRequests.DeleteCharacter(character.Name);
 
                 SendCharacterList("");
             }
@@ -371,7 +370,7 @@ namespace SunDofus.World.Network.Realm
                         Client.Characters.First(x => x.ID == idChar).ItemsInventary.AddItem(myGift.Item, true);
 
                         Client.Send("AG0");
-                        Network.ServersHandler.AuthLinks.Send(new Network.Authentication.Packets.DeletedGiftPacket().GetPacket(myGift.ID, Client.Infos.ID));
+                        Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedGiftPacket().GetPacket(myGift.ID, Client.Infos.ID));
 
                         lock(Client.Infos.Gifts)
                             Client.Infos.Gifts.Remove(myGift);
@@ -1079,7 +1078,7 @@ namespace SunDofus.World.Network.Realm
 
                     foreach (var i in NPC.Model.SellingList)
                     {
-                        var item = Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == i);
+                        var item = Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == i);
                         newPacket += string.Format("{0};{1}|", i, item.EffectInfos());
                     }
 
@@ -1136,7 +1135,7 @@ namespace SunDofus.World.Network.Realm
             if (!int.TryParse(datas[0], out itemID) || int.TryParse(datas[1], out quantity))
                 return;
 
-            var item = Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == itemID);
+            var item = Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == itemID);
             var NPC = Client.Player.GetMap().Npcs.First(x => x.ID == Client.Player.State.actualNPC);
 
             if (quantity <= 0 || !NPC.Model.SellingList.Contains(itemID))

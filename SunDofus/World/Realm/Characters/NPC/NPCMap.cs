@@ -104,11 +104,11 @@ namespace SunDofus.World.Realm.Characters.NPC
 
         private void Move(object e, EventArgs e2)
         {
-            lock (Entities.Cache.MapsCache.MapsList)
+            lock (Entities.Requests.MapsRequests.MapsList)
             {
                 _movements.Interval = Utilities.Basic.Rand(1000, 5000);
 
-                var map = Entities.Cache.MapsCache.MapsList.First(x => x.GetModel.ID == MapID);
+                var map = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == MapID);
 
                 var path = new Realm.Maps.Pathfinding("", map, MapCell, Dir);
                 var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;

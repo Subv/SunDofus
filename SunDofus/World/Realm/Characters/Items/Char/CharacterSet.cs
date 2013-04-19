@@ -24,7 +24,7 @@ namespace SunDofus.World.Realm.Characters.Items
             _ID = id;
 
             ItemsList = new List<int>();
-            BonusList = Entities.Cache.ItemsCache.SetsList.First(x => x.ID == ID).BonusList;
+            BonusList = Entities.Requests.ItemsRequests.SetsList.First(x => x.ID == ID).BonusList;
             BonusList[1] = new List<Effects.EffectItem>();
         }
     }

@@ -9,13 +9,13 @@ namespace SunDofus.Master
     class TCPClient
     {
         private SilverSocket _socket;
-        private bool isConnected = false;
+        private bool _isConnected = false;
 
         public bool Connected
         {
             get
             {
-                return isConnected;
+                return _isConnected;
             }
         }
 
@@ -97,7 +97,7 @@ namespace SunDofus.Master
 
         private void OnConnected()
         {
-            isConnected = true;
+            _isConnected = true;
         }
 
         private void OnFailedToConnect(Exception e)
@@ -107,7 +107,7 @@ namespace SunDofus.Master
 
         private void OnDisconnected()
         {
-            isConnected = false;
+            _isConnected = false;
 
             OnDisconnectedSocket();
         }

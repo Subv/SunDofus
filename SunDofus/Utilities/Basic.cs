@@ -7,7 +7,7 @@ namespace SunDofus.Utilities
 {
     class Basic
     {
-        public static object ConsoleLocker = new object();
+        public static object Locker = new object();
 
         private static int _startTime;
         private static Random _randomizer = new Random();
@@ -87,13 +87,19 @@ namespace SunDofus.Utilities
 
         public static string RandomName()
         {
-            var name = "";
+            var name = string.Empty;
 
             name += GetConsonants();
             name += GetVowels();
-            name += GetVowels();
+
+            if (Rand(0, 1) == 0)
+                name += GetVowels();
+
             name += GetConsonants();
-            name += GetConsonants();
+
+            if (Rand(0, 1) == 0)
+                name += name[name.Length - 1].ToString();
+
             name += GetVowels();
 
             if (Rand(0, 1) == 0)
@@ -136,26 +142,26 @@ namespace SunDofus.Utilities
         {
             if (jetStr.Length > 3)
             {
-                var Damage = 0;
-                var DS = int.Parse(jetStr.Split('d')[0]);
-                var Faces = int.Parse(jetStr.Split('d')[1].Split('+')[0]);
-                var Fixe = int.Parse(jetStr.Split('d')[1].Split('+')[1]);
+                var damages = 0;
+                var ds = int.Parse(jetStr.Split('d')[0]);
+                var faces = int.Parse(jetStr.Split('d')[1].Split('+')[0]);
+                var fixe = int.Parse(jetStr.Split('d')[1].Split('+')[1]);
 
-                if (DS != 0)
+                if (ds != 0)
                 {
-                    for (var i = 1; i <= DS; i++)
+                    for (var i = 1; i <= ds; i++)
                     {
                         if (jet == 1)
-                            Damage += Faces;
+                            damages += faces;
                         else if (jet == 2)
-                            Damage += 1;
+                            damages += 1;
                         else if (jet == 3)
-                            Damage += (int)Math.Ceiling((double)(Faces / 2));
+                            damages += (int)Math.Ceiling((double)(faces / 2));
                         else
-                            Damage += Rand(1, Faces);
+                            damages += Rand(1, faces);
                     }
                 }
-                return (Damage + Fixe);
+                return (damages + fixe);
             }
             else
                 return 0;

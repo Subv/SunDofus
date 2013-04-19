@@ -7,16 +7,15 @@ namespace SunDofus.World.Network
 {
     class ServersHandler
     {
-        public static Realm.RealmServer RealmServer;
-        public static Authentication.AuthenticationsLinks AuthLinks;
+        public static Realm.RealmClientServer RealmServer;
+        public static Auth.AuthLinks AuthLinks;
 
         public static void InitialiseServers()
         {
-            RealmServer = new Realm.RealmServer();
-            RealmServer.Start();
+            AuthLinks = new Auth.AuthLinks();
 
-            AuthLinks = new Authentication.AuthenticationsLinks();
-            AuthLinks.Start();
+            RealmServer = new Realm.RealmClientServer();
+            RealmServer.Start();
         }
     }
 }

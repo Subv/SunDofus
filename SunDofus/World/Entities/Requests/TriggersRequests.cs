@@ -4,31 +4,31 @@ using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
 
-namespace SunDofus.World.Entities.Cache
+namespace SunDofus.World.Entities.Requests
 {
-    class TriggersCache
+    class TriggersRequests
     {
         public static List<Entities.Models.Maps.TriggerModel> TriggersList = new List<Entities.Models.Maps.TriggerModel>();
 
         public static void LoadTriggers()
         {
-            lock (DatabaseHandler.ConnectionLocker)
+            lock (DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "SELECT * FROM datas_triggers";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseHandler.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
                 while (sqlReader.Read())
                 {
-                    var trigger = new Entities.Models.Maps.TriggerModel();
-
-                    trigger.MapID = sqlReader.GetInt16("MapID");
-                    trigger.CellID = sqlReader.GetInt16("CellID");
-                    trigger.ActionID = sqlReader.GetInt16("ActionID");
-                    trigger.Args = sqlReader.GetString("Args");
-                    trigger.Conditions = sqlReader.GetString("Conditions");
-                    
+                    var trigger = new Entities.Models.Maps.TriggerModel()
+                    {
+                        MapID = sqlReader.GetInt16("MapID"),
+                        CellID = sqlReader.GetInt16("CellID"),
+                        ActionID = sqlReader.GetInt16("ActionID"),
+                        Args = sqlReader.GetString("Args"),
+                        Conditions = sqlReader.GetString("Conditions"),
+                    };                    
 
                     lock (TriggersList)
                     {
@@ -40,15 +40,15 @@ namespace SunDofus.World.Entities.Cache
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded @'{0}' triggers@ from the database !", TriggersList.Count));
+            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' triggers from the database !", TriggersList.Count));
         }
 
         public static void InsertTrigger(Models.Maps.TriggerModel trigger)
         {
-            lock (DatabaseHandler.ConnectionLocker)
+            lock (DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "INSERT INTO datas_triggers VALUES(@mapid, @cellid, @action, @args, @condi)";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseHandler.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;
 
@@ -64,9 +64,9 @@ namespace SunDofus.World.Entities.Cache
 
         public static bool ParseTrigger(Entities.Models.Maps.TriggerModel trigger)
         {
-            if (MapsCache.MapsList.Any(x => x.GetModel.ID == trigger.MapID))
+            if (MapsRequests.MapsList.Any(x => x.GetModel.ID == trigger.MapID))
             {
-                MapsCache.MapsList.First(x => x.GetModel.ID == trigger.MapID).Triggers.Add(trigger);
+                MapsRequests.MapsList.First(x => x.GetModel.ID == trigger.MapID).Triggers.Add(trigger);
                 return true;
             }
             else

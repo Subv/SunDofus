@@ -1,0 +1,10 @@
+﻿//A FAIRE AVANT LA 3.1.X
+
+Réecrire tout les models du World (Get/Set etc)
+Revoir le reste des classes pour les performances et les mises aux normes du World
+Réecrire les échanges (Avec classes, pouvant être PNJ ou Joueur)
+Réecrire les canaux de discussions (Avec classes, pour facilier la vue et éviter les bugs)
+Revoir les droits des modérateurs / administrateurs / animateurs
+Faire les conditions des items et les armes à deux mains + bouclier, ...
+Recevoir les messages des cannaux Commerce et recrutement suivant le subarea
+Ajout des amis / Ennemis

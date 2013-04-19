@@ -69,7 +69,7 @@ namespace SunDofus.Auth.Entities
             _isConnected = true;
             _timer.Start();
 
-            Utilities.Loggers.StatusLogger.Write("Connected to the Realm_Database !");
+            Utilities.Loggers.StatusLogger.Write("Reconnected to the Realm_Database !");
         }
 
         private static void UpdateConnection(object sender, EventArgs e)

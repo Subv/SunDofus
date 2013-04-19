@@ -4,31 +4,32 @@ using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
 
-namespace SunDofus.World.Entities.Cache
+namespace SunDofus.World.Entities.Requests
 {
-    class LevelsCache
+    class LevelsRequests
     {
         public static List<Models.Levels.LevelModel> LevelsList = new List<Models.Levels.LevelModel>();
 
         public static void LoadLevels()
         {
-            lock (DatabaseHandler.ConnectionLocker)
+            lock (DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "SELECT * FROM datas_levels";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseHandler.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
                 while (sqlReader.Read())
                 {
-                    var level = new Models.Levels.LevelModel();
-
-                    level.ID = sqlReader.GetInt16("Level");
-                    level.Character = sqlReader.GetInt64("Character");
-                    level.Job = sqlReader.GetInt64("Job");
-                    level.Mount = sqlReader.GetInt64("Mount");
-                    level.Alignment = sqlReader.GetInt64("Pvp");
-                    level.Guild = sqlReader.GetInt64("Guild");
+                    var level = new Models.Levels.LevelModel()
+                    {
+                        ID = sqlReader.GetInt16("Level"),
+                        Character = sqlReader.GetInt64("Character"),
+                        Job = sqlReader.GetInt64("Job"),
+                        Mount = sqlReader.GetInt64("Mount"),
+                        Alignment = sqlReader.GetInt64("Pvp"),
+                        Guild = sqlReader.GetInt64("Guild"),
+                    };
 
                     lock(LevelsList)
                         LevelsList.Add(level);
@@ -37,7 +38,7 @@ namespace SunDofus.World.Entities.Cache
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded @'{0}' levels@ from the database !", LevelsList.Count));
+            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' levels from the database !", LevelsList.Count));
         }
 
         public static Models.Levels.LevelModel ReturnLevel(int _level)

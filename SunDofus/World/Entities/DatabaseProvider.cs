@@ -6,12 +6,12 @@ using MySql.Data.MySqlClient;
 
 namespace SunDofus.World.Entities
 {
-    class DatabaseHandler
+    class DatabaseProvider
     {
         public static MySqlConnection Connection;
         public static object ConnectionLocker;
 
-        public static void InitialiseConnection()
+        public static void InitializeConnection()
         {
             Connection = new MySqlConnection();
             ConnectionLocker = new object();
@@ -27,12 +27,28 @@ namespace SunDofus.World.Entities
                 lock (ConnectionLocker)
                     Connection.Open();
 
-                Utilities.Loggers.StatusLogger.Write("Connected to the @database@ !");
+                Utilities.Loggers.StatusLogger.Write("Connected to the World_Database !");
             }
             catch (Exception e)
             {
-                Utilities.Loggers.ErrorsLogger.Write(string.Format("Can't connect to the @database@ : {0}", e.ToString()));
+                Utilities.Loggers.ErrorsLogger.Write(string.Format("Can't connect to the database : {0}", e.ToString()));
             }
+        }
+
+        public static void Open()
+        {
+            lock (ConnectionLocker)
+                Connection.Open();
+
+            Utilities.Loggers.StatusLogger.Write("Reconnected to the World_Database !");
+        }
+
+        public static void Close()
+        {
+            lock (ConnectionLocker)
+                Connection.Close();
+
+            Utilities.Loggers.StatusLogger.Write("Diconnected from the World_Database !");
         }
     }
 }

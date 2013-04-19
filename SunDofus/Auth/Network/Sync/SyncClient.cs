@@ -75,59 +75,35 @@ namespace SunDofus.Auth.Network.Sync
                         return;
 
                     case 40:
-                        if (_state == State.OnConnected)
-                            ParseListConnected(packet);
+                        ParseListConnected(packet);
                         return;
 
                     case 50:
-                        if (_state == State.OnConnected)
-                            ChangeState(State.OnMaintenance);
+                        ChangeState(State.OnMaintenance);
                         return;
 
                     case 60:
-                        if (_state == State.OnMaintenance)
-                            ChangeState(State.OnConnected);
+                        ChangeState(State.OnConnected);
                         return;
 
                     case 80:
-                        if (_state == State.OnConnected)
-                            return;
-
-                        if (!Server.GetClients.Contains(datas[1]))
-                        {
-                            lock (Server.GetClients)
-                                Server.GetClients.Add(datas[1]);
-
-                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas[1]), true);
-                        }
+                        ReceiveNewConnectedClient(datas[1]);
                         return;
 
                     case 90:
-                        if (_state != State.OnConnected)
-                            return;
-
-                        if (Server.GetClients.Contains(datas[1]))
-                        {
-                            lock (Server.GetClients)
-                                Server.GetClients.Remove(datas[1]);
-
-                            SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas[1]), false);
-                        }
+                        ReceiveNewDisconnectedClient(datas[1]);
                         return;
 
                     case 100:
-                        if (_state == State.OnConnected)
-                            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID);
+                        ReceiveNewCreatedCharacter(datas);
                         return;
 
                     case 110:
-                        if (_state == State.OnConnected)
-                            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID, false);
+                        ReceiveNewDeletedCharacter(datas);
                         return;
 
                     case 120:
-                        if (_state == State.OnConnected)
-                            SyncAction.DeleteGift(int.Parse(datas[1]), int.Parse(datas[2]));
+                        ReceiveNewDeletedGifts(datas);
                         return;
                 }
             }
@@ -152,19 +128,62 @@ namespace SunDofus.Auth.Network.Sync
                 Server = requieredServer;
                 Send(new Packets.HelloConnectSuccessPacket().GetPacket());
 
-                ChangeState(SyncClient.State.OnConnected);
+                ChangeState(SyncClient.State.OnConnected, true);
                 Utilities.Loggers.InfosLogger.Write(string.Format("Sync <{0}> authentified !", this.myIp()));
             }
             else
                 Disconnect();
         }
 
-        private void ChangeState(State state)
+        private void ReceiveNewConnectedClient(string datas)
         {
-            this._state = state;
-
-            if (Server == null) 
+            if (_state == State.OnConnected)
                 return;
+
+            if (!Server.GetClients.Contains(datas))
+            {
+                lock (Server.GetClients)
+                    Server.GetClients.Add(datas);
+
+                SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), true);
+            }
+        }
+
+        private void ReceiveNewDisconnectedClient(string datas)
+        {
+            if (_state != State.OnConnected)
+                return;
+
+            if (Server.GetClients.Contains(datas))
+            {
+                lock (Server.GetClients)
+                    Server.GetClients.Remove(datas);
+
+                SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), false);
+            }
+        }
+
+        private void ReceiveNewCreatedCharacter(string[] datas)
+        {
+            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID);
+        }
+
+        private void ReceiveNewDeletedCharacter(string[] datas)
+        {
+            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID, false);
+        }
+
+        private void ReceiveNewDeletedGifts(string[] datas)
+        {
+            SyncAction.DeleteGift(int.Parse(datas[1]), int.Parse(datas[2]));
+        }
+
+        private void ChangeState(State state, bool force = false)
+        {
+            if (Server == null || state == State.OnDisconnected && !force)
+                return;
+
+            this._state = state;
 
             switch (this._state)
             {
@@ -191,7 +210,10 @@ namespace SunDofus.Auth.Network.Sync
 
         private void ParseListConnected(string _datas)
         {
-            var packet = _datas.Substring(5).Split('|');
+            if (_state != State.OnConnected)
+                return;
+
+            var packet = _datas.Substring(3).Split('|');
 
             foreach (var pseudo in packet)
             {

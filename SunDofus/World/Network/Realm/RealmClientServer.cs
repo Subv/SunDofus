@@ -7,12 +7,12 @@ using SunDofus.World.Network;
 
 namespace SunDofus.World.Network.Realm
 {
-    class RealmServer : Master.TCPServer
+    class RealmClientServer : Master.TCPServer
     {
         public List<RealmClient> Clients;
         public Dictionary<string, int> PseudoClients;
 
-        public RealmServer()
+        public RealmClientServer()
             : base(Utilities.Config.GetStringElement("ServerIp"), Utilities.Config.GetIntElement("ServerPort"))
         {
             Clients = new List<RealmClient>();
@@ -28,7 +28,7 @@ namespace SunDofus.World.Network.Realm
             if (socket == null) 
                 return;
 
-            Utilities.Loggers.InfosLogger.Write("New inputted @client@ connection !");
+            Utilities.Loggers.InfosLogger.Write("New inputted client connection !");
 
             lock(Clients)
                 Clients.Add(new RealmClient(socket));
@@ -36,12 +36,12 @@ namespace SunDofus.World.Network.Realm
 
         public void OnListeningServer(string remote)
         {
-            Utilities.Loggers.StatusLogger.Write(string.Format("@RealmServer@ started on <{0}> !", remote));
+            Utilities.Loggers.StatusLogger.Write(string.Format("RealmServer started on <{0}> !", remote));
         }
 
         public void OnListeningFailedServer(Exception exception)
         {
-            Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot start the @RealmServer@ because : {0}", exception.ToString()));
+            Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot start the RealmServer because : {0}", exception.ToString()));
         }
     }
 }

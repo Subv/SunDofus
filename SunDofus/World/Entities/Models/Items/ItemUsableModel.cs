@@ -22,8 +22,8 @@ namespace SunDofus.World.Entities.Models.Items
 
         public void AttributeItem()
         {
-            if (Entities.Cache.ItemsCache.ItemsList.Any(x => x.ID == Base))
-                Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == Base).isUsable = true;
+            if (Entities.Requests.ItemsRequests.ItemsList.Any(x => x.ID == Base))
+                Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == Base).isUsable = true;
         }
 
         public void ParseEffect(Character client)

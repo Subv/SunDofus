@@ -29,8 +29,8 @@ namespace SunDofus.World.Entities.Models.Items
             {
                 var id = int.Parse(infos.Trim());
 
-                if (Entities.Cache.ItemsCache.ItemsList.Any(x => x.ID == id))
-                    Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == id).Set = this.ID;
+                if (Entities.Requests.ItemsRequests.ItemsList.Any(x => x.ID == id))
+                    Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == id).Set = this.ID;
 
                 lock(ItemsList)
                     ItemsList.Add(ID);

@@ -5,11 +5,11 @@ using System.Text;
 
 namespace SunDofus.World.Network.Realm
 {
-    class RealmCommand
+    class RealmClientCommander
     {
         public RealmClient Client;
 
-        public RealmCommand(RealmClient client)
+        public RealmClientCommander(RealmClient client)
         {
             Client = client;
         }
@@ -128,7 +128,7 @@ namespace SunDofus.World.Network.Realm
                         t.Args = string.Format("{0},{1}", value, int.Parse(datas[3]));
 
                         Client.Player.GetMap().Triggers.Add(t);
-                        Entities.Cache.TriggersCache.InsertTrigger(t);
+                        Entities.Requests.TriggersRequests.InsertTrigger(t);
 
                         Client.SendConsoleMessage("Trigger Added !", 0);
                         break;
@@ -183,7 +183,7 @@ namespace SunDofus.World.Network.Realm
         {
             try
             {
-                var item = Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == int.Parse(datas[1]));
+                var item = Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == int.Parse(datas[1]));
 
                 if (datas.Length == 2)
                 {
@@ -225,7 +225,7 @@ namespace SunDofus.World.Network.Realm
 
                 else if (datas.Length == 4)
                 {
-                    var myMap = Entities.Cache.MapsCache.MapsList.First(x => x.GetModel.PosX == int.Parse(datas[1]) && x.GetModel.PosY == int.Parse(datas[2]));
+                    var myMap = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.PosX == int.Parse(datas[1]) && x.GetModel.PosY == int.Parse(datas[2]));
                     Client.Player.TeleportNewMap(myMap.GetModel.ID, int.Parse(datas[3]));
                     Client.SendConsoleMessage("Character Teleported !", 0);
                 }

@@ -39,32 +39,33 @@ namespace SunDofus
                 {
                     Console.Title = string.Format("{0} | Server '{1}'", Console.Title, Config.GetIntElement("ServerID"));
 
-                    World.Entities.DatabaseHandler.InitialiseConnection();
+                    World.Entities.DatabaseProvider.InitializeConnection();
 
-                    World.Entities.Cache.LevelsCache.LoadLevels();
+                    World.Entities.Requests.LevelsRequests.LoadLevels();
 
-                    World.Entities.Cache.ItemsCache.LoadItems();
-                    World.Entities.Cache.ItemsCache.LoadItemsSets();
-                    World.Entities.Cache.ItemsCache.LoadUsablesItems();
+                    World.Entities.Requests.ItemsRequests.LoadItems();
+                    World.Entities.Requests.ItemsRequests.LoadItemsSets();
+                    World.Entities.Requests.ItemsRequests.LoadUsablesItems();
 
-                    World.Entities.Cache.SpellsCache.LoadSpells();
-                    World.Entities.Cache.SpellsCache.LoadSpellsToLearn();
+                    World.Entities.Requests.SpellsRequests.LoadSpells();
+                    World.Entities.Requests.SpellsRequests.LoadSpellsToLearn();
 
-                    World.Entities.Cache.MonstersCache.LoadMonsters();
-                    World.Entities.Cache.MonstersCache.LoadMonstersLevels();
+                    World.Entities.Requests.MonstersRequests.LoadMonsters();
+                    World.Entities.Requests.MonstersRequests.LoadMonstersLevels();
 
-                    World.Entities.Cache.MapsCache.LoadMaps();
-                    World.Entities.Cache.TriggersCache.LoadTriggers();
+                    World.Entities.Requests.MapsRequests.LoadMaps();
+                    World.Entities.Requests.TriggersRequests.LoadTriggers();
 
-                    World.Entities.Cache.NoPlayerCharacterCache.LoadNPCsAnswers();
-                    World.Entities.Cache.NoPlayerCharacterCache.LoadNPCsQuestions();
-                    World.Entities.Cache.NoPlayerCharacterCache.LoadNPCs();
+                    World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsAnswers();
+                    World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsQuestions();
+                    World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCs();
 
-                    World.Entities.Cache.CharactersCache.LoadCharacters();
-
-                    World.Entities.Cache.AuthsCache.ReloadAuths();
+                    World.Entities.Requests.CharactersRequests.LoadCharacters();
 
                     World.Network.ServersHandler.InitialiseServers();
+
+                    World.Entities.Requests.AuthsRequests.LoadAuths();
+                    World.Entities.DatabaseProvider.Close();
                 }
                 catch (Exception error)
                 {

@@ -365,14 +365,14 @@ namespace SunDofus.World.Realm.Characters
 
         private void LevelUp()
         {
-            if (this.Level == Entities.Cache.LevelsCache.MaxLevel())
+            if (this.Level == Entities.Requests.LevelsRequests.MaxLevel())
                 return;
 
-            if (Exp >= Entities.Cache.LevelsCache.ReturnLevel(Level + 1).Character)
+            if (Exp >= Entities.Requests.LevelsRequests.ReturnLevel(Level + 1).Character)
             {
-                while (Exp >= Entities.Cache.LevelsCache.ReturnLevel(Level + 1).Character)
+                while (Exp >= Entities.Requests.LevelsRequests.ReturnLevel(Level + 1).Character)
                 {
-                    if (this.Level == Entities.Cache.LevelsCache.MaxLevel())
+                    if (this.Level == Entities.Requests.LevelsRequests.MaxLevel())
                         break;
 
                     Level++;
@@ -555,9 +555,9 @@ namespace SunDofus.World.Realm.Characters
 
         public void LoadMap()
         {
-            if (Entities.Cache.MapsCache.MapsList.Any(x => x.GetModel.ID == this.MapID))
+            if (Entities.Requests.MapsRequests.MapsList.Any(x => x.GetModel.ID == this.MapID))
             {
-                var map = Entities.Cache.MapsCache.MapsList.First(x => x.GetModel.ID == this.MapID);
+                var map = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == this.MapID);
 
                 NetworkClient.Send(string.Format("GDM|{0}|0{1}|{2}", map.GetModel.ID, map.GetModel.Date, map.GetModel.Key));
 
@@ -574,7 +574,7 @@ namespace SunDofus.World.Realm.Characters
             NetworkClient.Send(string.Format("GA;2;{0};", ID));
 
             GetMap().DelPlayer(this);
-            var map = Entities.Cache.MapsCache.MapsList.First(x => x.GetModel.ID == _mapID);
+            var map = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == _mapID);
 
             MapID = map.GetModel.ID;
             MapCell = _cell;
@@ -584,7 +584,7 @@ namespace SunDofus.World.Realm.Characters
 
         public Maps.Map GetMap()
         {
-            return Entities.Cache.MapsCache.MapsList.First(x => x.GetModel.ID == this.MapID);
+            return Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == this.MapID);
         }
 
         #endregion
@@ -933,8 +933,8 @@ namespace SunDofus.World.Realm.Characters
             StringBuilder builder = new StringBuilder();
             {
                 builder.Append(Exp).Append(",");
-                builder.Append(Entities.Cache.LevelsCache.ReturnLevel(Level).Character).Append(",");
-                builder.Append(Entities.Cache.LevelsCache.ReturnLevel(Level + 1).Character).Append("|");
+                builder.Append(Entities.Requests.LevelsRequests.ReturnLevel(Level).Character).Append(",");
+                builder.Append(Entities.Requests.LevelsRequests.ReturnLevel(Level + 1).Character).Append("|");
                 builder.Append(Kamas).Append("|");
                 builder.Append(CharactPoint).Append("|");
                 builder.Append(SpellPoint).Append("|");

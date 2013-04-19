@@ -112,14 +112,19 @@ namespace SunDofus.Auth.Network.Auth
                     return;
 
                 case AccountState.OnCheckingQueue:
-                    Send(string.Format("Af{0}|{1}|0|2", (AuthQueue.Clients.IndexOf(this) + 1),
-                        (AuthQueue.Clients.Count > 2 ? AuthQueue.Clients.Count : 3)));
+                    SendVersionPacket();
                     return;
 
                 case AccountState.OnServersList:
                     ParseListPacket(datas);
                     return;
             }
+        }
+
+        private void SendVersionPacket()
+        {
+            Send(string.Format("Af{0}|{1}|0|2", (AuthQueue.Clients.IndexOf(this) + 1),
+                (AuthQueue.Clients.Count > 2 ? AuthQueue.Clients.Count : 3)));
         }
 
         private void ParseVersionPacket(string datas)

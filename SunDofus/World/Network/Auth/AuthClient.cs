@@ -6,9 +6,9 @@ using SilverSock;
 using System.Timers;
 using SunDofus.World.Entities.Models.Clients;
 
-namespace SunDofus.World.Network.Authentication
+namespace SunDofus.World.Network.Auth
 {
-    class AuthenticationClient : Master.TCPClient
+    class AuthClient : Master.TCPClient
     {
         public AuthClientModel Model;
 
@@ -16,7 +16,7 @@ namespace SunDofus.World.Network.Authentication
         private bool isLogged;
         private object _packetLocker;
 
-        public AuthenticationClient(AuthClientModel model)
+        public AuthClient(AuthClientModel model)
             : base(new SilverSocket())
         {
             this.DisconnectedSocket += new DisconnectedSocketHandler(this.Disconnected);
@@ -59,7 +59,7 @@ namespace SunDofus.World.Network.Authentication
 
         private void FailedToConnect(Exception exception)
         {
-            Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot connect to @AuthServer@ because {0}", exception.ToString()));
+            Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot connect to AuthServer because {0}", exception.ToString()));
         }
 
         private void DatasArrival(string datas)
@@ -70,44 +70,80 @@ namespace SunDofus.World.Network.Authentication
 
         private void Disconnected()
         {
-            Utilities.Loggers.StatusLogger.Write("Connection with the @AuthServer@ closed !");
+            Utilities.Loggers.StatusLogger.Write("Connection with the AuthServer closed !");
             _timer.Start();
         }
 
         private void ParsePacket(string datas)
         {
             var infos = datas.Split('|');
-            var packetNummer = Utilities.Basic.HexToDeci(infos[0]);
+            var nummer = Utilities.Basic.HexToDeci(infos[0]);
 
             try
             {
-                switch (packetNummer)
+                switch (nummer)
                 {
-
                     case 10:
-                        var objects = new object[] { Utilities.Config.GetIntElement("ServerId"), Utilities.Config.GetStringElement("ServerIp"),
-                            Utilities.Config.GetIntElement("ServerPort"), this.Model.PassKey };
-
-                        Send(new Packets.AuthenticationPacket().GetPacket(objects), true);
+                        ReceiveHelloConnect();
                         return;
 
                     case 30:
-                        isLogged = true;
-                        Utilities.Loggers.InfosLogger.Write("Connected with the @AuthenticationServer@ !");
-
-                        if (ServersHandler.RealmServer.PseudoClients.Count > 0)
-                            Send(new Packets.ListOfConnectedPacket().GetPacket(ServersHandler.RealmServer.PseudoClients.Values));
+                        ReceiveHelloConnectSuccess();
                         return;
 
                     case 70:
-                        AuthenticationsKeys.Keys.Add(new AuthenticationsKeys(datas));
+                        ReceiveTranferTicket(datas.Substring(3));
                         return;
                 }
             }
             catch (Exception e)
             {
-                Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse @AuthServer's packet@ ({0}) because : {1}", datas, e.ToString()));
+                Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse AuthServer's packet ({0}) because : {1}", datas, e.ToString()));
             }
+        }
+
+        private void ReceiveHelloConnect()
+        {
+            var objects = new object[] { Utilities.Config.GetIntElement("ServerId"), Utilities.Config.GetStringElement("ServerIp"),
+                            Utilities.Config.GetIntElement("ServerPort"), this.Model.PassKey };
+
+            Send(new Packets.AuthenticationPacket().GetPacket(objects), true);
+        }
+
+        private void ReceiveHelloConnectSuccess()
+        {
+            isLogged = true;
+            Utilities.Loggers.InfosLogger.Write("Connected with the AuthenticationServer !");
+
+            if (ServersHandler.RealmServer.PseudoClients.Count > 0)
+                Send(new Packets.ListOfConnectedPacket().GetPacket(ServersHandler.RealmServer.PseudoClients.Values));
+        }
+
+        private void ReceiveTranferTicket(string datas)
+        {
+            var infos = datas.Split('|');
+            var key = infos[0];
+            var pseudo = infos[2];
+            var question = infos[3];
+            var answer = infos[4];
+            var characters = infos[6];
+            var gifts = infos[8];
+
+            int id;
+            int level;
+            long time;
+
+            if (!int.TryParse(infos[1], out id))
+                return;
+
+            if (!int.TryParse(infos[5], out level))
+                return;
+
+            if (!long.TryParse(infos[7], out time))
+                return;
+
+            AuthKeys.Keys.Add(new AuthKeys.AuthKey
+                (key, id, pseudo, question, answer, level, characters, time, gifts));
         }
     }
 }

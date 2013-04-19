@@ -23,10 +23,10 @@ namespace SunDofus.World.Realm.Characters.Items
         {
             if (offline == true)
             {
-                if (!Entities.Cache.ItemsCache.ItemsList.Any(x => x.ID == id))
+                if (!Entities.Requests.ItemsRequests.ItemsList.Any(x => x.ID == id))
                     return;
 
-                var baseItem = Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == id);
+                var baseItem = Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == id);
                 var item = new CharacterItem(baseItem);
 
                 item.GeneratItem(jet);
@@ -52,10 +52,10 @@ namespace SunDofus.World.Realm.Characters.Items
             }
             else if (offline == false)
             {
-                if (!Entities.Cache.ItemsCache.ItemsList.Any(x => x.ID == id))
+                if (!Entities.Requests.ItemsRequests.ItemsList.Any(x => x.ID == id))
                     return;
 
-                var baseItem = Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == id);
+                var baseItem = Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == id);
                 var item = new CharacterItem(baseItem);
 
                 item.GeneratItem(jet);
@@ -275,7 +275,7 @@ namespace SunDofus.World.Realm.Characters.Items
             foreach (var infos in splited)
             {
                 var allInfos = infos.Split('~');
-                var item = new CharacterItem(Entities.Cache.ItemsCache.ItemsList.First(x => x.ID == Convert.ToInt32(allInfos[0], 16)));
+                var item = new CharacterItem(Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == Convert.ToInt32(allInfos[0], 16)));
                 item.EffectsList.Clear();
 
                 item.ID = ItemsHandler.GetNewID();
@@ -403,7 +403,7 @@ namespace SunDofus.World.Realm.Characters.Items
                 return;
             }
 
-            var usable = Entities.Cache.ItemsCache.UsablesList.First(x => x.Base == item.Model.ID);
+            var usable = Entities.Requests.ItemsRequests.UsablesList.First(x => x.Base == item.Model.ID);
 
             var character = CharactersManager.CharactersList.First(x => x.ID == charID);
 

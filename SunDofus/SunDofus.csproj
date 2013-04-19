@@ -43,9 +43,8 @@
     <StartupObject>SunDofus.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.3.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\MySQL\MySQL Connector Net 6.3.7\Assemblies\v4.0\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data">
+      <HintPath>G:\Programmierung\CSHARP\Chatbox - Review\Chatbox - Server\bin\Debug\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="SilverSock">
       <HintPath>H:\Programmation\Développements\Library\SilverSock.dll</HintPath>
@@ -84,16 +83,16 @@
     <Compile Include="Utilities\Basic.cs" />
     <Compile Include="Utilities\Config.cs" />
     <Compile Include="Utilities\Loggers.cs" />
-    <Compile Include="World\Entities\Cache\AuthsCache.cs" />
-    <Compile Include="World\Entities\Cache\CharactersCache.cs" />
-    <Compile Include="World\Entities\Cache\ItemsCache.cs" />
-    <Compile Include="World\Entities\Cache\LevelsCache.cs" />
-    <Compile Include="World\Entities\Cache\MapsCache.cs" />
-    <Compile Include="World\Entities\Cache\MonstersCache.cs" />
-    <Compile Include="World\Entities\Cache\NoPlayerCharacterCache.cs" />
-    <Compile Include="World\Entities\Cache\SpellsCache.cs" />
-    <Compile Include="World\Entities\Cache\TriggersCache.cs" />
-    <Compile Include="World\Entities\DatabaseHandler.cs" />
+    <Compile Include="World\Entities\Requests\AuthsRequests.cs" />
+    <Compile Include="World\Entities\Requests\CharactersRequests.cs" />
+    <Compile Include="World\Entities\Requests\ItemsRequests.cs" />
+    <Compile Include="World\Entities\Requests\LevelsRequests.cs" />
+    <Compile Include="World\Entities\Requests\MapsRequests.cs" />
+    <Compile Include="World\Entities\Requests\MonstersRequests.cs" />
+    <Compile Include="World\Entities\Requests\NoPlayerCharacterRequests.cs" />
+    <Compile Include="World\Entities\Requests\SpellsRequests.cs" />
+    <Compile Include="World\Entities\Requests\TriggersRequests.cs" />
+    <Compile Include="World\Entities\DatabaseProvider.cs" />
     <Compile Include="World\Entities\Models\Clients\AccountModel.cs" />
     <Compile Include="World\Entities\Models\Clients\AuthClientModel.cs" />
     <Compile Include="World\Entities\Models\Clients\GiftModel.cs" />
@@ -111,23 +110,23 @@
     <Compile Include="World\Entities\Models\Spells\SpellLevelModel.cs" />
     <Compile Include="World\Entities\Models\Spells\SpellModel.cs" />
     <Compile Include="World\Entities\Models\Spells\SpellToLearn.cs" />
-    <Compile Include="World\Network\Authentication\AuthenticationClient.cs" />
-    <Compile Include="World\Network\Authentication\AuthenticationsKeys.cs" />
-    <Compile Include="World\Network\Authentication\AuthenticationsLinks.cs" />
-    <Compile Include="World\Network\Authentication\Packets\AuthenticationPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\ClientConnectedPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\ClientDisconnectedPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\CreatedCharacterPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\DeletedCharacterPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\DeletedGiftPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\ListOfConnectedPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\MasterPacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\StartMaintenancePacket.cs" />
-    <Compile Include="World\Network\Authentication\Packets\StopMaintenancePacket.cs" />
+    <Compile Include="World\Network\Auth\AuthClient.cs" />
+    <Compile Include="World\Network\Auth\AuthKeys.cs" />
+    <Compile Include="World\Network\Auth\AuthLinks.cs" />
+    <Compile Include="World\Network\Auth\Packets\AuthenticationPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\ClientConnectedPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\ClientDisconnectedPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\CreatedCharacterPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\DeletedCharacterPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\DeletedGiftPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\ListOfConnectedPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\MasterPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\StartMaintenancePacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\StopMaintenancePacket.cs" />
     <Compile Include="World\Network\Realm\RealmClient.cs" />
-    <Compile Include="World\Network\Realm\RealmCommand.cs" />
-    <Compile Include="World\Network\Realm\RealmParser.cs" />
-    <Compile Include="World\Network\Realm\RealmServer.cs" />
+    <Compile Include="World\Network\Realm\RealmClientCommander.cs" />
+    <Compile Include="World\Network\Realm\RealmClientParser.cs" />
+    <Compile Include="World\Network\Realm\RealmClientServer.cs" />
     <Compile Include="World\Network\ServersHandler.cs" />
     <Compile Include="World\Realm\Characters\Character.cs" />
     <Compile Include="World\Realm\Characters\CharacterFaction.cs" />
@@ -170,6 +169,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="favicon.ico" />
+    <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
