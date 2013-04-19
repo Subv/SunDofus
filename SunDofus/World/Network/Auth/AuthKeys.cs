@@ -32,7 +32,7 @@ namespace SunDofus.World.Network.Auth
                     Pseudo = pseudo,
                     Question = question,
                     Answer = answer,
-                    GMLevel = level,
+                    Level = level,
                     Strcharacters = charac,
                     Subscription = time,
                     Strgifts = gifts,

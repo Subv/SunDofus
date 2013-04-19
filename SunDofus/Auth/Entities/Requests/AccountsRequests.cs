@@ -94,7 +94,7 @@ namespace SunDofus.Auth.Entities.Requests
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
-                if (sqlReader.Read())
+                while (sqlReader.Read())
                 {
                     var serverID = sqlReader.GetInt16("serverID");
                     var charName = sqlReader.GetString("characterName");

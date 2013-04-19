@@ -141,9 +141,9 @@ namespace SunDofus.World.Network.Realm
 
         private void SendCharacterList(string datas)
         {
-            string packet = string.Format("ALK{0}|{1}", Client.Infos.Subscription, Client.Infos.Characters.Count);
+            string packet = string.Format("ALK{0}|{1}", Client.Infos.Subscription, Client.Characters.Count);
 
-            if (Client.Infos.Characters.Count != 0)
+            if (Client.Characters.Count != 0)
             {
                 foreach (SunDofus.World.Realm.Characters.Character m_C in Client.Characters)
                     packet += string.Format("|{0}", m_C.PatternList());
@@ -162,7 +162,11 @@ namespace SunDofus.World.Network.Realm
                 {
                     var character = new Character();
 
-                    character.ID = Entities.Requests.CharactersRequests.GetNewID();
+                    if (CharactersManager.CharactersList.Count > 0)
+                        character.ID = (CharactersManager.CharactersList.OrderByDescending(x => x.ID).ToArray()[0].ID) + 1;
+                    else
+                        character.ID = 1;
+
                     character.Name = characterDatas[0];
                     character.Level = Utilities.Config.GetIntElement("StartLevel");
                     character.Class = int.Parse(characterDatas[1]);
@@ -242,9 +246,6 @@ namespace SunDofus.World.Network.Realm
                     character.Exp = Entities.Requests.LevelsRequests.ReturnLevel(character.Level).Character;
                     character.Kamas = (long)Utilities.Config.GetIntElement("StartKamas");
 
-
-                    character.isNewCharacter = true;
-
                     if (character.Class < 1 | character.Class > 12 | character.Sex < 0 | character.Sex > 1)
                     {
                         Client.Send("AAE");
@@ -297,13 +298,14 @@ namespace SunDofus.World.Network.Realm
                     return;
                 }
 
-                CharactersManager.CharactersList.Remove(character);
+                lock(CharactersManager.CharactersList)
+                    CharactersManager.CharactersList.Remove(character);
 
                 lock(Client.Characters)
                     Client.Characters.Remove(character);
 
                 Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
-                Entities.Requests.CharactersRequests.DeleteCharacter(character.Name);
+                character.isDeletedCharacter = true;
 
                 SendCharacterList("");
             }

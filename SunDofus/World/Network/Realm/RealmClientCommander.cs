@@ -20,7 +20,7 @@ namespace SunDofus.World.Network.Realm
             {
                 var datas = args.Split(' ');
 
-                if (Client.Infos.GMLevel > 0)
+                if (Client.Infos.Level > 0)
                 {
                     switch (datas[0])
                     {

@@ -93,7 +93,16 @@ namespace SunDofus.World.Entities.Requests
         {
             if (character.isNewCharacter)
             {
+                if (character.isDeletedCharacter)
+                    return;
+
                 CreateCharacter(character);
+                return;
+            }
+
+            if (character.isDeletedCharacter)
+            {
+                DeleteCharacter(character.Name);
                 return;
             }
 
@@ -132,35 +141,6 @@ namespace SunDofus.World.Entities.Requests
                 sqlCommand.Parameters.Add(new MySqlParameter("@CharName", name));
 
                 sqlCommand.ExecuteNonQuery();
-            }
-        }
-
-        private static int _lastID = -1;
-
-        public static int GetNewID()
-        {
-            lock (DatabaseProvider.ConnectionLocker)
-            {
-                if (_lastID == -1)
-                {
-                    var sqlText = "SELECT id FROM dyn_characters ORDER BY id DESC LIMIT 0,1";
-                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                    var sqlResult = sqlCommand.ExecuteReader();
-
-                    _lastID = 0;
-
-                    if (sqlResult.Read())
-                        _lastID = sqlResult.GetInt32("id");
-
-                    sqlResult.Close();
-
-                    return ++_lastID;
-                }
-                else
-                {
-                    return ++_lastID;
-                }
             }
         }
     }

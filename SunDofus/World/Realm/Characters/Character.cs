@@ -293,6 +293,7 @@ namespace SunDofus.World.Realm.Characters
         }
 
         public bool isNewCharacter;
+        public bool isDeletedCharacter;
         public bool isConnected;
 
         private long _exp;
@@ -350,6 +351,7 @@ namespace SunDofus.World.Realm.Characters
             Channel = "*#$p%i:?!";
             Energy = 10000;
             isConnected = false;
+            isDeletedCharacter = false;
 
             QuotaRecruitment = 0;
             QuotaTrade = 0;

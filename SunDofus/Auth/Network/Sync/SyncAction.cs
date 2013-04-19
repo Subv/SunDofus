@@ -13,6 +13,8 @@ namespace SunDofus.Auth.Network.Sync
             if (accountID == -1)
                 return;
 
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
             lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
             {
                 if (add)
@@ -43,6 +45,8 @@ namespace SunDofus.Auth.Network.Sync
             if (accountID == -1)
                 return;
 
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
             lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "UPDATE dyn_accounts SET connected=@connected WHERE Id=@id";
@@ -59,6 +63,8 @@ namespace SunDofus.Auth.Network.Sync
         {
             if (accountID == -1)
                 return;
+
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
 
             lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
             {
