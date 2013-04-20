@@ -18,6 +18,11 @@ namespace SunDofus.World.Realm.World
 
         public static void SendIncarnamMessage(Network.Realm.RealmClient client, string message)
         {
+            foreach (var character in Network.ServersHandler.RealmServer.Clients.Where
+                (x => x.Authentified == true && x.Player.isInIncarnam))
+            {
+                character.Send(string.Format("cMK^|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
+            }
         }
 
         public static void SendPrivateMessage(Network.Realm.RealmClient client, string receiver, string message)

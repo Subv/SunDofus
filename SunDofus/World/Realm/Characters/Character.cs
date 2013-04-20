@@ -574,6 +574,14 @@ namespace SunDofus.World.Realm.Characters
             }
         }
 
+        public bool isInIncarnam
+        {
+            get
+            {
+                return GetMap().GetModel.SubArea == 440;
+            }
+        }
+
         public void TeleportNewMap(int _mapID, int _cell)
         {
             NetworkClient.Send(string.Format("GA;2;{0};", ID));

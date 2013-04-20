@@ -12,8 +12,10 @@ namespace SunDofus.World.Entities.Models.Maps
         public int Width;
         public int Height;
         public int Capabilities;
+
         public int PosX;
         public int PosY;
+        public int SubArea;
 
         public string MapData;
         public string Key;
@@ -40,6 +42,7 @@ namespace SunDofus.World.Entities.Models.Maps
             {
                 PosX = int.Parse(datas[0]);
                 PosY = int.Parse(datas[1]);
+                SubArea = int.Parse(datas[2]);
             }
             catch { }
         }
