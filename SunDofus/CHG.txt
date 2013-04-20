@@ -65,4 +65,13 @@
 
 [16.04.2013] Modification du code (mise en place d'une seule application le realm et le world, possibilité de multiserveurs distants)
 [16.04.2013] Rectification du bug sur la création des personnages
-[16.04.2013] Ajout d'un "PassKey" entre les worlds et realms (question sécurité pour la connexion pour le multi-server)
+[18.04.2013] Ajout d'un "PassKey" entre les worlds et realms (question sécurité pour la connexion pour le multi-server)
+[18.04.2013] Réparation de la création des personnages
+[18.04.2013] Refonte de la file d'attente
+[19.04.2013] Quelques petites modifications du code
+[19.04.2013] Réparation de la suppression des personnages
+[19.04.2013] Réparation de l'affichage de la liste des personnages
+[20.04.2013] Refonte des cannaux de discussions
+[20.04.2013] Ajout du cannal 'Incarnam' (recu des messages seulement sur Incarnam, il me manque les subareas du dj)
+[20.04.2013] Ajout de la première lettre du pseudo aléatoire en majuscule
+[20.04.2013] Envois des messages 'Incarnam' seulement sur incarnam et niveau inférieur à 31

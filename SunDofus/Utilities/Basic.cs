@@ -87,9 +87,7 @@ namespace SunDofus.Utilities
 
         public static string RandomName()
         {
-            var name = string.Empty;
-
-            name += GetConsonants();
+            var name = GetConsonants().ToUpper();
             name += GetVowels();
 
             if (Rand(0, 1) == 0)

@@ -24,6 +24,12 @@ namespace SunDofus.World.Realm.World
 
         public static void SendIncarnamMessage(Network.Realm.RealmClient client, string message)
         {
+            if (!client.Player.isInIncarnam || client.Player.Level > 30)
+            {
+                client.Send("Im0139");
+                return;
+            }
+
             foreach (var character in Network.ServersHandler.RealmServer.Clients.Where
                 (x => x.Authentified == true && x.Player.isInIncarnam))
             {
