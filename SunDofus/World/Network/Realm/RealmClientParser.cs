@@ -298,9 +298,6 @@ namespace SunDofus.World.Network.Realm
                     return;
                 }
 
-                lock(CharactersManager.CharactersList)
-                    CharactersManager.CharactersList.Remove(character);
-
                 lock(Client.Characters)
                     Client.Characters.Remove(character);
 
@@ -400,7 +397,7 @@ namespace SunDofus.World.Network.Realm
             Client.Send(string.Format("GCK|1|{0}", Client.Player.Name));
             Client.Send("AR6bk");
 
-            Client.Send("cC+*#$p%i:?!");
+            Client.Player.Channels.SendChannels();
             Client.Send("SLo+");
             Client.Player.SpellsInventary.SendAllSpells();
             Client.Send(string.Format("BT{0}", Utilities.Basic.GetActuelTime()));
@@ -420,22 +417,30 @@ namespace SunDofus.World.Network.Realm
 
         private void ChangeChannel(string channel)
         {
-            if (channel.Contains("+"))
-            {
-                channel = channel.Replace("+", "");
+            char head;
 
-                if (!Client.Player.Channel.Contains(channel)) 
-                    Client.Player.Channel = Client.Player.Channel + channel;
-                Client.Send("cC+" + channel);
-            }
+            if (!char.TryParse(channel.Substring(1), out head))
+                return;
+            
+            var state = (channel.Substring(0, 1) == "+" ? true : false);
+            Client.Player.Channels.ChangeChannelState(head, state);
 
-            else if (channel.Contains("-"))
-            {
-                channel = channel.Replace("-", "");
+            //if (channel.Contains("+"))
+            //{
+            //    channel = channel.Replace("+", "");
 
-                Client.Player.Channel = Client.Player.Channel.Replace(channel, "");
-                Client.Send("cC-" + channel);
-            }
+            //    if (!Client.Player.Channel.Contains(channel)) 
+            //        Client.Player.Channel = Client.Player.Channel + channel;
+            //    Client.Send("cC+" + channel);
+            //}
+
+            //else if (channel.Contains("-"))
+            //{
+            //    channel = channel.Replace("-", "");
+
+            //    Client.Player.Channel = Client.Player.Channel.Replace(channel, "");
+            //    Client.Send("cC-" + channel);
+            //}
         }
 
         private void ParseChatMessage(string datas)
@@ -449,6 +454,10 @@ namespace SunDofus.World.Network.Realm
             {
                 case "*":
                     Chat.SendGeneralMessage(Client, message);
+                    return;
+
+                case "^":
+                    Chat.SendIncarnamMessage(Client, message);
                     return;
 
                 case "$":

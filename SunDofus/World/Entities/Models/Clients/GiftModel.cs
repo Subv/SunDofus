@@ -8,12 +8,69 @@ namespace SunDofus.World.Entities.Models.Clients
 {
     class GiftModel
     {
-        public int ID;
-        public int ItemID;
+        private int _ID;
+        private int _itemID;
 
-        public string Title;
-        public string Message;
-        public string Image;
+        private string _title;
+        private string _message;
+        private string _image;
+
+        public int ID
+        {
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                _ID = value;
+            }
+        }
+        public int ItemID
+        {
+            get
+            {
+                return _itemID;
+            }
+            set
+            {
+                _itemID = value;
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                _title = value;
+            }
+        }
+        public string Message
+        {
+            get
+            {
+                return _message;
+            }
+            set
+            {
+                _message = value;
+            }
+        }
+        public string Image
+        {
+            get
+            {
+                return _image;
+            }
+            set
+            {
+                _image = value;
+            }
+        }
 
         public CharacterItem Item;
     }

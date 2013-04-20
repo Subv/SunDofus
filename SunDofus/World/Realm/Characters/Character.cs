@@ -333,6 +333,7 @@ namespace SunDofus.World.Realm.Characters
         public RealmClient NetworkClient;
         public CharacterState State;
         public CharacterFaction Faction;
+        public CharacterChannels Channels;
 
         public Character()
         {
@@ -347,6 +348,8 @@ namespace SunDofus.World.Realm.Characters
                 Deshonor = 0,
                 isEnabled = false,
             };
+
+            Channels = new CharacterChannels(this);
 
             Channel = "*#$p%i:?!";
             Energy = 10000;

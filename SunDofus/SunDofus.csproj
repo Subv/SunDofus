@@ -129,6 +129,7 @@
     <Compile Include="World\Network\Realm\RealmClientServer.cs" />
     <Compile Include="World\Network\ServersHandler.cs" />
     <Compile Include="World\Realm\Characters\Character.cs" />
+    <Compile Include="World\Realm\Characters\CharacterChannels.cs" />
     <Compile Include="World\Realm\Characters\CharacterFaction.cs" />
     <Compile Include="World\Realm\Characters\CharacterParty.cs" />
     <Compile Include="World\Realm\Characters\CharactersManager.cs" />

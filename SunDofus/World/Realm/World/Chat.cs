@@ -16,6 +16,10 @@ namespace SunDofus.World.Realm.World
             client.Player.GetMap().Send(string.Format("cMK|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
         }
 
+        public static void SendIncarnamMessage(Network.Realm.RealmClient client, string message)
+        {
+        }
+
         public static void SendPrivateMessage(Network.Realm.RealmClient client, string receiver, string message)
         {
             if (CharactersManager.CharactersList.Any(x => x.Name == receiver))
