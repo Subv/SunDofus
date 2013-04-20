@@ -578,7 +578,9 @@ namespace SunDofus.World.Realm.Characters
         {
             get
             {
-                return GetMap().GetModel.SubArea == 440;
+                return GetMap().GetModel.SubArea == 440 || GetMap().GetModel.SubArea == 442 || GetMap().GetModel.SubArea == 443 ||
+                    GetMap().GetModel.SubArea == 444 || GetMap().GetModel.SubArea == 445 || GetMap().GetModel.SubArea == 446 ||
+                    GetMap().GetModel.SubArea == 449 || GetMap().GetModel.SubArea == 450;
             }
         }
 

@@ -13,6 +13,12 @@ namespace SunDofus.World.Realm.World
             if (client.Player.GetMap() == null) 
                 return;
 
+            if (message.Substring(0, 1) == ".")
+            {
+                client.Commander.ParseChatCommand(message.Substring(1));
+                return;
+            }
+
             client.Player.GetMap().Send(string.Format("cMK|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
         }
 

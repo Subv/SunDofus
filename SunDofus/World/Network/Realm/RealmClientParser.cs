@@ -501,7 +501,7 @@ namespace SunDofus.World.Network.Realm
 
         private void ParseConsoleMessage(string datas)
         {
-            Client.Commander.ParseCommand(datas);
+            Client.Commander.ParseAdminCommand(datas);
         }
 
         private void GameInformations(string datas)

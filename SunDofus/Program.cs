@@ -6,6 +6,7 @@ using SunDofus.Utilities;
 using SunDofus.Auth.Entities;
 using SunDofus.Auth.Entities.Requests;
 using SunDofus.World.Network;
+using System.Reflection;
 
 namespace SunDofus
 {
@@ -14,7 +15,7 @@ namespace SunDofus
         static void Main(string[] args)
         {
             Basic.Uptime = Environment.TickCount;
-            Console.Title = "SunDofus";
+            Console.Title = string.Concat("SunDofus v", Assembly.GetExecutingAssembly().FullName.Split(',')[1].Replace("Version=", "").Trim());
 
             Config.LoadConfiguration();
             Loggers.InitializeLoggers();

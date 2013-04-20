@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace SunDofus.World.Network.Realm
 {
@@ -14,7 +15,7 @@ namespace SunDofus.World.Network.Realm
             Client = client;
         }
 
-        public void ParseCommand(string args)
+        public void ParseAdminCommand(string args)
         {
             try
             {
@@ -60,6 +61,33 @@ namespace SunDofus.World.Network.Realm
                 Client.SendConsoleMessage("Cannot parse your AdminCommand !");
                 Client.SendConsoleMessage("Use the command 'Help' for more informations !");
 
+                Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse command from <{0}> because : {1}", Client.myIp(), e.ToString()));
+            }
+        }
+
+        public void ParseChatCommand(string args)
+        {
+            try
+            {
+                var datas = args.Split(' ');
+
+                switch (datas[0])
+                {
+                    case "infos":
+                        Client.SendMessage(string.Concat("SunDofus v", Assembly.GetExecutingAssembly().FullName.Split(',')[1].Replace("Version=", "").Trim(),
+                            " par Ghost"));
+                        Client.SendMessage(string.Concat("Nombre de joueur(s) connectés : '", Network.ServersHandler.RealmServer.Clients.Count(x => x.Authentified), "'"));
+                        Client.SendMessage(string.Concat("Uptime du serveur (en minute) : '", (Utilities.Basic.Uptime / 60000), "'"));
+                        break;
+
+                    default:
+                        Client.SendConsoleMessage("Cannot parse your ChatCommand !");
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                Client.SendConsoleMessage("Cannot parse your ChatCommand !");
                 Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse command from <{0}> because : {1}", Client.myIp(), e.ToString()));
             }
         }
