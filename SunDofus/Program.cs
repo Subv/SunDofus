@@ -15,7 +15,7 @@ namespace SunDofus
         static void Main(string[] args)
         {
             Basic.Uptime = Environment.TickCount;
-            Console.Title = string.Concat("SunDofus v", Assembly.GetExecutingAssembly().FullName.Split(',')[1].Replace("Version=", "").Trim());
+            Console.Title = string.Concat("SunDofus v", Utilities.Config.Version(Assembly.GetExecutingAssembly().FullName.Split(',')[1].Replace("Version=", "").Trim()));
 
             Config.LoadConfiguration();
             Loggers.InitializeLoggers();

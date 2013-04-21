@@ -74,10 +74,9 @@ namespace SunDofus.World.Network.Realm
                 switch (datas[0])
                 {
                     case "infos":
-                        Client.SendMessage(string.Concat("SunDofus v", Assembly.GetExecutingAssembly().FullName.Split(',')[1].Replace("Version=", "").Trim(),
-                            " par Ghost"));
-                        Client.SendMessage(string.Concat("Nombre de joueur(s) connectés : '", Network.ServersHandler.RealmServer.Clients.Count(x => x.Authentified), "'"));
-                        Client.SendMessage(string.Concat("Uptime du serveur (en minute) : '", (Utilities.Basic.Uptime / 60000), "'"));
+                        Client.SendMessage(string.Concat("SunDofus v", Utilities.Config.Version(), " par Ghost"));
+                        Client.SendMessage(string.Concat("Nombre de joueur(s) connecté(s) : '", Network.ServersHandler.RealmServer.Clients.Count(x => x.Authentified), "'"));
+                        Client.SendMessage(string.Concat("Uptime du serveur (en minute(s)) : '", (Utilities.Basic.Uptime / 60000), "'"));
                         break;
 
                     default:

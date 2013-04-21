@@ -99,7 +99,7 @@ namespace SunDofus.World.Network.Realm
 
         public void SendMessage(string _message)
         {
-            Send(string.Format("cs<font color=\"#FF0000\">{0}</font>", _message));
+            Send(string.Format("cs<font color=\"#00A611\">{0}</font>", _message));
         }
 
         private void ReceivedPackets(string _datas)

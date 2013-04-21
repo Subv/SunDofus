@@ -9,6 +9,16 @@ namespace SunDofus.Utilities
     class Config
     {
         private static Configuration _config;
+        private static string _version;
+
+        public static string Version(string version = "")
+        {
+            if (version == "")
+                return _version;
+
+            _version = version;
+            return _version;
+        }
 
         public static void LoadConfiguration()
         {
