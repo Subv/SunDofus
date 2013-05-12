@@ -707,7 +707,7 @@ namespace SunDofus.World.Network.Realm
                     return;
             }
 
-            if (!int.TryParse(allDatas[0], out ID) || int.TryParse(allDatas[1], out pos))
+            if (!int.TryParse(allDatas[0], out ID) || !int.TryParse(allDatas[1], out pos))
                 return;
 
             Client.Player.ItemsInventary.MoveItem(int.Parse(allDatas[0]), int.Parse(allDatas[1]), (allDatas.Length >= 3 ? int.Parse(allDatas[2]) : 1));

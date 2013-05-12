@@ -217,6 +217,10 @@ namespace SunDofus.World.Game.Characters.Items
 
                     Client.NetworkClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
                     DeleteItem(item.ID, item.Quantity);
+
+                    if (Client.State.Party != null)
+                        Client.State.Party.UpdateMembers();
+
                     return;
                 }
             }
@@ -256,6 +260,9 @@ namespace SunDofus.World.Game.Characters.Items
                     Client.NetworkClient.Send(string.Format("OQ{0}|{1}", item.ID, item.Quantity));
                 }
             }
+
+            if (Client.State.Party != null)
+                Client.State.Party.UpdateMembers();
 
             Client.NetworkClient.Send(string.Format("OM{0}|{1}", item.ID, (item.Position != -1 ? item.Position.ToString() : "")));
             Client.GetMap().Send(string.Format("Oa{0}|{1}", Client.ID, Client.GetItemsPos()));

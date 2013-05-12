@@ -282,7 +282,7 @@ namespace SunDofus.World.Game.Characters
             ItemsInventary = new InventaryItems(this);
             SpellsInventary = new InventarySpells(this);
 
-            Faction = new CharacterFaction()
+            Faction = new CharacterFaction(this)
             {
                 ID = 0,
                 Honor = 0,
@@ -480,7 +480,7 @@ namespace SunDofus.World.Game.Characters
                 builder.Append(Name).Append(";");
                 builder.Append(Class).Append(";");
                 builder.Append(Skin).Append("^").Append(Size).Append(";");
-                builder.Append(Sex).Append(";0,0,0,").Append(Level + ID).Append(";"); // Sex + Alignment
+                builder.Append(Sex).Append(";").Append(Faction.AlignementInfos).Append(";");
                 builder.Append(Utilities.Basic.DeciToHex(Color)).Append(";");
                 builder.Append(Utilities.Basic.DeciToHex(Color2)).Append(";");
                 builder.Append(Utilities.Basic.DeciToHex(Color3)).Append(";");
@@ -894,7 +894,7 @@ namespace SunDofus.World.Game.Characters
                 builder.Append(Kamas).Append("|");
                 builder.Append(CharactPoint).Append("|");
                 builder.Append(SpellPoint).Append("|");
-                builder.Append("0~2,0,0,0,0,0|"); // Alignement
+                builder.Append(Faction.ToString()).Append("|");
                 builder.Append(Life).Append(",");
                 builder.Append(MaximumLife).Append("|");
                 builder.Append(Energy).Append(",10000|");

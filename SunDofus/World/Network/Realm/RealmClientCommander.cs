@@ -49,6 +49,10 @@ namespace SunDofus.World.Network.Realm
                             ParseCommandTeleport(datas);
                             break;
 
+                        case "faction":
+                            ParseCommandFaction(datas);
+                            break;
+
                         default:
                             Client.SendConsoleMessage("Cannot parse your AdminCommand !");
                             Client.SendConsoleMessage("Use the command 'Help' for more informations !");
@@ -111,6 +115,53 @@ namespace SunDofus.World.Network.Realm
                         writer.Close();
                         break;
 
+                }
+            }
+            catch
+            {
+                Client.SendConsoleMessage("Cannot parse your AdminCommand !");
+            }
+        }
+
+        private void ParseCommandFaction(string[] datas)
+        {
+            try
+            {
+                switch (datas[1])
+                {
+                    case "enabled":
+                        
+                        Client.Player.Faction.isEnabled = bool.Parse(datas[2].Trim());
+                        Client.Player.SendChararacterStats();
+                        Client.Player.TeleportNewMap(Client.Player.MapID, Client.Player.MapCell);
+                        break;
+
+                    case "change":
+                        
+                        Client.Player.Faction.ID = int.Parse(datas[2].Trim());
+                        Client.Player.Faction.Level = 1;
+                        Client.Player.Faction.Honor = 0;
+                        Client.Player.Faction.Deshonor = 0;
+                        Client.Player.SendChararacterStats();
+                        break;
+
+                    case "addhonor":
+
+                        Client.Player.Faction.Honor += int.Parse(datas[2].Trim());
+
+                        if (Client.Player.Faction.Honor > Entities.Requests.LevelsRequests.LevelsList.OrderByDescending(x => x.Alignment).ToArray()[0].Alignment)
+                            Client.Player.Faction.Level = 10;
+                        else
+                            Client.Player.Faction.Level = Entities.Requests.LevelsRequests.LevelsList.Where(x => x.Alignment <= Client.Player.Faction.Honor).OrderByDescending(x => x.Alignment).ToArray()[0].ID;
+
+                        Client.Player.SendChararacterStats();
+                        break;
+
+                    case "adddeshonor":
+                        
+                        Client.Player.Faction.Deshonor += int.Parse(datas[2].Trim());
+                        Client.Player.SendChararacterStats();
+                        break;
                 }
             }
             catch

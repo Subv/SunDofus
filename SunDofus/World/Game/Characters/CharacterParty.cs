@@ -42,9 +42,17 @@ namespace SunDofus.World.Game.Characters
                 member.NetworkClient.Send(string.Format("PL{0}", _ownerID));
                 member.NetworkClient.Send(string.Format("PM{0}", PartyPattern()));
 
-                foreach (var character in Members.Keys.ToList().Where(x => x != member).OrderByDescending(x => x.Stats.initiative.Total()))
+                foreach (var character in Members.Keys.ToList().Where(x => x != member))
                     character.NetworkClient.Send(string.Format("PM{0}", character.PatternOnParty()));
             }
+
+            UpdateMembers();
+        }
+
+        public void UpdateMembers()
+        {
+            Members.Keys.ToList().ToList().ForEach(x => Send("PM-" + x.ID));
+            Send(string.Format("PM{0}", PartyPattern()));
         }
 
         public void LeaveParty(string name, string kicker = "")
@@ -81,6 +89,9 @@ namespace SunDofus.World.Game.Characters
             }
             else if (_ownerID == character.ID)
                 GetNewLeader();
+
+            if(Members.Count >= 2)
+                UpdateMembers();
         }
 
         private void Send(string text)
@@ -102,7 +113,7 @@ namespace SunDofus.World.Game.Characters
 
         private string PartyPattern()
         {
-            return string.Format("+{0}", string.Join("|", from x in Members.Keys.ToList() select x.PatternOnParty()));
+            return string.Format("+{0}", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty()));
         }
     }
 }
