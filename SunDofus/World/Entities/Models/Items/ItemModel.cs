@@ -7,12 +7,74 @@ namespace SunDofus.World.Entities.Models.Items
 {
     class ItemModel
     {
-        public int ID;
-        public int Type;
-        public int Level;
-        public int Pods;
-        public int Price;
-        public int Set;
+        private int _ID, _type, _level, _pods, _price, _set;
+
+        public int ID
+        {
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                _ID = value;
+            }
+        }
+        public int Type 
+        { 
+            get 
+            { 
+                return _type; 
+            }
+            set 
+            {
+                _type = value;
+            }
+        }
+        public int Level
+        {
+            get
+            {
+                return _level;
+            }
+            set
+            {
+                _level = value;
+            }
+        }
+        public int Pods
+        {
+            get
+            {
+                return _pods;
+            }
+            set
+            {
+                _pods = value;
+            }
+        }
+        public int Price
+        {
+            get
+            {
+                return _price;
+            }
+            set
+            {
+                _price = value;
+            }
+        }
+        public int Set
+        {
+            get
+            {
+                return _set;
+            }
+            set
+            {
+                _set = value;
+            }
+        }
 
         public bool isUsable;
         public bool isTwoHands;

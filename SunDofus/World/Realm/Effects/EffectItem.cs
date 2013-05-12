@@ -7,7 +7,8 @@ namespace SunDofus.World.Realm.Effects
 {
     class EffectItem
     {
-        private int _ID;
+        private int _ID, _value, _value2, _value3;
+        private string _effect;
 
         public int ID
         {
@@ -20,9 +21,6 @@ namespace SunDofus.World.Realm.Effects
                 _ID = value;
             }
         }
-
-        private int _value;
-
         public int Value
         {
             get
@@ -34,9 +32,6 @@ namespace SunDofus.World.Realm.Effects
                 _value = value;
             }
         }
-
-        private int _value2;
-
         public int Value2
         {
             get
@@ -48,9 +43,6 @@ namespace SunDofus.World.Realm.Effects
                 _value2 = value;
             }
         }
-
-        private int _value3;
-
         public int Value3
         {
             get
@@ -62,9 +54,6 @@ namespace SunDofus.World.Realm.Effects
                 _value3 = value;
             }
         }
-
-        private string _effect;
-
         public string Effect
         {
             get

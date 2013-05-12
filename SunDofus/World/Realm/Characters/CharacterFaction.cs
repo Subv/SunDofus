@@ -7,7 +7,7 @@ namespace SunDofus.World.Realm.Characters
 {
     class CharacterFaction
     {
-        private int _ID;
+        private int _ID, _honor, _deshonor;
 
         public int ID
         {
@@ -20,9 +20,6 @@ namespace SunDofus.World.Realm.Characters
                 _ID = value;
             }
         }
-
-        private int _honor;
-
         public int Honor
         {
             get
@@ -34,9 +31,6 @@ namespace SunDofus.World.Realm.Characters
                 _honor = value;
             }
         }
-
-        private int _deshonor;
-
         public int Deshonor
         {
             get

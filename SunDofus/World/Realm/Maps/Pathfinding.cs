@@ -15,7 +15,8 @@ namespace SunDofus.World.Realm.Maps
         private int _startCell;
         private int _startDir;
 
-        private int _destination;
+        private int _destination, _direction;
+        private Map _map;
 
         public int Destination
         {
@@ -24,9 +25,6 @@ namespace SunDofus.World.Realm.Maps
                 return _destination;
             }
         }
-
-        private int _direction;
-
         public int Direction
         {
             get
@@ -34,8 +32,6 @@ namespace SunDofus.World.Realm.Maps
                 return _direction;
             }
         }
-
-        private Map _map;
 
         public Pathfinding(string path, Map map, int startCell, int startDir)
         {

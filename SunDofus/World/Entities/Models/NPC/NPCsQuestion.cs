@@ -7,8 +7,30 @@ namespace SunDofus.World.Entities.Models.NPC
 {
     class NPCsQuestion
     {
-        public int QuestionID;
-        public int RescueQuestionID;
+        private int _questionID, _resQuesID;
+
+        public int QuestionID
+        {
+            get
+            {
+                return _questionID;
+            }
+            set
+            {
+                _questionID = value;
+            }
+        }
+        public int RescueQuestionID
+        {
+            get
+            {
+                return _resQuesID;
+            }
+            set
+            {
+                _resQuesID = value;
+            }
+        }
 
         public NPCsQuestion RescueQuestion;
         public List<NPCsAnswer> Answers; 

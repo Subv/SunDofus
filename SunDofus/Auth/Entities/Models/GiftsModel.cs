@@ -7,13 +7,8 @@ namespace SunDofus.Auth.Entities.Models
 {
     class GiftsModel
     {
-        private int _ID;
-        private int _target;
-        private int _itemID;
-
-        private string _title;
-        private string _message;
-        private string _image;
+        private int _ID, _target, _itemID;
+        private string _title, _message, _image;
 
         public int ID
         {

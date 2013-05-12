@@ -8,15 +8,8 @@ namespace SunDofus.Auth.Entities.Models
 {
     class AccountsModel
     {
-        private int _ID;
-        private int _level;
-        private int _communauty;
-
-        private string _username;
-        private string _password;
-        private string _pseudo;
-        private string _question;
-        private string _answer;
+        private int _ID, _level, _communauty;
+        private string _username, _password, _pseudo, _question, _answer;
 
         public int ID
         {

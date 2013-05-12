@@ -7,7 +7,7 @@ namespace SunDofus.World.Realm.Characters.Stats
 {
     class AbstractStats
     {
-        public int _bases;
+        public int _bases, _items, _dons, _boosts;
 
         public int Bases
         {
@@ -20,9 +20,6 @@ namespace SunDofus.World.Realm.Characters.Stats
                 _bases = value;
             }
         }
-
-        public int _items;
-
         public int Items
         {
             get
@@ -34,9 +31,6 @@ namespace SunDofus.World.Realm.Characters.Stats
                 _items = value;
             }
         }
-
-        public int _dons;
-
         public int Dons
         {
             get
@@ -48,9 +42,6 @@ namespace SunDofus.World.Realm.Characters.Stats
                 _dons = value;
             }
         }
-
-        public int _boosts;
-
         public int Boosts
         {
             get

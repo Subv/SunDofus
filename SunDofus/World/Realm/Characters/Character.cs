@@ -12,7 +12,10 @@ namespace SunDofus.World.Realm.Characters
 {
     class Character
     {
-        private string _name;
+        private string _name, _channel;
+        private int _ID, _color, _color2, _color3, _class, _sex, _skin, _size, _level, _mapID, _mapCell, _dir, _charactPoint, _spellPoint, _energy;
+        private int _maximumLife, _life, _pods;
+        private long _exp, _kamas;
 
         public string Name
         {
@@ -25,9 +28,6 @@ namespace SunDofus.World.Realm.Characters
                 _name = value;
             }
         }
-
-        private string _channel;
-
         public string Channel
         {
             get
@@ -39,9 +39,6 @@ namespace SunDofus.World.Realm.Characters
                 _channel = value;
             }
         }
-
-        private int _ID;
-
         public int ID
         {
             get
@@ -53,9 +50,6 @@ namespace SunDofus.World.Realm.Characters
                 _ID = value;
             }
         }
-
-        private int _color;
-
         public int Color
         {
             get
@@ -67,9 +61,6 @@ namespace SunDofus.World.Realm.Characters
                 _color = value;
             }
         }
-
-        private int _color2;
-
         public int Color2
         {
             get
@@ -81,9 +72,6 @@ namespace SunDofus.World.Realm.Characters
                 _color2 = value;
             }
         }
-
-        private int _color3;
-
         public int Color3
         {
             get
@@ -95,9 +83,6 @@ namespace SunDofus.World.Realm.Characters
                 _color3 = value;
             }
         }
-
-        private int _class;
-
         public int Class
         {
             get
@@ -109,9 +94,6 @@ namespace SunDofus.World.Realm.Characters
                 _class = value;
             }
         }
-
-        private int _sex;
-
         public int Sex
         {
             get
@@ -123,9 +105,6 @@ namespace SunDofus.World.Realm.Characters
                 _sex = value;
             }
         }
-
-        private int _skin;
-
         public int Skin
         {
             get
@@ -137,9 +116,6 @@ namespace SunDofus.World.Realm.Characters
                 _skin = value;
             }
         }
-
-        private int _size;
-
         public int Size
         {
             get
@@ -151,9 +127,6 @@ namespace SunDofus.World.Realm.Characters
                 _size = value;
             }
         }
-
-        private int _level;
-
         public int Level
         {
             get
@@ -165,9 +138,6 @@ namespace SunDofus.World.Realm.Characters
                 _level = value;
             }
         }
-
-        private int _mapID;
-
         public int MapID
         {
             get
@@ -179,9 +149,6 @@ namespace SunDofus.World.Realm.Characters
                 _mapID = value;
             }
         }
-
-        private int _mapCell;
-
         public int MapCell
         {
             get
@@ -193,9 +160,6 @@ namespace SunDofus.World.Realm.Characters
                 _mapCell = value;
             }
         }
-
-        private int _dir;
-
         public int Dir
         {
             get
@@ -207,9 +171,6 @@ namespace SunDofus.World.Realm.Characters
                 _dir = value;
             }
         }
-
-        private int _charactPoint;
-
         public int CharactPoint
         {
             get
@@ -221,9 +182,6 @@ namespace SunDofus.World.Realm.Characters
                 _charactPoint = value;
             }
         }
-
-        private int _spellPoint;
-
         public int SpellPoint
         {
             get
@@ -235,9 +193,6 @@ namespace SunDofus.World.Realm.Characters
                 _spellPoint = value;
             }
         }
-
-        private int _energy;
-
         public int Energy
         {
             get
@@ -249,9 +204,6 @@ namespace SunDofus.World.Realm.Characters
                 _energy = value;
             }
         }
-
-        private int _maximumLife;
-
         public int MaximumLife
         {
             get
@@ -263,9 +215,6 @@ namespace SunDofus.World.Realm.Characters
                 _maximumLife = value;
             }
         }
-
-        private int _life;
-
         public int Life
         {
             get
@@ -277,9 +226,6 @@ namespace SunDofus.World.Realm.Characters
                 _life = value;
             }
         }
-
-        private int _pods;
-
         public int Pods
         {
             get
@@ -296,8 +242,6 @@ namespace SunDofus.World.Realm.Characters
         public bool isDeletedCharacter;
         public bool isConnected;
 
-        private long _exp;
-
         public long Exp
         {
             get
@@ -309,9 +253,6 @@ namespace SunDofus.World.Realm.Characters
                 _exp = value;
             }
         }
-
-        private long _kamas;
-
         public long Kamas
         {
             get
@@ -564,7 +505,7 @@ namespace SunDofus.World.Realm.Characters
             {
                 var map = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == this.MapID);
 
-                NetworkClient.Send(string.Format("GDM|{0}|0{1}|{2}", map.GetModel.ID, map.GetModel.Date, map.GetModel.Key));
+                NetworkClient.Send(string.Format("GDM|{0}|{1}|{2}", map.GetModel.ID, map.GetModel.Date, map.GetModel.Key));
 
                 if (this.State.isFollow)
                 {

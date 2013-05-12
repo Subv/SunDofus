@@ -7,15 +7,8 @@ namespace SunDofus.World.Entities.Models.Clients
 {
     class AccountModel
     {
-        private int _ID;
-        private int _level;
-
-        private string _pseudo;
-        private string _question;
-        private string _answer;
-        private string _strcharacters;
-        private string _strgifts;
-
+        private int _ID, _level;
+        private string _pseudo, _question, _answer, _strcharacters, _strgifts;
         private long _subscription;
 
         public int ID

@@ -7,18 +7,122 @@ namespace SunDofus.World.Entities.Models.Monsters
 {
     class MonsterModel
     {
-        public int ID;
-        public int GfxID;
-        public int Align;
-        public int Color;
-        public int Color2;
-        public int Color3;
-        public int IA;
+        private int _ID, _gfxID, _align, _col, _col2, _col3, _IA;
+        private int _max, _min;
+        private string _name;
 
-        public int Max_kamas;
-        public int Min_kamas;
+        public int ID
+        {
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                _ID = value;
+            }
+        }
+        public int GfxID
+        {
+            get
+            {
+                return _gfxID;
+            }
+            set
+            {
+                _gfxID = value;
+            }
+        }
+        public int Align
+        {
+            get
+            {
+                return _align;
+            }
+            set
+            {
+                _align = value;
+            }
+        }
+        public int Color
+        {
+            get
+            {
+                return _col;
+            }
+            set
+            {
+                _col = value;
+            }
+        }
+        public int Color2
+        {
+            get
+            {
+                return _col2;
+            }
+            set
+            {
+                _col2 = value;
+            }
+        }
+        public int Color3
+        {
+            get
+            {
+                return _col3;
+            }
+            set
+            {
+                _col3 = value;
+            }
+        }
+        public int IA
+        {
+            get
+            {
+                return _IA;
+            }
+            set
+            {
+                _IA = value;
+            }
+        }
 
-        public string Name;
+        public int Max_kamas
+        {
+            get
+            {
+                return _max;
+            }
+            set
+            {
+                _max = value;
+            }
+        }
+        public int Min_kamas
+        {
+            get
+            {
+                return _min;
+            }
+            set
+            {
+                _min = value;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
 
         public List<MonsterLevelModel> Levels;
         public List<MonsterItem> Items;

@@ -7,7 +7,7 @@ namespace SunDofus.World.Realm.Characters.Spells
 {
     class CharacterSpell
     {
-        private int _ID;
+        private int _ID, _level, _pos;
 
         public int ID
         {
@@ -20,9 +20,6 @@ namespace SunDofus.World.Realm.Characters.Spells
                 _ID = value;
             }
         }
-
-        private int _level;
-
         public int Level
         {
             get
@@ -34,9 +31,6 @@ namespace SunDofus.World.Realm.Characters.Spells
                 _level = value;
             }
         }
-
-        private int _pos;
-
         public int Position
         {
             get

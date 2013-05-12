@@ -8,7 +8,7 @@ namespace SunDofus.World.Realm.Characters.Items
 {
     class CharacterItem
     {
-        private int _ID;
+        private int _ID, _position, _quantity;
 
         public int ID 
         {
@@ -21,9 +21,6 @@ namespace SunDofus.World.Realm.Characters.Items
                 _ID = value;
             }
         }
-
-        private int _position;
-
         public int Position
         {
             get
@@ -35,9 +32,6 @@ namespace SunDofus.World.Realm.Characters.Items
                 _position = value;
             }
         }
-
-        private int _quantity;
-
         public int Quantity
         {
             get

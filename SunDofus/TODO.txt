@@ -1,6 +1,5 @@
 ﻿//A FAIRE AVANT LA 3.1.X
 
-Réecrire tout les models du World (Get/Set etc)
 Revoir le reste des classes pour les performances et les mises aux normes du World
 Réecrire les échanges (Avec classes, pouvant être PNJ ou Joueur)
 Réecrire les canaux de discussions (Avec classes, pour facilier la vue et éviter les bugs)

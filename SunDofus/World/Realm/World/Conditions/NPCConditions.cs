@@ -8,6 +8,7 @@ namespace SunDofus.World.Realm.World.Conditions
     class NPCConditions
     {
         private int _condiID;
+        private string _args;
 
         public int CondiID
         {
@@ -20,9 +21,6 @@ namespace SunDofus.World.Realm.World.Conditions
                 _condiID = value;
             }
         }
-
-        private string _args;
-
         public string Args
         {
             get

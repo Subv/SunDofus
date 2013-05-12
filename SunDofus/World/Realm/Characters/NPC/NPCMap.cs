@@ -9,7 +9,7 @@ namespace SunDofus.World.Realm.Characters.NPC
 {
     class NPCMap
     {
-        private int _ID;
+        private int _ID, _mapID, _mapCell, _dir;
 
         public int ID 
         {
@@ -22,9 +22,6 @@ namespace SunDofus.World.Realm.Characters.NPC
                 _ID = value;
             }
         }
-
-        private int _mapID;
-
         public int MapID
         {
             get
@@ -36,9 +33,6 @@ namespace SunDofus.World.Realm.Characters.NPC
                 _mapID = value;
             }
         }
-
-        private int _mapCell;
-
         public int MapCell
         {
             get
@@ -50,9 +44,6 @@ namespace SunDofus.World.Realm.Characters.NPC
                 _mapCell = value;
             }
         }
-
-        private int _dir;
-
         public int Dir
         {
             get

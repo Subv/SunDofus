@@ -7,8 +7,31 @@ namespace SunDofus.World.Entities.Models.NPC
 {
     class NPCsAnswer
     {
-        public int AnswerID;
-        public string Effects;
+        private int _answerID;
+        private string _effects;
+
+        public int AnswerID
+        {
+            get
+            {
+                return _answerID;
+            }
+            set
+            {
+                _answerID = value;
+            }
+        }
+        public string Effects
+        {
+            get
+            {
+                return _effects;
+            }
+            set
+            {
+                _effects = value;
+            }
+        }
 
         public List<Realm.World.Conditions.NPCConditions> Conditions;
 

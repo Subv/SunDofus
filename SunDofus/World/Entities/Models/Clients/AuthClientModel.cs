@@ -7,10 +7,8 @@ namespace SunDofus.World.Entities.Models.Clients
 {
     class AuthClientModel
     {
-        private int _ID;
-        private int _port;
-        private string _IP;
-        private string _passKey;
+        private int _ID, _port;
+        private string _IP, _passKey;
 
         public int ID
         {

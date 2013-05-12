@@ -9,8 +9,31 @@ namespace SunDofus.World.Entities.Models.Items
 {
     class ItemUsableModel
     {
-        public int Base;
-        public string Args;
+        private int _base;
+        private string _args;
+
+        public int Base
+        {
+            get
+            {
+                return _base;
+            }
+            set
+            {
+                _base = value;
+            }
+        }
+        public string Args
+        {
+            get
+            {
+                return _args;
+            }
+            set
+            {
+                _args = value;
+            }
+        }
         public bool MustDelete;
 
         public ItemUsableModel()

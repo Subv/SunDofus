@@ -8,18 +8,111 @@ namespace SunDofus.World.Entities.Models.Spells
 {
     class SpellLevelModel
     {
+        private int _lvl, _cost, _minRP, _maxRP, _cc, _ec, _maxPerT, _maxPerP, _turnNum;
+        private string _type;
+
         public List<Realm.Effects.EffectSpell> Effects;
         public List<Realm.Effects.EffectSpell> CriticalEffects;
 
-        public int Level;
-        public int Cost;
-        public int MinRP;
-        public int MaxRP;
-        public int CC;
-        public int EC;
-        public int MaxPerTurn;
-        public int MaxPerPlayer;
-        public int TurnNumber;
+        public int Level
+        {
+            get
+            {
+                return _lvl;
+            }
+            set
+            {
+                _lvl = value;
+            }
+        }
+        public int Cost
+        {
+            get
+            {
+                return _cost;
+            }
+            set
+            {
+                _cost = value;
+            }
+        }
+        public int MinRP
+        {
+            get
+            {
+                return _minRP;
+            }
+            set
+            {
+                _minRP = value;
+            }
+        }
+        public int MaxRP
+        {
+            get
+            {
+                return _maxRP;
+            }
+            set
+            {
+                _maxRP = value;
+            }
+        }
+        public int CC
+        {
+            get
+            {
+                return _cc;
+            }
+            set
+            {
+                _cc = value;
+            }
+        }
+        public int EC
+        {
+            get
+            {
+                return _ec;
+            }
+            set
+            {
+                _ec = value;
+            }
+        }
+        public int MaxPerTurn
+        {
+            get
+            {
+                return _maxPerT;
+            }
+            set
+            {
+                _maxPerT = value;
+            }
+        }
+        public int MaxPerPlayer
+        {
+            get
+            {
+                return _maxPerP;
+            }
+            set
+            {
+                 _maxPerP = value;
+            }
+        }
+        public int TurnNumber
+        {
+            get
+            {
+                return _turnNum;
+            }
+            set
+            {
+                _turnNum = value;
+            }
+        }
 
         public bool isOnlyViewLine;
         public bool isOnlyLine;
@@ -27,7 +120,17 @@ namespace SunDofus.World.Entities.Models.Spells
         public bool isECEndTurn;
         public bool isEmptyCell;
 
-        public string Type;
+        public string Type
+        {
+            get
+            {
+                return _type;
+            }
+            set
+            {
+                _type = value;
+            }
+        }
 
         public SpellLevelModel()
         {

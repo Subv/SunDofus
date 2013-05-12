@@ -8,13 +8,8 @@ namespace SunDofus.Auth.Entities.Models
 {
     class ServersModel
     {
-        private int _ID;
-        private int _port;
-        private int _state;
-        private int opeID;
-
-        private string _IP;
-        private string _passKey;
+        private int _ID, _port, _state, opeID;
+        private string _IP, _passKey;
 
         public int ID
         {

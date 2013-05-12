@@ -7,10 +7,43 @@ namespace SunDofus.World.Entities.Models.Spells
 {
     class SpellModel
     {
-        public int ID;
-        public int Sprite;
+        private int _ID, _sprite;
+        private string _spriteinfos;
 
-        public string SpriteInfos;
+        public int ID
+        {
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                _ID = value;
+            }
+        }
+        public int Sprite
+        {
+            get
+            {
+                return _sprite;
+            }
+            set
+            {
+                _sprite = value;
+            }
+        }
+
+        public string SpriteInfos
+        {
+            get
+            {
+                return _spriteinfos;
+            }
+            set
+            {
+                _spriteinfos = value;
+            }
+        }
 
         public List<SpellLevelModel> Levels;
 

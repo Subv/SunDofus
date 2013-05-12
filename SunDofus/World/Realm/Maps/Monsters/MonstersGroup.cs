@@ -10,7 +10,7 @@ namespace SunDofus.World.Realm.Maps.Monsters
     {
         public List<Monster> Monsters;
 
-        private int _id;
+        private int _id, _maxSize;
 
         public int ID
         {
@@ -19,9 +19,6 @@ namespace SunDofus.World.Realm.Maps.Monsters
                 return _id;
             }
         }
-
-        private int _maxSize;
-
         public int MaxSize
         {
             get

@@ -14,7 +14,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_maps";
+                var sqlText = "SELECT * FROM maps";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
@@ -24,14 +24,14 @@ namespace SunDofus.World.Entities.Requests
                     var map = new Models.Maps.MapModel()
                     {
                         ID = sqlReader.GetInt32("id"),
-                        Date = sqlReader.GetInt32("date"),
+                        Date = sqlReader.GetString("date"),
                         Width = sqlReader.GetInt16("width"),
                         Height = sqlReader.GetInt16("heigth"),
                         Capabilities = sqlReader.GetInt16("capabilities"),
                         Mappos = sqlReader.GetString("mappos"),
                         MapData = sqlReader.GetString("mapData"),
                         Key = sqlReader.GetString("key"),
-                        MaxMonstersGroup = sqlReader.GetInt16("maxgroups"),
+                        MaxMonstersGroup = sqlReader.GetInt16("numgroup"),
                         MaxGroupSize = sqlReader.GetInt16("groupsize"),
                     };
 
