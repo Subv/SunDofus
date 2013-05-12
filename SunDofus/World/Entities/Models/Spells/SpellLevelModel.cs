@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SunDofus.World.Realm.Characters.Spells;
+using SunDofus.World.Game.Characters.Spells;
 
 namespace SunDofus.World.Entities.Models.Spells
 {
@@ -11,8 +11,8 @@ namespace SunDofus.World.Entities.Models.Spells
         private int _lvl, _cost, _minRP, _maxRP, _cc, _ec, _maxPerT, _maxPerP, _turnNum;
         private string _type;
 
-        public List<Realm.Effects.EffectSpell> Effects;
-        public List<Realm.Effects.EffectSpell> CriticalEffects;
+        public List<Game.Effects.EffectSpell> Effects;
+        public List<Game.Effects.EffectSpell> CriticalEffects;
 
         public int Level
         {
@@ -134,8 +134,8 @@ namespace SunDofus.World.Entities.Models.Spells
 
         public SpellLevelModel()
         {
-            CriticalEffects = new List<Realm.Effects.EffectSpell>();
-            Effects = new List<Realm.Effects.EffectSpell>();
+            CriticalEffects = new List<Game.Effects.EffectSpell>();
+            Effects = new List<Game.Effects.EffectSpell>();
 
             Level = -1;
             CC = 0;
@@ -162,7 +162,7 @@ namespace SunDofus.World.Entities.Models.Spells
                 if (actualEffect == "-1" | actualEffect == "") 
                     continue;
 
-                var effect = new Realm.Effects.EffectSpell();
+                var effect = new Game.Effects.EffectSpell();
                 var infos = actualEffect.Split(';');
 
                 effect.ID = int.Parse(infos[0]);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SunDofus.World.Realm.Effects;
+using SunDofus.World.Game.Effects;
 
 namespace SunDofus.World.Entities.Models.Items
 {
@@ -61,14 +61,14 @@ namespace SunDofus.World.Entities.Models.Items
                     continue;
 
                 lock(BonusList)
-                    BonusList.Add(++num, new List<Realm.Effects.EffectItem>());
+                    BonusList.Add(++num, new List<Game.Effects.EffectItem>());
 
                 foreach (var datas in infos.Split(','))
                 {
                     if (datas == "") 
                         continue;
 
-                    var bonus = new Realm.Effects.EffectItem();
+                    var bonus = new Game.Effects.EffectItem();
                     bonus.ID = int.Parse(datas.Split(':')[0]);
                     bonus.Value = int.Parse(datas.Split(':')[1]);
 

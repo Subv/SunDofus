@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SunDofus.World.Realm;
-using SunDofus.World.Realm.Characters;
+using SunDofus.World.Game;
+using SunDofus.World.Game.Characters;
 
 namespace SunDofus.World.Entities.Models.Items
 {
@@ -56,7 +56,7 @@ namespace SunDofus.World.Entities.Models.Items
             foreach (var effect in datas)
             {
                 var infos = effect.Split(';');
-                Realm.Effects.EffectAction.ParseEffect(client, int.Parse(infos[0]), infos[1]);
+                Game.Effects.EffectAction.ParseEffect(client, int.Parse(infos[0]), infos[1]);
             }
         }
     }

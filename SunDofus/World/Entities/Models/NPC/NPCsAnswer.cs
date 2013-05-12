@@ -33,27 +33,27 @@ namespace SunDofus.World.Entities.Models.NPC
             }
         }
 
-        public List<Realm.World.Conditions.NPCConditions> Conditions;
+        public List<Game.World.Conditions.NPCConditions> Conditions;
 
         public NPCsAnswer()
         {
-            Conditions = new List<Realm.World.Conditions.NPCConditions>();
+            Conditions = new List<Game.World.Conditions.NPCConditions>();
         }
 
-        public void ApplyEffects(Realm.Characters.Character character)
+        public void ApplyEffects(Game.Characters.Character character)
         {
             try
             {
                 foreach (var effect in Effects.Split('|'))
                 {
                     var infos = effect.Split(';');
-                    Realm.Effects.EffectAction.ParseEffect(character, int.Parse(infos[0]), infos[1]);
+                    Game.Effects.EffectAction.ParseEffect(character, int.Parse(infos[0]), infos[1]);
                 }
             }
             catch { }
         }
 
-        public bool HasConditions(Realm.Characters.Character _character)
+        public bool HasConditions(Game.Characters.Character _character)
         {
             foreach (var condi in Conditions)
             {

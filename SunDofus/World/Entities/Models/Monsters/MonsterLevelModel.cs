@@ -239,11 +239,11 @@ namespace SunDofus.World.Entities.Models.Monsters
                 _exp = value;
             }
         }
-        public List<Realm.Characters.Spells.CharacterSpell> Spells;
+        public List<Game.Characters.Spells.CharacterSpell> Spells;
 
         public MonsterLevelModel()
         {
-            Spells = new List<Realm.Characters.Spells.CharacterSpell>();
+            Spells = new List<Game.Characters.Spells.CharacterSpell>();
         }
     }
 }

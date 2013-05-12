@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SunDofus.World.Realm.World.Conditions;
+using SunDofus.World.Game.World.Conditions;
 
 namespace SunDofus.World.Entities.Models.Maps
 {

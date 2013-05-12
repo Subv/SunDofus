@@ -82,7 +82,7 @@ namespace SunDofus.World.Entities.Models.Items
         public string Jet;
         public string Condistr;
 
-        public List<Realm.Effects.EffectItem> EffectsList;
+        public List<Game.Effects.EffectItem> EffectsList;
 
         public ItemModel()
         {
@@ -92,7 +92,7 @@ namespace SunDofus.World.Entities.Models.Items
             isTwoHands = false;
             isUsable = false;
 
-            EffectsList = new List<Realm.Effects.EffectItem>();
+            EffectsList = new List<Game.Effects.EffectItem>();
         }
 
         public void ParseWeaponInfos(string datas)
@@ -110,7 +110,7 @@ namespace SunDofus.World.Entities.Models.Items
                 if (_jet == "") continue;
                 var infos = _jet.Split('#');
 
-                var myEffect = new Realm.Effects.EffectItem();
+                var myEffect = new Game.Effects.EffectItem();
                 myEffect.ID = Utilities.Basic.HexToDeci(infos[0]);
 
                 if (infos.Length > 1) myEffect.Value = Utilities.Basic.HexToDeci(infos[1]);

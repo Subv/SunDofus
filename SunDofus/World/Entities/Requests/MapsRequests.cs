@@ -8,7 +8,7 @@ namespace SunDofus.World.Entities.Requests
 {
     class MapsRequests
     {
-        public static List<Realm.Maps.Map> MapsList = new List<Realm.Maps.Map>();
+        public static List<Game.Maps.Map> MapsList = new List<Game.Maps.Map>();
 
         public static void LoadMaps()
         {
@@ -60,7 +60,7 @@ namespace SunDofus.World.Entities.Requests
                     map.ParsePos();
 
                     lock(MapsList)
-                        MapsList.Add(new Realm.Maps.Map(map));
+                        MapsList.Add(new Game.Maps.Map(map));
                 }
 
                 sqlReader.Close();

@@ -33,17 +33,17 @@ namespace SunDofus.World.Entities.Models.NPC
         }
 
         public NPCsQuestion RescueQuestion;
-        public List<NPCsAnswer> Answers; 
+        public List<NPCsAnswer> Answers;
 
-        public List<Realm.World.Conditions.NPCConditions> Conditions;
+        public List<Game.World.Conditions.NPCConditions> Conditions;
 
         public NPCsQuestion()
         {
             Answers = new List<NPCsAnswer>();
-            Conditions = new List<Realm.World.Conditions.NPCConditions>();
+            Conditions = new List<Game.World.Conditions.NPCConditions>();
         }
 
-        public bool HasConditions(Realm.Characters.Character _character)
+        public bool HasConditions(Game.Characters.Character _character)
         {
             foreach (var condi in Conditions)
             {

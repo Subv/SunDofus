@@ -19,7 +19,7 @@ namespace SunDofus.World.Entities.Requests
 
                 while (sqlResult.Read())
                 {
-                    var character = new Realm.Characters.Character()
+                    var character = new Game.Characters.Character()
                     {
                         ID = sqlResult.GetInt16("id"),
                         Name = sqlResult.GetString("name"),
@@ -50,17 +50,17 @@ namespace SunDofus.World.Entities.Requests
                     if (sqlResult.GetString("spells") != "") 
                         character.SpellsInventary.ParseSpells(sqlResult.GetString("spells"));
 
-                    lock(Realm.Characters.CharactersManager.CharactersList)
-                        Realm.Characters.CharactersManager.CharactersList.Add(character);
+                    lock (Game.Characters.CharactersManager.CharactersList)
+                        Game.Characters.CharactersManager.CharactersList.Add(character);
                 }
 
                 sqlResult.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' characters from the database !",Realm.Characters.CharactersManager.CharactersList.Count));
+            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' characters from the database !", Game.Characters.CharactersManager.CharactersList.Count));
         }
 
-        public static void CreateCharacter(Realm.Characters.Character character)
+        public static void CreateCharacter(Game.Characters.Character character)
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
@@ -89,7 +89,7 @@ namespace SunDofus.World.Entities.Requests
             }
         }
 
-        public static void SaveCharacter(Realm.Characters.Character character)
+        public static void SaveCharacter(Game.Characters.Character character)
         {
             if (character.isNewCharacter)
             {

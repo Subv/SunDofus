@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SunDofus.World.Realm.Characters;
-using SunDofus.World.Realm.Maps;
-using SunDofus.World.Realm.Characters.Stats;
-using SunDofus.World.Realm;
-using SunDofus.World.Realm.World;
+using SunDofus.World.Game.Characters;
+using SunDofus.World.Game.Maps;
+using SunDofus.World.Game.Characters.Stats;
+using SunDofus.World.Game;
+using SunDofus.World.Game.World;
 
 namespace SunDofus.World.Network.Realm
 {
@@ -145,7 +145,7 @@ namespace SunDofus.World.Network.Realm
 
             if (Client.Characters.Count != 0)
             {
-                foreach (SunDofus.World.Realm.Characters.Character m_C in Client.Characters)
+                foreach (SunDofus.World.Game.Characters.Character m_C in Client.Characters)
                     packet += string.Format("|{0}", m_C.PatternList());
             }
 
@@ -612,8 +612,8 @@ namespace SunDofus.World.Network.Realm
                 Client.Send(string.Format("GA;901;{0};{1}", Client.Player.ID, character.ID));
                 character.NetworkClient.Send(string.Format("GA;901;{0};{1}", character.ID, Client.Player.ID));
 
-                Client.Player.GetMap().AddFight(new SunDofus.World.Realm.Maps.Fights.Fight
-                    (Client.Player, character, SunDofus.World.Realm.Maps.Fights.Fight.FightType.Challenge, Client.Player.GetMap()));
+                Client.Player.GetMap().AddFight(new SunDofus.World.Game.Maps.Fights.Fight
+                    (Client.Player, character, SunDofus.World.Game.Maps.Fights.Fight.FightType.Challenge, Client.Player.GetMap()));
             }
         }
 
@@ -656,8 +656,8 @@ namespace SunDofus.World.Network.Realm
                         {
                             var trigger = Client.Player.GetMap().Triggers.First(x => x.CellID == Client.Player.MapCell);
 
-                            if (SunDofus.World.Realm.World.Conditions.TriggerCondition.HasConditions(Client.Player, trigger.Conditions))
-                                SunDofus.World.Realm.Effects.EffectAction.ParseEffect(Client.Player, trigger.ActionID, trigger.Args);
+                            if (SunDofus.World.Game.World.Conditions.TriggerCondition.HasConditions(Client.Player, trigger.Conditions))
+                                SunDofus.World.Game.Effects.EffectAction.ParseEffect(Client.Player, trigger.ActionID, trigger.Args);
                             else
                                 Client.SendMessage("Vous ne possédez pas les conditions nécessaires pour cette action !");
                         }
@@ -1099,9 +1099,9 @@ namespace SunDofus.World.Network.Realm
 
                 case 1://Player
 
-                    if (SunDofus.World.Realm.Characters.CharactersManager.CharactersList.Any(x => x.ID == receiverID))
+                    if (SunDofus.World.Game.Characters.CharactersManager.CharactersList.Any(x => x.ID == receiverID))
                     {
-                        var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == receiverID);
+                        var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == receiverID);
 
                         if (!character.isConnected == true && !character.State.Occuped)
                         {
@@ -1128,7 +1128,7 @@ namespace SunDofus.World.Network.Realm
             Client.Send("EV");
 
             if (Client.Player.State.onExchange)
-                SunDofus.World.Realm.Exchanges.ExchangesManager.LeaveExchange(Client.Player);
+                SunDofus.World.Game.Exchanges.ExchangesManager.LeaveExchange(Client.Player);
         }
 
         private void ExchangeBuy(string packet)
@@ -1159,7 +1159,7 @@ namespace SunDofus.World.Network.Realm
 
             if (Client.Player.Kamas >= price)
             {
-                var newItem = new SunDofus.World.Realm.Characters.Items.CharacterItem(item);
+                var newItem = new SunDofus.World.Game.Characters.Items.CharacterItem(item);
                 newItem.GeneratItem(4);
                 newItem.Quantity = quantity;
 
@@ -1215,7 +1215,7 @@ namespace SunDofus.World.Network.Realm
             {
                 case 'G': //kamas
 
-                    var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualPlayerExchange);
+                    var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualPlayerExchange);
 
                     if (!Client.Player.State.onExchangePanel || !character.State.onExchangePanel || character.State.actualPlayerExchange != Client.Player.ID)
                     {
@@ -1223,7 +1223,7 @@ namespace SunDofus.World.Network.Realm
                         return;
                     }
 
-                    var actualExchange = SunDofus.World.Realm.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
+                    var actualExchange = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
                         x.player2.ID == character.ID) || (x.player2.ID == Client.Player.ID && x.player1.ID == character.ID));
 
                     var kamas = (long)0;
@@ -1242,7 +1242,7 @@ namespace SunDofus.World.Network.Realm
 
                 case 'O': //Items
 
-                    var character2 = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualPlayerExchange);
+                    var character2 = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualPlayerExchange);
 
                     if (!Client.Player.State.onExchangePanel || !character2.State.onExchangePanel || character2.State.actualPlayerExchange != Client.Player.ID)
                     {
@@ -1250,7 +1250,7 @@ namespace SunDofus.World.Network.Realm
                         return;
                     }
 
-                    var actualExchange2 = SunDofus.World.Realm.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
+                    var actualExchange2 = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
                         x.player2.ID == character2.ID) || (x.player2.ID == Client.Player.ID && x.player1.ID == character2.ID));
 
                     var add = (datas.Substring(1, 1) == "+" ? true : false);
@@ -1278,10 +1278,10 @@ namespace SunDofus.World.Network.Realm
         {
             if (Client.Player.State.onExchange && Client.Player.State.actualTraider != -1)
             {
-                var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualTraider);
+                var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualTraider);
                 if (character.State.actualTraided == Client.Player.ID)
                 {
-                    SunDofus.World.Realm.Exchanges.ExchangesManager.AddExchange(character, Client.Player);
+                    SunDofus.World.Game.Exchanges.ExchangesManager.AddExchange(character, Client.Player);
                     return;
                 }
             }
@@ -1298,7 +1298,7 @@ namespace SunDofus.World.Network.Realm
 
             Client.Player.State.onExchangeAccepted = true;
 
-            var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualPlayerExchange);
+            var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.actualPlayerExchange);
 
             if (!Client.Player.State.onExchangePanel || !character.State.onExchangePanel || character.State.actualPlayerExchange != Client.Player.ID)
             {
@@ -1306,7 +1306,7 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
-            var actualExchange = SunDofus.World.Realm.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
+            var actualExchange = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
                 x.player2.ID == character.ID) || (x.player2.ID == Client.Player.ID && x.player1.ID == character.ID));
 
             Client.Send(string.Format("EK1{0}", Client.Player.ID));
@@ -1322,9 +1322,9 @@ namespace SunDofus.World.Network.Realm
 
         private void PartyInvite(string datas)
         {
-            if (SunDofus.World.Realm.Characters.CharactersManager.CharactersList.Any(x => x.Name == datas && x.isConnected))
+            if (SunDofus.World.Game.Characters.CharactersManager.CharactersList.Any(x => x.Name == datas && x.isConnected))
             {
-                var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.Name == datas);
+                var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.Name == datas);
                 if (character.State.Party != null || character.State.Occuped)
                 {
                     Client.Send(string.Format("PIEa{0}", datas));
@@ -1372,7 +1372,7 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
-            var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First
+            var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First
                 (x => x.ID == Client.Player.State.senderInviteParty);
 
             if (character.isConnected == false || character.State.receiverInviteParty != Client.Player.ID)
@@ -1394,7 +1394,7 @@ namespace SunDofus.World.Network.Realm
         {
             if (Client.Player.State.senderInviteParty != -1 && Client.Player.State.onWaitingParty)
             {
-                var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.senderInviteParty);
+                var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == Client.Player.State.senderInviteParty);
 
                 if (character.isConnected == false || character.State.receiverInviteParty != Client.Player.ID)
                 {
@@ -1461,7 +1461,7 @@ namespace SunDofus.World.Network.Realm
             if (!int.TryParse(datas.Substring(1, datas.Length - 1), out charid))
                 return;
 
-            var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == charid);
+            var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == charid);
 
             if (add)
             {
@@ -1521,7 +1521,7 @@ namespace SunDofus.World.Network.Realm
             if (!int.TryParse(datas.Substring(1, datas.Length - 1), out charid))
                 return;
 
-            var character = SunDofus.World.Realm.Characters.CharactersManager.CharactersList.First(x => x.ID == charid);
+            var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == charid);
 
             if (add)
             {

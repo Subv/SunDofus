@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SunDofus.World.Realm.Characters.Items;
+using SunDofus.World.Game.Characters.Items;
 
 namespace SunDofus.World.Entities.Models.Clients
 {

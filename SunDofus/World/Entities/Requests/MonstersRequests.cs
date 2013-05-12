@@ -114,7 +114,7 @@ namespace SunDofus.World.Entities.Requests
 
                         lock (newLevel.Spells)
                         {
-                            newLevel.Spells.Add(new Realm.Characters.Spells.CharacterSpell
+                            newLevel.Spells.Add(new Game.Characters.Spells.CharacterSpell
                                 (int.Parse(infos[0]), int.Parse(infos[1]), -1));
                         }
                     }

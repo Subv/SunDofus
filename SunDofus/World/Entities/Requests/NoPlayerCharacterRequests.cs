@@ -8,7 +8,7 @@ namespace SunDofus.World.Entities.Requests
 {
     class NoPlayerCharacterRequests
     {
-        public static List<Realm.Characters.NPC.NPCMap> NpcsList = new List<Realm.Characters.NPC.NPCMap>();
+        public static List<Game.Characters.NPC.NPCMap> NpcsList = new List<Game.Characters.NPC.NPCMap>();
         public static List<Models.NPC.NPCsQuestion> QuestionsList = new List<Models.NPC.NPCsQuestion>();
         public static List<Models.NPC.NPCsAnswer> AnswersList = new List<Models.NPC.NPCsAnswer>();
 
@@ -51,7 +51,7 @@ namespace SunDofus.World.Entities.Requests
 
                     var infosMap = sqlReader.GetString("Mapinfos").Split(';');
 
-                    var npc = new Realm.Characters.NPC.NPCMap(npcModel)
+                    var npc = new Game.Characters.NPC.NPCMap(npcModel)
                     {
 
                         MapID = int.Parse(infosMap[0]),
@@ -113,7 +113,7 @@ namespace SunDofus.World.Entities.Requests
                             continue;
 
                         var condiInfos = condi.Split(';');
-                        var condiObject = new Realm.World.Conditions.NPCConditions();
+                        var condiObject = new Game.World.Conditions.NPCConditions();
 
                         condiObject.CondiID = int.Parse(condiInfos[0]);
                         condiObject.Args = condiInfos[1];
@@ -158,7 +158,7 @@ namespace SunDofus.World.Entities.Requests
                             continue;
 
                         var condiInfos = condi.Split(';');
-                        var condiObject = new Realm.World.Conditions.NPCConditions();
+                        var condiObject = new Game.World.Conditions.NPCConditions();
 
                         condiObject.CondiID = int.Parse(condiInfos[0]);
                         condiObject.Args = condiInfos[1];

@@ -177,24 +177,24 @@ namespace SunDofus.World.Network.Realm
             {
                 if (datas.Length <= 1)
                 {
-                    SunDofus.World.Realm.World.Save.SaveWorld();
+                    SunDofus.World.Game.World.Save.SaveWorld();
                     return;
                 }
 
                 switch (datas[1])
                 {
                     case "all":
-                        SunDofus.World.Realm.World.Save.SaveWorld();
+                        SunDofus.World.Game.World.Save.SaveWorld();
                         Client.SendConsoleMessage("World saved !", 0);
                         break;
 
                     case "char":
-                        SunDofus.World.Realm.World.Save.SaveChararacters();
+                        SunDofus.World.Game.World.Save.SaveChararacters();
                         Client.SendConsoleMessage("Characters saved !", 0);
                         break;
 
                     default:
-                        SunDofus.World.Realm.World.Save.SaveWorld();
+                        SunDofus.World.Game.World.Save.SaveWorld();
                         Client.SendConsoleMessage("World saved !", 0);
                         break;
                 }
@@ -214,7 +214,7 @@ namespace SunDofus.World.Network.Realm
 
                 if (datas.Length == 2)
                 {
-                    var newItem = new SunDofus.World.Realm.Characters.Items.CharacterItem(item);
+                    var newItem = new SunDofus.World.Game.Characters.Items.CharacterItem(item);
                     newItem.GeneratItem();
 
                     Client.Player.ItemsInventary.AddItem(newItem, false);
@@ -223,7 +223,7 @@ namespace SunDofus.World.Network.Realm
 
                 else if (datas.Length == 3)
                 {
-                    var newItem = new SunDofus.World.Realm.Characters.Items.CharacterItem(item);
+                    var newItem = new SunDofus.World.Game.Characters.Items.CharacterItem(item);
                     newItem.GeneratItem(int.Parse(datas[2]));
 
                     Client.Player.ItemsInventary.AddItem(newItem, false);
