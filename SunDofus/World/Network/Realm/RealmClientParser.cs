@@ -55,6 +55,7 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["GC"] = CreateGame;
             RegisteredPackets["GI"] = GameInformations;
             RegisteredPackets["GK"] = EndAction;
+            RegisteredPackets["GP"] = ChangeAlignmentEnable;
             RegisteredPackets["Od"] = DeleteItem;
             RegisteredPackets["OM"] = MoveItem;
             RegisteredPackets["OU"] = UseItem;
@@ -424,23 +425,34 @@ namespace SunDofus.World.Network.Realm
             
             var state = (channel.Substring(0, 1) == "+" ? true : false);
             Client.Player.Channels.ChangeChannelState(head, state);
+        }
 
-            //if (channel.Contains("+"))
-            //{
-            //    channel = channel.Replace("+", "");
+        private void ChangeAlignmentEnable(string enable)
+        {
+            if (enable == "+")
+            {
+                if (Client.Player.Faction.ID != 0)
+                    Client.Player.Faction.isEnabled = true;
+            }
+            else if (enable == "*")
+            {
+                var hloose = Client.Player.Faction.Honor / 100;
+                Client.Send(string.Concat("GIP", hloose.ToString()));
 
-            //    if (!Client.Player.Channel.Contains(channel)) 
-            //        Client.Player.Channel = Client.Player.Channel + channel;
-            //    Client.Send("cC+" + channel);
-            //}
+                return;
+            }
+            else if (enable == "-")
+            {
+                var hloose = Client.Player.Faction.Honor / 100;
 
-            //else if (channel.Contains("-"))
-            //{
-            //    channel = channel.Replace("-", "");
+                if (Client.Player.Faction.ID != 0)
+                {
+                    Client.Player.Faction.isEnabled = false;
+                    Client.Player.Faction.Honor -= hloose;
+                }
+            }
 
-            //    Client.Player.Channel = Client.Player.Channel.Replace(channel, "");
-            //    Client.Send("cC-" + channel);
-            //}
+            Client.Player.SendChararacterStats();
         }
 
         private void ParseChatMessage(string datas)

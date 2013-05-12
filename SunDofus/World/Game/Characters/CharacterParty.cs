@@ -51,8 +51,7 @@ namespace SunDofus.World.Game.Characters
 
         public void UpdateMembers()
         {
-            Members.Keys.ToList().ToList().ForEach(x => Send("PM-" + x.ID));
-            Send(string.Format("PM{0}", PartyPattern()));
+            Send(string.Format("PM~{0}", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty())));
         }
 
         public void LeaveParty(string name, string kicker = "")
