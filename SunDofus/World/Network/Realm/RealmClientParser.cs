@@ -1223,8 +1223,8 @@ namespace SunDofus.World.Network.Realm
                         return;
                     }
 
-                    var actualExchange = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
-                        x.player2.ID == character.ID) || (x.player2.ID == Client.Player.ID && x.player1.ID == character.ID));
+                    var actualExchange = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.memberOne.Character.ID == Client.Player.ID &&
+                        x.memberTwo.Character.ID == character.ID) || (x.memberTwo.Character.ID == Client.Player.ID && x.memberOne.Character.ID == character.ID));
 
                     var kamas = (long)0;
 
@@ -1250,8 +1250,8 @@ namespace SunDofus.World.Network.Realm
                         return;
                     }
 
-                    var actualExchange2 = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
-                        x.player2.ID == character2.ID) || (x.player2.ID == Client.Player.ID && x.player1.ID == character2.ID));
+                    var actualExchange2 = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.memberOne.Character.ID == Client.Player.ID &&
+                        x.memberTwo.Character.ID == character2.ID) || (x.memberTwo.Character.ID == Client.Player.ID && x.memberOne.Character.ID == character2.ID));
 
                     var add = (datas.Substring(1, 1) == "+" ? true : false);
                     var infos = datas.Substring(2).Split('|');
@@ -1306,8 +1306,8 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
-            var actualExchange = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.player1.ID == Client.Player.ID &&
-                x.player2.ID == character.ID) || (x.player2.ID == Client.Player.ID && x.player1.ID == character.ID));
+            var actualExchange = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.memberOne.Character.ID == Client.Player.ID &&
+                x.memberTwo.Character.ID == character.ID) || (x.memberTwo.Character.ID == Client.Player.ID && x.memberOne.Character.ID == character.ID));
 
             Client.Send(string.Format("EK1{0}", Client.Player.ID));
             character.NetworkClient.Send(string.Format("EK1{0}", Client.Player.ID));

@@ -12,7 +12,7 @@ namespace SunDofus.World.Game.Exchanges
         public static void AddExchange(Characters.Character traider, Characters.Character traided)
         {
             lock(Exchanges)
-                Exchanges.Add(new Exchange(traider, traided));
+                Exchanges.Add(new Exchange(new ExchangePlayer(traider), new ExchangePlayer(traided)));
 
             traider.State.onExchangePanel = true;
             traided.State.onExchangePanel = true;
@@ -55,8 +55,8 @@ namespace SunDofus.World.Game.Exchanges
 
                     lock (Exchanges)
                     {
-                        if (Exchanges.Any(x => (x.player1 == canceler && x.player2 == character) || (x.player2 == canceler && x.player1 == character)))
-                            Exchanges.Remove(Exchanges.First(x => (x.player1 == canceler && x.player2 == character) || (x.player2 == canceler && x.player1 == character)));
+                        if (Exchanges.Any(x => (x.memberOne.Character == canceler && x.memberTwo.Character == character) || (x.memberTwo.Character == canceler && x.memberOne.Character == character)))
+                            Exchanges.Remove(Exchanges.First(x => (x.memberOne.Character == canceler && x.memberTwo.Character == character) || (x.memberTwo.Character == canceler && x.memberOne.Character == character)));
                     }
                 }
             }
@@ -84,8 +84,8 @@ namespace SunDofus.World.Game.Exchanges
 
                     lock (Exchanges)
                     {
-                        if (Exchanges.Any(x => (x.player1 == canceler && x.player2 == character) || (x.player2 == canceler && x.player1 == character)))
-                            Exchanges.Remove(Exchanges.First(x => (x.player1 == canceler && x.player2 == character) || (x.player2 == canceler && x.player1 == character)));
+                        if (Exchanges.Any(x => (x.memberOne.Character == canceler && x.memberTwo.Character == character) || (x.memberTwo.Character == canceler && x.memberOne.Character == character)))
+                            Exchanges.Remove(Exchanges.First(x => (x.memberOne.Character == canceler && x.memberTwo.Character == character) || (x.memberTwo.Character == canceler && x.memberOne.Character == character)));
                     }
                 }
             }
