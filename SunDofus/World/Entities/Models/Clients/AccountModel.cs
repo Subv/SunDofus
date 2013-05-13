@@ -8,7 +8,7 @@ namespace SunDofus.World.Entities.Models.Clients
     class AccountModel
     {
         private int _ID, _level;
-        private string _pseudo, _question, _answer, _strcharacters, _strgifts;
+        private string _pseudo, _question, _answer, _strcharacters, _strgifts, _strfriends, _strenemies;
         private long _subscription;
 
         public int ID
@@ -33,6 +33,7 @@ namespace SunDofus.World.Entities.Models.Clients
                 _level = value;
             }
         }
+
         public string Pseudo
         {
             get
@@ -88,6 +89,29 @@ namespace SunDofus.World.Entities.Models.Clients
                 _strgifts = value;
             }
         }
+        public string StrFriends
+        {
+            get
+            {
+                return _strfriends;
+            }
+            set
+            {
+                _strfriends = value;
+            }
+        }
+        public string StrEnemies
+        {
+            get
+            {
+                return _strenemies;
+            }
+            set
+            {
+                _strenemies = value;
+            }
+        }
+
         public long Subscription
         {
             get

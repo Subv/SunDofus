@@ -55,7 +55,7 @@ namespace SunDofus.World.Game.Characters
 
                     character.NetworkClient.Send(string.Concat("FAK", packet));
 
-                    //Send the information to AuthServer and Save
+                    Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.CreatedFriendPacket().GetPacket(character.NetworkClient.Infos.ID, charact.Infos.Pseudo));
                 }
                 else
                     character.NetworkClient.Send("FAEa");
@@ -75,7 +75,7 @@ namespace SunDofus.World.Game.Characters
                     character.NetworkClient.Friends.Remove(name);
                     character.NetworkClient.Send("FDK");
 
-                    //Send the information to AuthServer and Save
+                    Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedFriendPacket().GetPacket(character.NetworkClient.Infos.ID, name));
                 }
                 else
                     character.NetworkClient.Send("FDEf");
@@ -91,7 +91,7 @@ namespace SunDofus.World.Game.Characters
                         character.NetworkClient.Friends.Remove(client.Infos.Pseudo);
                         character.NetworkClient.Send("FDK");
 
-                        //Send the information to AuthServer and Save
+                        Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedFriendPacket().GetPacket(character.NetworkClient.Infos.ID, client.Infos.Pseudo));
                     }
                     else
                         character.NetworkClient.Send("FDEf");

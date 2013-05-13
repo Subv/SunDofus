@@ -48,7 +48,7 @@ namespace SunDofus.World.Game.Characters
                     character.NetworkClient.Enemies.Add(charact.Infos.Pseudo);
                     character.NetworkClient.Send(string.Concat("iAK", charact.Infos.Pseudo, ";2;", charact.Player.Name, ";36;10;0;100.FL."));
 
-                    //Send the information to AuthServer and Save
+                    Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.CreatedEnemyPacket().GetPacket(character.NetworkClient.Infos.ID, charact.Infos.Pseudo));
                 }
                 character.NetworkClient.Send("iAEA");
             }
@@ -67,7 +67,7 @@ namespace SunDofus.World.Game.Characters
                     character.NetworkClient.Enemies.Remove(name);
                     character.NetworkClient.Send("iDK");
 
-                    //Send the information to AuthServer and Save
+                    Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedEnemyPacket().GetPacket(character.NetworkClient.Infos.ID, name));
                 }
                 else
                     character.NetworkClient.Send("FDEf");
@@ -83,7 +83,7 @@ namespace SunDofus.World.Game.Characters
                         character.NetworkClient.Enemies.Remove(client.Infos.Pseudo);
                         character.NetworkClient.Send("iDK");
 
-                        //Send the information to AuthServer and Save
+                        Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedEnemyPacket().GetPacket(character.NetworkClient.Infos.ID, client.Infos.Pseudo));
                     }
                     else
                         character.NetworkClient.Send("FDEf");

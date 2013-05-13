@@ -104,10 +104,16 @@ namespace SunDofus.Auth.Entities.Models
         public DateTime SubscriptionDate;
         public Dictionary<int, List<string>> Characters;
 
+        public List<string> Friends;
+        public List<string> Enemies;
+
         public AccountsModel()
         {
             SubscriptionDate = new DateTime();
             Characters = new Dictionary<int, List<string>>();
+
+            Friends = new List<string>();
+            Enemies = new List<string>();
         }
 
         public long SubscriptionTime()

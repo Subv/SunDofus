@@ -116,6 +116,18 @@ namespace SunDofus.World.Network.Realm
 
                     Client.Authentified = true;
 
+                    foreach (var friend in Client.Infos.StrFriends.Split('+'))
+                    {
+                        if (!Client.Friends.Contains(friend))
+                            Client.Friends.Add(friend);
+                    }
+
+                    foreach (var enemy in Client.Infos.StrEnemies.Split('+'))
+                    {
+                        if (!Client.Enemies.Contains(enemy))
+                            Client.Enemies.Add(enemy);
+                    }
+
                     Network.Auth.AuthKeys.Keys.Remove(key);
 
                     Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.ClientConnectedPacket().GetPacket(Client.Infos.Pseudo));

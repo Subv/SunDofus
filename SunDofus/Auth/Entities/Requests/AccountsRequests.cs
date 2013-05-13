@@ -41,6 +41,8 @@ namespace SunDofus.Auth.Entities.Requests
                 sqlReader.Close();
 
                 account.Characters = LoadCharacters(account.ID);
+                account.Friends = LoadFriends(account.ID);
+                account.Enemies = LoadEnemies(account.ID);
             }
 
             return account;
@@ -77,6 +79,8 @@ namespace SunDofus.Auth.Entities.Requests
                 sqlReader.Close();
 
                 account.Characters = LoadCharacters(account.ID);
+                account.Friends = LoadFriends(account.ID);
+                account.Enemies = LoadEnemies(account.ID);
             }
 
             return account;
@@ -110,6 +114,54 @@ namespace SunDofus.Auth.Entities.Requests
             }
 
             return dico;
+        }
+
+        public static List<string> LoadFriends(int accID)
+        {
+            var friends = new List<string>();
+
+            lock (DatabaseProvider.ConnectionLocker)
+            {
+                var sqlText = "SELECT targetPseudo FROM accounts_friends WHERE accID=@id";
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+
+                var sqlReader = sqlCommand.ExecuteReader();
+
+                while (sqlReader.Read())
+                {
+                    if (!friends.Contains(sqlReader.GetString("targetPseudo")))
+                        friends.Add(sqlReader.GetString("targetPseudo"));
+                }
+
+                sqlReader.Close();
+            }
+
+            return friends;
+        }
+
+        public static List<string> LoadEnemies(int accID)
+        {
+            var enemies = new List<string>();
+
+            lock (DatabaseProvider.ConnectionLocker)
+            {
+                var sqlText = "SELECT targetPseudo FROM accounts_enemies WHERE accID=@id";
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+
+                var sqlReader = sqlCommand.ExecuteReader();
+
+                while (sqlReader.Read())
+                {
+                    if (!enemies.Contains(sqlReader.GetString("targetPseudo")))
+                        enemies.Add(sqlReader.GetString("targetPseudo"));
+                }
+
+                sqlReader.Close();
+            }
+
+            return enemies;
         }
 
         public static int GetAccountID(string pseudo)

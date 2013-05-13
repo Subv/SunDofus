@@ -128,6 +128,8 @@ namespace SunDofus.World.Network.Auth
             var answer = infos[4];
             var characters = infos[6];
             var gifts = infos[8];
+            var friends = infos[9];
+            var enemies = infos[10];
 
             int id;
             int level;
@@ -143,7 +145,7 @@ namespace SunDofus.World.Network.Auth
                 return;
 
             AuthKeys.Keys.Add(new AuthKeys.AuthKey
-                (key, id, pseudo, question, answer, level, characters, time, gifts));
+                (key, id, pseudo, question, answer, level, characters, time, gifts, friends, enemies));
         }
     }
 }

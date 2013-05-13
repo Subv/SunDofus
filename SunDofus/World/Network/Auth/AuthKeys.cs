@@ -22,7 +22,7 @@ namespace SunDofus.World.Network.Auth
             }
             public Entities.Models.Clients.AccountModel Infos;
 
-            public AuthKey(string key, int id, string pseudo, string question, string answer, int level, string charac, long time, string gifts)
+            public AuthKey(string key, int id, string pseudo, string question, string answer, int level, string charac, long time, string gifts, string friends, string enemies)
             {
                 _key = key;
 
@@ -36,6 +36,8 @@ namespace SunDofus.World.Network.Auth
                     Strcharacters = charac,
                     Subscription = time,
                     Strgifts = gifts,
+                    StrFriends = friends,
+                    StrEnemies = enemies,
                 };
             }
         }

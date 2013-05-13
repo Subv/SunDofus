@@ -31,7 +31,8 @@ namespace SunDofus.Auth.Network.Sync
         {
             var datas = new object[] { key, client.Account.ID, client.Account.Pseudo, client.Account.Question,
                 client.Account.Answer, client.Account.Level, string.Join(",", client.Account.Characters[Server.ID].ToArray()),
-                client.Account.SubscriptionTime(), string.Join("+", Entities.Requests.GiftsRequests.GetGiftsByAccountID(client.Account.ID)) };
+                client.Account.SubscriptionTime(), string.Join("+", Entities.Requests.GiftsRequests.GetGiftsByAccountID(client.Account.ID)),
+                string.Join("+", client.Account.Friends), string.Join("+", client.Account.Enemies) };
 
             Send(new Packets.TransferPacket().GetPacket(datas));
         }
@@ -105,6 +106,22 @@ namespace SunDofus.Auth.Network.Sync
                     case 120:
                         ReceiveNewDeletedGifts(datas);
                         return;
+
+                    case 130:
+                        ReceiveToUpdateFriend(datas, true);
+                        return;
+
+                    case 140:
+                        ReceiveToUpdateFriend(datas, false);
+                        return;
+
+                    case 150:
+                        ReceiveToUpdateEnemy(datas, true);
+                        return;
+
+                    case 160:
+                        ReceiveToUpdateEnemy(datas, false);
+                        return;
                 }
             }
             catch (Exception e)
@@ -147,6 +164,16 @@ namespace SunDofus.Auth.Network.Sync
 
                 SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), true);
             }
+        }
+
+        private void ReceiveToUpdateFriend(string[] datas, bool add)
+        {
+            SyncAction.UpdateFriend(int.Parse(datas[1]), datas[2], add);
+        }
+
+        private void ReceiveToUpdateEnemy(string[] datas, bool add)
+        {
+            SyncAction.UpdateEnemy(int.Parse(datas[1]), datas[2], add);
         }
 
         private void ReceiveNewDisconnectedClient(string datas)

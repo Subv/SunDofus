@@ -76,5 +76,63 @@ namespace SunDofus.Auth.Network.Sync
                 sqlCommand.ExecuteNonQuery();
             }
         }
+
+        public static void UpdateFriend(int accID, string targetPseudo, bool add)
+        {
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
+            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            {
+                if (add)
+                {
+                    var sqlText = "INSERT INTO accounts_friends VALUES (@id, @pseudo)";
+                    var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    var sqlText = "DELETE FROM accounts_friends WHERE accID=@id AND targetPseudo=@pseudo";
+                    var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void UpdateEnemy(int accID, string targetPseudo, bool add)
+        {
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
+            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            {
+                if (add)
+                {
+                    var sqlText = "INSERT INTO accounts_enemies VALUES (@id, @pseudo)";
+                    var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    var sqlText = "DELETE FROM accounts_enemies WHERE accID=@id AND targetPseudo=@pseudo";
+                    var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

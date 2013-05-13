@@ -120,7 +120,11 @@
     <Compile Include="World\Network\Auth\Packets\ClientConnectedPacket.cs" />
     <Compile Include="World\Network\Auth\Packets\ClientDisconnectedPacket.cs" />
     <Compile Include="World\Network\Auth\Packets\CreatedCharacterPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\CreatedEnemyPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\CreatedFriendPacket.cs" />
     <Compile Include="World\Network\Auth\Packets\DeletedCharacterPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\DeletedEnemyPacket.cs" />
+    <Compile Include="World\Network\Auth\Packets\DeletedFriendPacket.cs" />
     <Compile Include="World\Network\Auth\Packets\DeletedGiftPacket.cs" />
     <Compile Include="World\Network\Auth\Packets\ListOfConnectedPacket.cs" />
     <Compile Include="World\Network\Auth\Packets\MasterPacket.cs" />
