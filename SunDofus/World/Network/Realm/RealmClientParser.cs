@@ -340,6 +340,9 @@ namespace SunDofus.World.Network.Realm
 
                         Client.Player.isConnected = true;
 
+                        foreach (var client in Network.ServersHandler.RealmServer.Clients.Where(x => x.Characters.Any(c => c.isConnected == true) && x.Friends.Contains(Client.Infos.Pseudo) && x.Player.Friends.willSeeWhenConnected))
+                            client.Send(string.Concat("Im0143;", Client.Player.Name));
+
                         Client.Send(string.Format("ASK{0}", Client.Player.PatternSelect()));
                     }
                     else
