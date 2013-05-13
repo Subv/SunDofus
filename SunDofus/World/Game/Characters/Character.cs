@@ -275,14 +275,7 @@ namespace SunDofus.World.Game.Characters
             Stats = new Stats.Stats();
             ItemsInventary = new InventaryItems(this);
             SpellsInventary = new InventarySpells(this);
-
-            Faction = new CharacterFaction(this)
-            {
-                ID = 0,
-                Honor = 0,
-                Deshonor = 0,
-                isEnabled = false,
-            };
+            Faction = new CharacterFaction(this);
 
             Channels = new CharacterChannels(this);
             Friends = new CharacterFriends(this);

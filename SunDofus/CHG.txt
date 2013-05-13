@@ -143,5 +143,5 @@ SunDofus v0.3.1.X :
 -> [11.05.2013] Réecriture de tous les models du world (Get/Set)
 -> [12.05.2013] Ajout de l'update dans les groupes lors d'un changement d'item
 -> [12.05.2013] Ajout des alignements des joueurs (activation, perte de point d'honneur, level, vue d'extérieur)
--> [12.05.2013] Ajout des amis et des ennemis (manque la partie SQL) -> Message lors de la connexion, stats cachés etc etc
+-> [12.05.2013] Ajout des amis et des ennemis -> Message lors de la connexion, stats cachés etc etc
 -> [12.05.2013] Ajout du chat d'alignement (minimum grade 3, et tous les joueurs du même alignement recoive le message)

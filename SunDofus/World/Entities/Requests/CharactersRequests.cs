@@ -50,6 +50,16 @@ namespace SunDofus.World.Entities.Requests
                     if (sqlResult.GetString("spells") != "") 
                         character.SpellsInventary.ParseSpells(sqlResult.GetString("spells"));
 
+                    var factionInfos = sqlResult.GetString("faction").Split(';');
+                    character.Faction.ID = int.Parse(factionInfos[0]);
+                    character.Faction.Honor = int.Parse(factionInfos[1]);
+                    character.Faction.Deshonor = int.Parse(factionInfos[2]);
+
+                    if (character.Faction.Honor > Entities.Requests.LevelsRequests.LevelsList.OrderByDescending(x => x.Alignment).ToArray()[0].Alignment)
+                        character.Faction.Level = 10;
+                    else
+                        character.Faction.Level = Entities.Requests.LevelsRequests.LevelsList.Where(x => x.Alignment <= character.Faction.Honor).OrderByDescending(x => x.Alignment).ToArray()[0].ID;
+
                     lock (Game.Characters.CharactersManager.CharactersList)
                         Game.Characters.CharactersManager.CharactersList.Add(character);
                 }
@@ -64,7 +74,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "INSERT INTO dyn_characters VALUES(@id, @name, @level, @class, @sex, @color, @color2, @color3, @mapinfos, @stats, @items, @spells, @exp)";
+                var sqlText = "INSERT INTO dyn_characters VALUES(@id, @name, @level, @class, @sex, @color, @color2, @color3, @mapinfos, @stats, @items, @spells, @exp, @faction)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;
@@ -82,6 +92,7 @@ namespace SunDofus.World.Entities.Requests
                 P.Add(new MySqlParameter("@items", character.GetItemsToSave()));
                 P.Add(new MySqlParameter("@spells", character.SpellsInventary.SaveSpells()));
                 P.Add(new MySqlParameter("@exp", character.Exp));
+                P.Add(new MySqlParameter("@faction", "0;0;0"));
 
                 sqlCommand.ExecuteNonQuery();
 
@@ -109,7 +120,7 @@ namespace SunDofus.World.Entities.Requests
             lock (DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "UPDATE dyn_characters SET id=@id, name=@name, level=@level, class=@class, sex=@sex," +
-                    " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp WHERE id=@id";
+                    " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp, faction=@faction WHERE id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;
@@ -126,6 +137,7 @@ namespace SunDofus.World.Entities.Requests
                 P.Add(new MySqlParameter("@items", character.GetItemsToSave()));
                 P.Add(new MySqlParameter("@spells", character.SpellsInventary.SaveSpells()));
                 P.Add(new MySqlParameter("@exp", character.Exp));
+                P.Add(new MySqlParameter("@faction", string.Concat(character.Faction.ID, ";", character.Faction.Honor, ";", character.Faction.Deshonor)));
 
                 sqlCommand.ExecuteNonQuery();
             }
