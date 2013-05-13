@@ -262,10 +262,13 @@ namespace SunDofus.World.Game.Characters
         public InventaryItems ItemsInventary;
         public InventarySpells SpellsInventary;
         public RealmClient NetworkClient;
+
         public CharacterState State;
         public CharacterFaction Faction;
         public CharacterChannels Channels;
+
         public CharacterFriends Friends;
+        public CharacterEnemies Enemies;
 
         public Character()
         {
@@ -283,6 +286,7 @@ namespace SunDofus.World.Game.Characters
 
             Channels = new CharacterChannels(this);
             Friends = new CharacterFriends(this);
+            Enemies = new CharacterEnemies(this);
 
             Energy = 10000;
             isConnected = false;

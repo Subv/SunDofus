@@ -26,7 +26,10 @@ namespace SunDofus.World.Network.Realm
 
         public Character Player;
         public List<Character> Characters;
+
         public List<string> Friends;
+        public List<string> Enemies;
+
         public AccountModel Infos;
         public RealmClientCommander Commander;
 
@@ -42,7 +45,7 @@ namespace SunDofus.World.Network.Realm
 
             Characters = new List<SunDofus.World.Game.Characters.Character>();
             Friends = new List<string>();
-            Friends.Add("test");
+            Enemies = new List<string>();
 
             Commander = new RealmClientCommander(this);
             _parser = new RealmClientParser(this);

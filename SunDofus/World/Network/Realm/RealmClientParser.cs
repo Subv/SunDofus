@@ -59,6 +59,9 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["GI"] = GameInformations;
             RegisteredPackets["GK"] = EndAction;
             RegisteredPackets["GP"] = ChangeAlignmentEnable;
+            RegisteredPackets["iA"] = EnemyAdd;
+            RegisteredPackets["iD"] = EnemyDelete;
+            RegisteredPackets["iL"] = EnemiesList;
             RegisteredPackets["Od"] = DeleteItem;
             RegisteredPackets["OM"] = MoveItem;
             RegisteredPackets["OU"] = UseItem;
@@ -471,6 +474,21 @@ namespace SunDofus.World.Network.Realm
         private void FriendDelete(string datas)
         {
             Client.Player.Friends.RemoveFriend(datas);
+        }
+
+        private void EnemiesList(string datas)
+        {
+            Client.Player.Enemies.SendEnemies();
+        }
+
+        private void EnemyAdd(string datas)
+        {
+            Client.Player.Enemies.AddEnemy(datas);
+        }
+
+        private void EnemyDelete(string datas)
+        {
+            Client.Player.Enemies.RemoveEnemy(datas);
         }
 
         private void ParseChatMessage(string datas)

@@ -110,6 +110,7 @@
     <Compile Include="World\Entities\Models\Spells\SpellLevelModel.cs" />
     <Compile Include="World\Entities\Models\Spells\SpellModel.cs" />
     <Compile Include="World\Entities\Models\Spells\SpellToLearn.cs" />
+    <Compile Include="World\Game\Characters\CharacterEnemies.cs" />
     <Compile Include="World\Game\Characters\CharacterFriends.cs" />
     <Compile Include="World\Game\Exchanges\ExchangePlayer.cs" />
     <Compile Include="World\Network\Auth\AuthClient.cs" />
