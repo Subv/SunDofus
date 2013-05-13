@@ -538,7 +538,7 @@ namespace SunDofus.World.Network.Realm
                     return;
 
                 case "!":
-                    //AlignmentMessage
+                    Chat.SendFactionMessage(Client, message);
                     return;
 
                 case ":":

@@ -43,7 +43,7 @@ namespace SunDofus.World.Game.World
             {
                 var character = CharactersManager.CharactersList.First(x => x.Name == receiver);
 
-                if (character.isConnected == true)
+                if (character.isConnected == true && !character.NetworkClient.Enemies.Contains(client.Infos.Pseudo))
                 {
                     character.NetworkClient.Send(string.Format("cMKF|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
                     client.Send(string.Format("cMKT|{0}|{1}|{2}", client.Player.ID, character.Name, message));
@@ -77,6 +77,15 @@ namespace SunDofus.World.Game.World
             }
             else
                 client.Send(string.Format("Im0115;{0}", client.Player.TimeRecruitment()));
+        }
+
+        public static void SendFactionMessage(Network.Realm.RealmClient client, string message)
+        {
+            if (client.Player.Faction.ID != 0 && client.Player.Faction.Level >= 3)
+            {
+                foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.Authentified == true && x.Player.Faction.ID == client.Player.Faction.ID))
+                    character.Send(string.Format("cMK!|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
+            }
         }
 
         public static void SendPartyMessage(Network.Realm.RealmClient client, string message)
