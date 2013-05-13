@@ -112,7 +112,7 @@ namespace SunDofus.World.Entities.Models.Monsters
             }
             set
             {
-                _str = value;
+                _rStr = value;
             }
         }
         public int RIntel

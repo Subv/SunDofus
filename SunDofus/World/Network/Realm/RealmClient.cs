@@ -26,6 +26,7 @@ namespace SunDofus.World.Network.Realm
 
         public Character Player;
         public List<Character> Characters;
+        public List<string> Friends;
         public AccountModel Infos;
         public RealmClientCommander Commander;
 
@@ -40,6 +41,9 @@ namespace SunDofus.World.Network.Realm
             this.ReceivedDatas += new ReceiveDatasHandler(this.ReceivedPackets);
 
             Characters = new List<SunDofus.World.Game.Characters.Character>();
+            Friends = new List<string>();
+            Friends.Add("test");
+
             Commander = new RealmClientCommander(this);
             _parser = new RealmClientParser(this);
 
@@ -78,7 +82,7 @@ namespace SunDofus.World.Network.Realm
 
             foreach (var gift in Infos.Gifts)
             {
-                if (Entities.Requests.ItemsRequests.ItemsList.Any(x => x.ID == gift.ItemID) == false)
+                if (!Entities.Requests.ItemsRequests.ItemsList.Any(x => x.ID == gift.ItemID))
                     return;
 
                 var item = new SunDofus.World.Game.Characters.Items.CharacterItem(Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == gift.ItemID));

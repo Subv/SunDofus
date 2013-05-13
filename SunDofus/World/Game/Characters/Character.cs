@@ -12,7 +12,7 @@ namespace SunDofus.World.Game.Characters
 {
     class Character
     {
-        private string _name, _channel;
+        private string _name;
         private int _ID, _color, _color2, _color3, _class, _sex, _skin, _size, _level, _mapID, _mapCell, _dir, _charactPoint, _spellPoint, _energy;
         private int _maximumLife, _life, _pods;
         private long _exp, _kamas;
@@ -28,17 +28,7 @@ namespace SunDofus.World.Game.Characters
                 _name = value;
             }
         }
-        public string Channel
-        {
-            get
-            {
-                return _channel;
-            }
-            set
-            {
-                _channel = value;
-            }
-        }
+
         public int ID
         {
             get
@@ -238,10 +228,6 @@ namespace SunDofus.World.Game.Characters
             }
         }
 
-        public bool isNewCharacter;
-        public bool isDeletedCharacter;
-        public bool isConnected;
-
         public long Exp
         {
             get
@@ -265,6 +251,10 @@ namespace SunDofus.World.Game.Characters
             }
         }
 
+        public bool isNewCharacter;
+        public bool isDeletedCharacter;
+        public bool isConnected;
+
         private long QuotaRecruitment;
         private long QuotaTrade;
 
@@ -275,6 +265,7 @@ namespace SunDofus.World.Game.Characters
         public CharacterState State;
         public CharacterFaction Faction;
         public CharacterChannels Channels;
+        public CharacterFriends Friends;
 
         public Character()
         {
@@ -291,8 +282,8 @@ namespace SunDofus.World.Game.Characters
             };
 
             Channels = new CharacterChannels(this);
+            Friends = new CharacterFriends(this);
 
-            Channel = "*#$p%i:?!";
             Energy = 10000;
             isConnected = false;
             isDeletedCharacter = false;

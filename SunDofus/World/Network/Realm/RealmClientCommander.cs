@@ -29,10 +29,6 @@ namespace SunDofus.World.Network.Realm
                             ParseCommandAdd(datas);
                             break;
 
-                        case "bug":
-                            ParseCommandBug(datas);
-                            break;
-
                         case "save":
                             ParseCommandSave(datas);
                             break;
@@ -90,38 +86,12 @@ namespace SunDofus.World.Network.Realm
             }
             catch (Exception e)
             {
-                Client.SendConsoleMessage("Cannot parse your ChatCommand !");
+                Client.SendMessage("Cannot parse your ChatCommand !");
                 Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse command from <{0}> because : {1}", Client.myIp(), e.ToString()));
             }
         }
 
         #region CommandInfos
-
-        private void ParseCommandBug(string[] datas)
-        {
-            try
-            {
-                switch (datas[1])
-                {
-                    case "trigger":
-
-                        if (!System.IO.Directory.Exists("./output/"))
-                            System.IO.Directory.CreateDirectory("./output/");
-                        if (!System.IO.Directory.Exists("./output/bugs/"))
-                            System.IO.Directory.CreateDirectory("./output/bugs/");
-
-                        var writer = new System.IO.StreamWriter("./output/bugs/triggers.txt", true);
-                        writer.WriteLine(Client.Player.MapID+ "<>" + Client.Player.MapCell);
-                        writer.Close();
-                        break;
-
-                }
-            }
-            catch
-            {
-                Client.SendConsoleMessage("Cannot parse your AdminCommand !");
-            }
-        }
 
         private void ParseCommandFaction(string[] datas)
         {
@@ -142,6 +112,7 @@ namespace SunDofus.World.Network.Realm
                         Client.Player.Faction.Level = 1;
                         Client.Player.Faction.Honor = 0;
                         Client.Player.Faction.Deshonor = 0;
+                        Client.Player.Faction.isEnabled = false;
                         Client.Player.SendChararacterStats();
                         break;
 

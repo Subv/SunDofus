@@ -51,6 +51,9 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["ER"] = ExchangeRequest;
             RegisteredPackets["ES"] = ExchangeSell;
             RegisteredPackets["EV"] = CancelExchange;
+            RegisteredPackets["FA"] = FriendAdd;
+            RegisteredPackets["FD"] = FriendDelete;
+            RegisteredPackets["FL"] = FriendsList;
             RegisteredPackets["GA"] = GameAction;
             RegisteredPackets["GC"] = CreateGame;
             RegisteredPackets["GI"] = GameInformations;
@@ -453,6 +456,21 @@ namespace SunDofus.World.Network.Realm
             }
 
             Client.Player.SendChararacterStats();
+        }
+
+        private void FriendsList(string datas)
+        {
+            Client.Player.Friends.SendFriends();
+        }
+
+        private void FriendAdd(string datas)
+        {
+            Client.Player.Friends.AddFriend(datas);
+        }
+
+        private void FriendDelete(string datas)
+        {
+            Client.Player.Friends.RemoveFriend(datas);
         }
 
         private void ParseChatMessage(string datas)

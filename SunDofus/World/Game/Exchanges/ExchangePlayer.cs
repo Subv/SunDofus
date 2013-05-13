@@ -43,12 +43,16 @@ namespace SunDofus.World.Game.Exchanges
         {
             isNpc = false;
             Character = _character;
+
+            Items = new List<ExchangeItem>();
         }
 
         public ExchangePlayer(Characters.NPC.NPCMap _npc)
         {
             isNpc = true;
             Npc = _npc;
+
+            Items = new List<ExchangeItem>();
         }
 
         public void Send(string message)
