@@ -54,6 +54,7 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["FA"] = FriendAdd;
             RegisteredPackets["FD"] = FriendDelete;
             RegisteredPackets["FL"] = FriendsList;
+            RegisteredPackets["FO"] = FriendsFollow;
             RegisteredPackets["GA"] = GameAction;
             RegisteredPackets["GC"] = CreateGame;
             RegisteredPackets["GI"] = GameInformations;
@@ -420,6 +421,8 @@ namespace SunDofus.World.Network.Realm
             Client.Player.SendChararacterStats();
 
             Client.Player.LoadMap();
+
+            Client.Send(string.Concat("FO", (Client.Player.Friends.willSeeWhenConnected ? "+" : "-")));
         }
 
         private void ChangeChannel(string channel)
@@ -474,6 +477,16 @@ namespace SunDofus.World.Network.Realm
         private void FriendDelete(string datas)
         {
             Client.Player.Friends.RemoveFriend(datas);
+        }
+
+        private void FriendsFollow(string datas)
+        {
+            if (datas.Substring(0, 1) == "+")
+                Client.Player.Friends.willSeeWhenConnected = true;
+            else
+                Client.Player.Friends.willSeeWhenConnected = false;
+
+            Client.Send(string.Concat("FO", (Client.Player.Friends.willSeeWhenConnected ? "+" : "-")));
         }
 
         private void EnemiesList(string datas)

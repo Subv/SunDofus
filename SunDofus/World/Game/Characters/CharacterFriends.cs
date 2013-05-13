@@ -9,6 +9,8 @@ namespace SunDofus.World.Game.Characters
     {
         private Character character;
 
+        public bool willSeeWhenConnected = false;
+
         public CharacterFriends(Character _character)
         {
             character = _character;
