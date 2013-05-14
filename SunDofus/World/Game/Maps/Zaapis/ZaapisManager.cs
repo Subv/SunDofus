@@ -44,8 +44,7 @@ namespace SunDofus.World.Game.Maps.Zaapis
                 var price = (character.Faction.ID == zaapis.Faction ? 10 : 20);
 
                 character.Kamas -= price;
-                //character.NetworkClient.Send(string.Concat("Im022;suite à votre déplacement;", price));
-                //ImPacket, argent perdu
+                character.NetworkClient.Send(string.Concat("Im046;", price));
                 character.TeleportNewMap(zaapis.MapID, zaapis.CellID);
 
                 character.NetworkClient.Send("Wv");
