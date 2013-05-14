@@ -14,7 +14,7 @@ namespace SunDofus.World.Game.Characters
     {
         private string _name;
         private int _ID, _color, _color2, _color3, _class, _sex, _skin, _size, _level, _mapID, _mapCell, _dir, _charactPoint, _spellPoint, _energy;
-        private int _maximumLife, _life, _pods;
+        private int _maximumLife, _life, _pods, _savemap, _savecell;
         private long _exp, _kamas;
 
         public string Name
@@ -227,6 +227,28 @@ namespace SunDofus.World.Game.Characters
                 _pods = value;
             }
         }
+        public int SaveMap
+        {
+            get
+            {
+                return _savemap;
+            }
+            set
+            {
+                _savemap = value;
+            }
+        }
+        public int SaveCell
+        {
+            get
+            {
+                return _savecell;
+            }
+            set
+            {
+                _savecell = value;
+            }
+        }
 
         public long Exp
         {
@@ -258,6 +280,8 @@ namespace SunDofus.World.Game.Characters
         private long QuotaRecruitment;
         private long QuotaTrade;
 
+        public List<int> Zaaps;
+
         public Stats.Stats Stats;
         public InventaryItems ItemsInventary;
         public InventarySpells SpellsInventary;
@@ -272,6 +296,8 @@ namespace SunDofus.World.Game.Characters
 
         public Character()
         {
+            Zaaps = new List<int>();
+
             Stats = new Stats.Stats();
             ItemsInventary = new InventaryItems(this);
             SpellsInventary = new InventarySpells(this);
@@ -489,16 +515,16 @@ namespace SunDofus.World.Game.Characters
 
         public void LoadMap()
         {
-            if (Entities.Requests.MapsRequests.MapsList.Any(x => x.GetModel.ID == this.MapID))
+            if (Entities.Requests.MapsRequests.MapsList.Any(x => x.Model.ID == this.MapID))
             {
-                var map = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == this.MapID);
+                var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == this.MapID);
 
-                NetworkClient.Send(string.Format("GDM|{0}|{1}|{2}", map.GetModel.ID, map.GetModel.Date, map.GetModel.Key));
+                NetworkClient.Send(string.Format("GDM|{0}|{1}|{2}", map.Model.ID, map.Model.Date, map.Model.Key));
 
                 if (this.State.isFollow)
                 {
                     foreach (var character in this.State.Followers)
-                        character.NetworkClient.Send(string.Format("IC{0}|{1}", GetMap().GetModel.PosX, GetMap().GetModel.PosY));
+                        character.NetworkClient.Send(string.Format("IC{0}|{1}", GetMap().Model.PosX, GetMap().Model.PosY));
                 }
             }
         }
@@ -507,9 +533,9 @@ namespace SunDofus.World.Game.Characters
         {
             get
             {
-                return GetMap().GetModel.SubArea == 440 || GetMap().GetModel.SubArea == 442 || GetMap().GetModel.SubArea == 443 ||
-                    GetMap().GetModel.SubArea == 444 || GetMap().GetModel.SubArea == 445 || GetMap().GetModel.SubArea == 446 ||
-                    GetMap().GetModel.SubArea == 449 || GetMap().GetModel.SubArea == 450;
+                return GetMap().Model.SubArea == 440 || GetMap().Model.SubArea == 442 || GetMap().Model.SubArea == 443 ||
+                    GetMap().Model.SubArea == 444 || GetMap().Model.SubArea == 445 || GetMap().Model.SubArea == 446 ||
+                    GetMap().Model.SubArea == 449 || GetMap().Model.SubArea == 450;
             }
         }
 
@@ -518,9 +544,9 @@ namespace SunDofus.World.Game.Characters
             NetworkClient.Send(string.Format("GA;2;{0};", ID));
 
             GetMap().DelPlayer(this);
-            var map = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == _mapID);
+            var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == _mapID);
 
-            MapID = map.GetModel.ID;
+            MapID = map.Model.ID;
             MapCell = _cell;
 
             LoadMap();
@@ -528,7 +554,7 @@ namespace SunDofus.World.Game.Characters
 
         public Maps.Map GetMap()
         {
-            return Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == this.MapID);
+            return Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == this.MapID);
         }
 
         #endregion

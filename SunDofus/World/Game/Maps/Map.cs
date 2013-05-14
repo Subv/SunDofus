@@ -14,19 +14,11 @@ namespace SunDofus.World.Game.Maps
         public List<Fights.Fight> Fights;
         public List<int> RushablesCells;
 
-        private Entities.Models.Maps.MapModel _model;
-
-        public Entities.Models.Maps.MapModel GetModel
-        {
-            get
-            {
-                return _model;
-            }
-        }
+        public Entities.Models.Maps.MapModel Model;
 
         public Map(Entities.Models.Maps.MapModel map)
         {
-            _model = map;
+            Model = map;
 
             RushablesCells = UncompressDatas();
 
@@ -36,23 +28,23 @@ namespace SunDofus.World.Game.Maps
             MonstersGroups = new List<Monsters.MonstersGroup>();
             Fights = new List<Fights.Fight>();
 
-            if (GetModel.Monsters.Count != 0 && RushablesCells.Count != 0)
+            if (Model.Monsters.Count != 0 && RushablesCells.Count != 0)
                 RefreshAllMonsters();
         }
 
         private void RefreshAllMonsters()
         {
-            for (int i = 1; i <= GetModel.MaxMonstersGroup; i++)
+            for (int i = 1; i <= Model.MaxMonstersGroup; i++)
                 AddMonstersGroup();
         }
 
         public void AddMonstersGroup()
         {
-            if (MonstersGroups.Count >= GetModel.MaxMonstersGroup)
+            if (MonstersGroups.Count >= Model.MaxMonstersGroup)
                 return;
 
             lock(MonstersGroups)
-                MonstersGroups.Add(new Monsters.MonstersGroup(GetModel.Monsters, this));
+                MonstersGroups.Add(new Monsters.MonstersGroup(Model.Monsters, this));
         }
 
         public void Send(string message)
@@ -140,18 +132,10 @@ namespace SunDofus.World.Game.Maps
         private List<int> UncompressDatas()
         {
             List<int> newList = new List<int>();
-            var lengh = GetModel.MapData.Length;
-            var cells = 0;
-            var id = 0;
 
-            while (cells < lengh)
-            {
-                if (isValidCell(GetModel.MapData.Substring(cells, 10)))
-                    newList.Add(id);
-
-                cells += 10;
-                id++;
-            }
+            for (int i = 1; i <= 479; i++)
+                newList.Add(i);
+            //Lecture in the MapData / Decrypt
 
             return newList;
         }

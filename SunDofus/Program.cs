@@ -56,6 +56,8 @@ namespace SunDofus
 
                     World.Entities.Requests.MapsRequests.LoadMaps();
                     World.Entities.Requests.TriggersRequests.LoadTriggers();
+                    World.Entities.Requests.ZaapsRequests.LoadZaaps();
+                    World.Entities.Requests.ZaapisRequests.LoadZaapis();
 
                     World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsAnswers();
                     World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsQuestions();

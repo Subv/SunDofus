@@ -41,7 +41,7 @@ namespace SunDofus.World.Game.Maps.Monsters
             _base = monsters;
 
             _map = map;
-            _maxSize = map.GetModel.MaxGroupSize;
+            _maxSize = map.Model.MaxGroupSize;
 
             _id = map.NextNpcID();
 
@@ -74,7 +74,7 @@ namespace SunDofus.World.Game.Maps.Monsters
             var startpath = path.GetStartPath;
             var cellpath = path.RemakePath();
 
-            if (!Game.Maps.Pathfinding.isValidCell(_cell, cellpath) && !_map.RushablesCells.Contains(newCell))
+            if (!_map.RushablesCells.Contains(newCell))
                 return;
 
             if (cellpath != "")

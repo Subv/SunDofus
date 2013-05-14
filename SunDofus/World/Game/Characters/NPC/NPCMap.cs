@@ -99,7 +99,7 @@ namespace SunDofus.World.Game.Characters.NPC
             {
                 _movements.Interval = Utilities.Basic.Rand(1000, 5000);
 
-                var map = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.ID == MapID);
+                var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == MapID);
 
                 var path = new Game.Maps.Pathfinding("", map, MapCell, Dir);
                 var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
@@ -114,7 +114,7 @@ namespace SunDofus.World.Game.Characters.NPC
                 var startpath = path.GetStartPath;
                 var cellpath = path.RemakePath();
 
-                if (!Game.Maps.Pathfinding.isValidCell(MapCell, cellpath) && !map.RushablesCells.Contains(newCell))
+                if (!map.RushablesCells.Contains(newCell))
                     return;
 
                 if (cellpath != "")

@@ -274,8 +274,8 @@ namespace SunDofus.World.Network.Realm
 
                 else if (datas.Length == 4)
                 {
-                    var myMap = Entities.Requests.MapsRequests.MapsList.First(x => x.GetModel.PosX == int.Parse(datas[1]) && x.GetModel.PosY == int.Parse(datas[2]));
-                    Client.Player.TeleportNewMap(myMap.GetModel.ID, int.Parse(datas[3]));
+                    var myMap = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.PosX == int.Parse(datas[1]) && x.Model.PosY == int.Parse(datas[2]));
+                    Client.Player.TeleportNewMap(myMap.Model.ID, int.Parse(datas[3]));
                     Client.SendConsoleMessage("Character Teleported !", 0);
                 }
 

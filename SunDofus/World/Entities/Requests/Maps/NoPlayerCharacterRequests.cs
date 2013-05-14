@@ -60,10 +60,10 @@ namespace SunDofus.World.Entities.Requests
                         mustMove = bool.Parse(infosMap[3]),
                     };
 
-                    if (MapsRequests.MapsList.Any(x => x.GetModel.ID == npc.MapID))
+                    if (MapsRequests.MapsList.Any(x => x.Model.ID == npc.MapID))
                     {
-                        var map = MapsRequests.MapsList.First(x => x.GetModel.ID == npc.MapID);
-                        npc.ID = MapsRequests.MapsList.First(x => x.GetModel.ID == npc.MapID).NextNpcID();
+                        var map = MapsRequests.MapsList.First(x => x.Model.ID == npc.MapID);
+                        npc.ID = MapsRequests.MapsList.First(x => x.Model.ID == npc.MapID).NextNpcID();
 
                         lock (map.Npcs)
                             map.Npcs.Add(npc);

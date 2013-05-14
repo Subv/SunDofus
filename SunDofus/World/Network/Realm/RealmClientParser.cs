@@ -74,6 +74,9 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["PV"] = PartyLeave;
             RegisteredPackets["SB"] = SpellBoost;
             RegisteredPackets["SM"] = SpellMove;
+            RegisteredPackets["Wu"] = UseZaapis;
+            RegisteredPackets["WV"] = ExitZaap;
+            RegisteredPackets["Wv"] = ExitZaapis;
         }
 
         public void Parse(string datas)
@@ -519,6 +522,26 @@ namespace SunDofus.World.Network.Realm
             Client.Player.Enemies.RemoveEnemy(datas);
         }
 
+        private void ExitZaap(string datas)
+        {
+            Client.Send("WV");
+        }
+
+        private void ExitZaapis(string datas)
+        {
+            Client.Send("Wv");
+        }
+
+        private void UseZaapis(string datas)
+        {
+            var id = 0;
+
+            if (!int.TryParse(datas, out id))
+                return;
+
+            Game.Maps.Zaapis.ZaapisManager.OnMove(Client.Player, id);
+        }
+
         private void ParseChatMessage(string datas)
         {
             var infos = datas.Split('|');
@@ -596,7 +619,11 @@ namespace SunDofus.World.Network.Realm
             switch (packet)
             {
                 case 1://GameMove
-                    GameMove(datas);
+                    GameMove(datas.Substring(3));
+                    return;
+
+                case 500://ParseGameAction
+                    ParseGameAction(datas.Substring(3));
                     return;
 
                 case 900://AskChallenge
@@ -613,16 +640,37 @@ namespace SunDofus.World.Network.Realm
             }
         }
 
-        private void GameMove(string datas)
+        private void ParseGameAction(string packet)
         {
-            var packet = datas.Substring(3);
+            var infos = packet.Split(';'); 
+            
+            var id = 0;
 
-            if (!Pathfinding.isValidCell(Client.Player.MapCell, packet))
-            {
-                Client.Send("GA;0");
+            if (!int.TryParse(infos[1], out id))
                 return;
-            }
 
+            switch (id)
+            {
+                case 44:
+                    Game.Maps.Zaaps.ZaapsManager.SaveZaap(Client.Player);
+                    return;
+
+                case 114:
+                    Game.Maps.Zaaps.ZaapsManager.SendZaaps(Client.Player);
+                    return;
+
+                case 157:
+                    Game.Maps.Zaapis.ZaapisManager.SendZaapis(Client.Player);
+                    return;
+
+                default:
+                    Client.Send("BN");
+                    return;
+            }
+        }
+
+        private void GameMove(string packet)
+        {
             var path = new Pathfinding(packet, Client.Player.GetMap(), Client.Player.MapCell, Client.Player.Dir);
             var newPath = path.RemakePath();
 
@@ -652,7 +700,7 @@ namespace SunDofus.World.Network.Realm
             {
                 var character = CharactersManager.CharactersList.First(x => x.ID == charid);
 
-                if (Client.Player.State.Occuped || character.State.Occuped || Client.Player.GetMap().GetModel.ID != character.GetMap().GetModel.ID)
+                if (Client.Player.State.Occuped || character.State.Occuped || Client.Player.GetMap().Model.ID != character.GetMap().Model.ID)
                 {
                     Client.SendMessage("Personnage actuellement occupé ou indisponible !");
                     return;
@@ -1563,7 +1611,7 @@ namespace SunDofus.World.Network.Realm
                 Client.Player.State.followingID = character.ID;
                 Client.Player.State.isFollowing = true;
 
-                Client.Send(string.Format("IC{0}|{1}", character.GetMap().GetModel.PosX, character.GetMap().GetModel.PosY));
+                Client.Send(string.Format("IC{0}|{1}", character.GetMap().Model.PosX, character.GetMap().Model.PosY));
                 Client.Send(string.Format("PF+{0}", character.ID));
             }
             else
@@ -1620,7 +1668,7 @@ namespace SunDofus.World.Network.Realm
                     charinparty.State.followingID = character.ID;
                     charinparty.State.isFollowing = true;
 
-                    charinparty.NetworkClient.Send(string.Format("IC{0}|{1}", character.GetMap().GetModel.PosX, character.GetMap().GetModel.PosY));
+                    charinparty.NetworkClient.Send(string.Format("IC{0}|{1}", character.GetMap().Model.PosX, character.GetMap().Model.PosY));
                     charinparty.NetworkClient.Send(string.Format("PF+{0}", character.ID));
                 }
 

@@ -23,8 +23,8 @@ namespace SunDofus.World.Entities.Requests
                 {
                     var trigger = new Entities.Models.Maps.TriggerModel()
                     {
-                        MapID = sqlReader.GetInt16("MapID"),
-                        CellID = sqlReader.GetInt16("CellID"),
+                        MapID = sqlReader.GetInt32("MapID"),
+                        CellID = sqlReader.GetInt32("CellID"),
                         ActionID = sqlReader.GetInt16("ActionID"),
                         Args = sqlReader.GetString("Args"),
                         Conditions = sqlReader.GetString("Conditions"),
@@ -64,9 +64,9 @@ namespace SunDofus.World.Entities.Requests
 
         public static bool ParseTrigger(Entities.Models.Maps.TriggerModel trigger)
         {
-            if (MapsRequests.MapsList.Any(x => x.GetModel.ID == trigger.MapID))
+            if (MapsRequests.MapsList.Any(x => x.Model.ID == trigger.MapID))
             {
-                MapsRequests.MapsList.First(x => x.GetModel.ID == trigger.MapID).Triggers.Add(trigger);
+                MapsRequests.MapsList.First(x => x.Model.ID == trigger.MapID).Triggers.Add(trigger);
                 return true;
             }
             else
