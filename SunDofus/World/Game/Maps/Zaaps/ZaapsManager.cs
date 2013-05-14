@@ -24,7 +24,7 @@ namespace SunDofus.World.Game.Maps.Zaaps
                 var packet = string.Concat("WC", savepos, "|");
 
                 Entities.Requests.ZaapsRequests.ZaapsList.Where(x => character.Zaaps.Contains(x.MapID)).ToList().
-                    ForEach(x => packet = string.Concat(packet, x.MapID, ";", CalcPrice(character.MapID, x.MapID), "|"));
+                    ForEach(x => packet = string.Concat(packet, x.MapID, ";", CalcPrice(character.GetMap(), x.Map), "|"));
 
                 character.NetworkClient.Send(packet.Substring(0, packet.Length - 1));
             }
@@ -53,7 +53,7 @@ namespace SunDofus.World.Game.Maps.Zaaps
             {
                 var zaap = Entities.Requests.ZaapsRequests.ZaapsList.First(x => x.MapID == nextZaap);
 
-                var price = CalcPrice(character.MapID, nextZaap);
+                var price = CalcPrice(character.GetMap(), zaap.Map);
 
                 character.Kamas -= price;
                 character.NetworkClient.Send(string.Concat("Im046;", price));
@@ -67,9 +67,9 @@ namespace SunDofus.World.Game.Maps.Zaaps
                 character.NetworkClient.Send("BN");
         }
 
-        private static int CalcPrice(int startMap, int nextMap)
+        private static int CalcPrice(Map startMap, Map nextMap)
         {
-            return 100;
+            return (int)(10 * (Math.Abs(nextMap.Model.PosX - startMap.Model.PosX) + Math.Abs(nextMap.Model.PosY - startMap.Model.PosY)));
         }
     }
 }

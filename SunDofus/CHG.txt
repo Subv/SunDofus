@@ -128,7 +128,7 @@ SunDofus v0.3.0.140 :
 -> [16.04.2013] Rectification du bug sur la création des personnages
 -> [16.04.2013] Ajout d'un "PassKey" entre les worlds et realms (question sécurité pour la connexion pour le multi-server)
 
-SunDofus v0.3.1.X :
+SunDofus v0.3.1.169 :
 -> [18.04.2013] Réparation de la création des personnages
 -> [18.04.2013] Refonte de la file d'attente
 -> [19.04.2013] Quelques petites modifications du code
@@ -147,3 +147,5 @@ SunDofus v0.3.1.X :
 -> [13.05.2013] Ajout du chat d'alignement (minimum grade 3, et tous les joueurs du même alignement recoive le message)
 -> [14.05.2013] Ajout des zaapis (conditions, pertes kamas, alignements, panels, téléportations)
 -> [14.05.2013] Ajout des zaaps (apprentissages, positions sauvegardées, panels, téléportations)
+
+SunDofus v0.3.2.X :
