@@ -55,6 +55,18 @@ namespace SunDofus.World.Entities.Requests
                     character.Faction.Honor = int.Parse(factionInfos[1]);
                     character.Faction.Deshonor = int.Parse(factionInfos[2]);
 
+                    foreach (var zaap in sqlResult.GetString("zaaps").Split(';'))
+                    {
+                        if (zaap == "")
+                            continue;
+
+                        character.Zaaps.Add(int.Parse(zaap));
+                    }
+
+                    var savepos = sqlResult.GetString("savepos").Split(';');
+                    character.SaveMap = int.Parse(savepos[0]);
+                    character.SaveCell = int.Parse(savepos[1]);
+
                     if (character.Faction.Honor > Entities.Requests.LevelsRequests.LevelsList.OrderByDescending(x => x.Alignment).ToArray()[0].Alignment)
                         character.Faction.Level = 10;
                     else
@@ -74,7 +86,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "INSERT INTO dyn_characters VALUES(@id, @name, @level, @class, @sex, @color, @color2, @color3, @mapinfos, @stats, @items, @spells, @exp, @faction)";
+                var sqlText = "INSERT INTO dyn_characters VALUES(@id, @name, @level, @class, @sex, @color, @color2, @color3, @mapinfos, @stats, @items, @spells, @exp, @faction, @zaaps, @savepos)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;
@@ -92,7 +104,10 @@ namespace SunDofus.World.Entities.Requests
                 P.Add(new MySqlParameter("@items", character.GetItemsToSave()));
                 P.Add(new MySqlParameter("@spells", character.SpellsInventary.SaveSpells()));
                 P.Add(new MySqlParameter("@exp", character.Exp));
-                P.Add(new MySqlParameter("@faction", "0;0;0"));
+                P.Add(new MySqlParameter("@faction", string.Concat(character.Faction.ID, ";",
+                    character.Faction.Honor, ";", character.Faction.Deshonor)));
+                P.Add(new MySqlParameter("@zaaps", string.Join(";", character.Zaaps)));
+                P.Add(new MySqlParameter("@savepos", string.Concat(character.SaveMap, ";", character.SaveCell)));
 
                 sqlCommand.ExecuteNonQuery();
 
@@ -120,7 +135,7 @@ namespace SunDofus.World.Entities.Requests
             lock (DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "UPDATE dyn_characters SET id=@id, name=@name, level=@level, class=@class, sex=@sex," +
-                    " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp, faction=@faction WHERE id=@id";
+                    " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp, faction=@faction, zaaps=@zaaps, savepos=@savepos WHERE id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;
@@ -137,7 +152,10 @@ namespace SunDofus.World.Entities.Requests
                 P.Add(new MySqlParameter("@items", character.GetItemsToSave()));
                 P.Add(new MySqlParameter("@spells", character.SpellsInventary.SaveSpells()));
                 P.Add(new MySqlParameter("@exp", character.Exp));
-                P.Add(new MySqlParameter("@faction", string.Concat(character.Faction.ID, ";", character.Faction.Honor, ";", character.Faction.Deshonor)));
+                P.Add(new MySqlParameter("@faction", string.Concat(character.Faction.ID, ";",
+                    character.Faction.Honor, ";", character.Faction.Deshonor)));
+                P.Add(new MySqlParameter("@zaaps", string.Join(";", character.Zaaps)));
+                P.Add(new MySqlParameter("@savepos", string.Concat(character.SaveMap, ";", character.SaveCell)));
 
                 sqlCommand.ExecuteNonQuery();
             }
