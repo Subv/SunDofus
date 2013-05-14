@@ -11,11 +11,11 @@ namespace SunDofus.World.Game.Maps.Zaaps
         {
             if (Entities.Requests.ZaapsRequests.ZaapsList.Any(x => x.MapID == character.MapID))
             {
-                var zaapis = Entities.Requests.ZaapsRequests.ZaapsList.First(x => x.MapID == character.MapID);
+                var zaap = Entities.Requests.ZaapsRequests.ZaapsList.First(x => x.MapID == character.MapID);
 
-                if (!character.Zaaps.Contains(zaapis.MapID))
+                if (!character.Zaaps.Contains(zaap.MapID))
                 {
-                    character.Zaaps.Add(zaapis.MapID);
+                    character.Zaaps.Add(zaap.MapID);
                     character.NetworkClient.Send("Im024");
                 }
 
@@ -34,6 +34,37 @@ namespace SunDofus.World.Game.Maps.Zaaps
 
         public static void SaveZaap(Characters.Character character)
         {
+            if (Entities.Requests.ZaapsRequests.ZaapsList.Any(x => x.MapID == character.MapID))
+            {
+                var zaap = Entities.Requests.ZaapsRequests.ZaapsList.First(x => x.MapID == character.MapID);
+
+                character.SaveMap = zaap.MapID;
+                character.SaveCell = zaap.CellID;
+
+                character.NetworkClient.Send("Im06");
+            }
+            else
+                character.NetworkClient.Send("BN");
+        }
+
+        public static void OnMove(Characters.Character character, int nextZaap)
+        {
+            if (Entities.Requests.ZaapsRequests.ZaapsList.Any(x => x.MapID == nextZaap))
+            {
+                var zaap = Entities.Requests.ZaapsRequests.ZaapsList.First(x => x.MapID == nextZaap);
+
+                var price = CalcPrice(character.MapID, nextZaap);
+
+                character.Kamas -= price;
+                character.NetworkClient.Send(string.Concat("Im046;", price));
+                character.TeleportNewMap(zaap.MapID, zaap.CellID);
+
+                character.NetworkClient.Send("WV");
+
+                character.SendChararacterStats();
+            }
+            else
+                character.NetworkClient.Send("BN");
         }
 
         private static int CalcPrice(int startMap, int nextMap)

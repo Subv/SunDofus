@@ -25,6 +25,8 @@ namespace SunDofus.World.Network.Realm
             RegisterPackets();
         }
 
+        #region Packets
+
         private void RegisterPackets()
         {
             RegisteredPackets["AA"] = CreateCharacter;
@@ -74,6 +76,7 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["PV"] = PartyLeave;
             RegisteredPackets["SB"] = SpellBoost;
             RegisteredPackets["SM"] = SpellMove;
+            RegisteredPackets["WU"] = UseZaaps;
             RegisteredPackets["Wu"] = UseZaapis;
             RegisteredPackets["WV"] = ExitZaap;
             RegisteredPackets["Wv"] = ExitZaapis;
@@ -99,6 +102,8 @@ namespace SunDofus.World.Network.Realm
 
             RegisteredPackets[header](datas.Substring(2));
         }
+
+        #endregion
 
         #region Ticket
 
@@ -411,37 +416,18 @@ namespace SunDofus.World.Network.Realm
 
         #endregion
 
-        #region Realm
+        #region World
+
+        #region Date
 
         private void SendDate(string datas)
         {
             Client.Send(string.Format("BD{0}", Utilities.Basic.GetDofusDate()));
         }
 
-        private void CreateGame(string datas)
-        {
-            Client.Send(string.Format("GCK|1|{0}", Client.Player.Name));
-            Client.Send("AR6bk");
+        #endregion
 
-            Client.Player.Channels.SendChannels();
-            Client.Send("SLo+");
-            Client.Player.SpellsInventary.SendAllSpells();
-            Client.Send(string.Format("BT{0}", Utilities.Basic.GetActuelTime()));
-
-            if (Client.Player.Life == 0)
-            {
-                Client.Player.UpdateStats();
-                Client.Player.Life = Client.Player.MaximumLife;
-            }
-
-            Client.Player.ItemsInventary.RefreshBonus();
-            Client.Player.SendPods();
-            Client.Player.SendChararacterStats();
-
-            Client.Player.LoadMap();
-
-            Client.Send(string.Concat("FO", (Client.Player.Friends.willSeeWhenConnected ? "+" : "-")));
-        }
+        #region Channels
 
         private void ChangeChannel(string channel)
         {
@@ -453,6 +439,10 @@ namespace SunDofus.World.Network.Realm
             var state = (channel.Substring(0, 1) == "+" ? true : false);
             Client.Player.Channels.ChangeChannelState(head, state);
         }
+
+        #endregion
+
+        #region Faction
 
         private void ChangeAlignmentEnable(string enable)
         {
@@ -481,6 +471,10 @@ namespace SunDofus.World.Network.Realm
 
             Client.Player.SendChararacterStats();
         }
+
+        #endregion
+
+        #region Friends - Enemies
 
         private void FriendsList(string datas)
         {
@@ -522,6 +516,10 @@ namespace SunDofus.World.Network.Realm
             Client.Player.Enemies.RemoveEnemy(datas);
         }
 
+        #endregion
+
+        #region Zaaps - Zaapis
+
         private void ExitZaap(string datas)
         {
             Client.Send("WV");
@@ -541,6 +539,20 @@ namespace SunDofus.World.Network.Realm
 
             Game.Maps.Zaapis.ZaapisManager.OnMove(Client.Player, id);
         }
+
+        private void UseZaaps(string datas)
+        {
+            var id = 0;
+
+            if (!int.TryParse(datas, out id))
+                return;
+
+            Game.Maps.Zaaps.ZaapsManager.OnMove(Client.Player, id);
+        }
+
+        #endregion
+
+        #region Messages
 
         private void ParseChatMessage(string datas)
         {
@@ -601,6 +613,43 @@ namespace SunDofus.World.Network.Realm
         private void ParseConsoleMessage(string datas)
         {
             Client.Commander.ParseAdminCommand(datas);
+        }
+
+        #endregion
+
+        #region Game
+
+        private void CreateGame(string datas)
+        {
+            if (Client.Player.SaveMap == 0)
+            {
+                Client.Player.SaveMap = Client.Player.MapID;
+                Client.Player.SaveCell = Client.Player.MapCell;
+
+                Client.Send("Im06");
+            }
+
+            Client.Send(string.Format("GCK|1|{0}", Client.Player.Name));
+            Client.Send("AR6bk");
+
+            Client.Player.Channels.SendChannels();
+            Client.Send("SLo+");
+            Client.Player.SpellsInventary.SendAllSpells();
+            Client.Send(string.Format("BT{0}", Utilities.Basic.GetActuelTime()));
+
+            if (Client.Player.Life == 0)
+            {
+                Client.Player.UpdateStats();
+                Client.Player.Life = Client.Player.MaximumLife;
+            }
+
+            Client.Player.ItemsInventary.RefreshBonus();
+            Client.Player.SendPods();
+            Client.Player.SendChararacterStats();
+
+            Client.Player.LoadMap();
+
+            Client.Send(string.Concat("FO", (Client.Player.Friends.willSeeWhenConnected ? "+" : "-")));
         }
 
         private void GameInformations(string datas)
@@ -689,6 +738,50 @@ namespace SunDofus.World.Network.Realm
             Client.Player.GetMap().Send(string.Format("GA0;1;{0};{1}", Client.Player.ID, newPath));
         }
 
+        private void EndAction(string datas)
+        {
+            switch (datas[0])
+            {
+                case 'K':
+
+                    if (Client.Player.State.onMove == true)
+                    {
+                        Client.Player.State.onMove = false;
+                        Client.Player.MapCell = Client.Player.State.moveToCell;
+                        Client.Player.State.moveToCell = -1;
+                        Client.Send("BN");
+
+                        if (Client.Player.GetMap().Triggers.Any(x => x.CellID == Client.Player.MapCell))
+                        {
+                            var trigger = Client.Player.GetMap().Triggers.First(x => x.CellID == Client.Player.MapCell);
+
+                            if (SunDofus.World.Game.World.Conditions.TriggerCondition.HasConditions(Client.Player, trigger.Conditions))
+                                SunDofus.World.Game.Effects.EffectAction.ParseEffect(Client.Player, trigger.ActionID, trigger.Args);
+                            else
+                                Client.SendMessage("Vous ne possédez pas les conditions nécessaires pour cette action !");
+                        }
+                    }
+
+                    return;
+
+                case 'E':
+
+                    var cell = 0;
+
+                    if (!int.TryParse(datas.Split('|')[1], out cell))
+                        return;
+
+                    Client.Player.State.onMove = false;
+                    Client.Player.MapCell = cell;
+
+                    return;
+            }
+        }
+
+        #endregion
+
+        #region Challenge
+
         private void AskChallenge(string datas)
         {
             var charid = 0;
@@ -763,45 +856,7 @@ namespace SunDofus.World.Network.Realm
             }
         }
 
-        private void EndAction(string datas)
-        {
-            switch(datas[0])
-            {
-                case 'K':
-
-                    if (Client.Player.State.onMove == true)
-                    {
-                        Client.Player.State.onMove = false;
-                        Client.Player.MapCell = Client.Player.State.moveToCell;
-                        Client.Player.State.moveToCell = -1;
-                        Client.Send("BN");
-
-                        if (Client.Player.GetMap().Triggers.Any(x => x.CellID == Client.Player.MapCell))
-                        {
-                            var trigger = Client.Player.GetMap().Triggers.First(x => x.CellID == Client.Player.MapCell);
-
-                            if (SunDofus.World.Game.World.Conditions.TriggerCondition.HasConditions(Client.Player, trigger.Conditions))
-                                SunDofus.World.Game.Effects.EffectAction.ParseEffect(Client.Player, trigger.ActionID, trigger.Args);
-                            else
-                                Client.SendMessage("Vous ne possédez pas les conditions nécessaires pour cette action !");
-                        }
-                    }
-
-                    return;
-
-                case 'E':
-
-                    var cell = 0;
-
-                    if (!int.TryParse(datas.Split('|')[1], out cell))
-                        return;
-                    
-                    Client.Player.State.onMove = false;
-                    Client.Player.MapCell = cell;
-
-                    return;
-            }
-        }
+        #endregion
 
         #region Items
 

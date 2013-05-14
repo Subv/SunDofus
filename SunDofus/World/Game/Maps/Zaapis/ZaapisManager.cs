@@ -48,6 +48,8 @@ namespace SunDofus.World.Game.Maps.Zaapis
                 character.TeleportNewMap(zaapis.MapID, zaapis.CellID);
 
                 character.NetworkClient.Send("Wv");
+
+                character.SendChararacterStats();
             }
             else
                 character.NetworkClient.Send("BN");
