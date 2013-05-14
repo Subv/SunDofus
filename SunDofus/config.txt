@@ -36,8 +36,8 @@ $ServerCom 0;
 $AntiSpamTrade 60000;
 $AntiSpamRecruitment 60000;
 
-$MustMonstersMove false;
-$MustNPCsMove false;
+$MustMonstersMove true;
+$MustNPCsMove true;
 
 $StartLevel 1;
 $StartKamas 0;

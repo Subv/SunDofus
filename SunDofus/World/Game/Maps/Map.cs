@@ -129,16 +129,72 @@ namespace SunDofus.World.Game.Maps
             return packet;
         }
 
+        #region mapdata
+
         private List<int> UncompressDatas()
         {
             List<int> newList = new List<int>();
 
-            for (int i = 1; i <= 479; i++)
-                newList.Add(i);
-            //Lecture in the MapData / Decrypt
+            string data = DecypherData(Model.MapData, "");
+
+            for (int i = 0; i < data.Length; i += 10)
+            {
+                string CurrentCell = data.Substring(i, 10);
+                byte[] CellInfo = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                for (int i2 = CurrentCell.Length - 1; i2 >= 0; i2--)
+                    CellInfo[i2] = (byte)hash.IndexOf(CurrentCell[i2]);
+
+                var type = (CellInfo[2] & 56) >> 3;
+
+                if (type != 0)
+                    newList.Add(i / 10);
+            }
 
             return newList;
         }
+
+        public static string DecypherData(string Data, string DecryptKey)
+        {
+            try
+            {
+                string result = string.Empty;
+
+                if (DecryptKey != "")
+                {
+                    DecryptKey = PrepareKey(DecryptKey);
+                    int checkSum = CheckSum(DecryptKey) * 2;
+
+                    for (int i = 0, k = 0; i < Data.Length; i += 2)
+                        result += (char)(int.Parse(Data.Substring(i, 2), System.Globalization.NumberStyles.HexNumber) ^ (int)(DecryptKey[(k++ + checkSum) % DecryptKey.Length]));
+
+                    return Uri.UnescapeDataString(result);
+                }
+                else return Data;
+            }
+            catch (Exception e){ return ""; }
+        }
+
+        private static int CheckSum(string Data)
+        {
+            int result = 0;
+
+            for (int i = 0; i < Data.Length; i++)
+                result += Data[i] % 16;
+
+            return result % 16;
+        }
+
+        private static string PrepareKey(string Key)
+        {
+            string keyResult = "";
+
+            for (int i = 0; i < Key.Length; i += 2)
+                keyResult += Convert.ToChar(int.Parse(Key.Substring(i, 2), System.Globalization.NumberStyles.HexNumber));
+
+            return Uri.UnescapeDataString(keyResult);
+        }
+
+        #endregion
 
         private string hash = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
 
