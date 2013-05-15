@@ -147,5 +147,6 @@ SunDofus v0.3.1.169 :
 -> [13.05.2013] Ajout du chat d'alignement (minimum grade 3, et tous les joueurs du même alignement recoive le message)
 -> [14.05.2013] Ajout des zaapis (conditions, pertes kamas, alignements, panels, téléportations)
 -> [14.05.2013] Ajout des zaaps (apprentissages, positions sauvegardées, panels, téléportations)
+-> [14.05.2013] Ajout des cellules non marchables et donc des restrictions par rapport aux mouvements des personnages / NPC / Monstres
 
 SunDofus v0.3.2.X :
