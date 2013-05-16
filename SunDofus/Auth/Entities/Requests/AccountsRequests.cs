@@ -11,7 +11,7 @@ namespace SunDofus.Auth.Entities.Requests
     {
         public static Models.AccountsModel LoadAccount(string username)
         {
-            var account = new Models.AccountsModel();
+            Models.AccountsModel account = null;
 
             DatabaseProvider.CheckConnection();
 
@@ -27,22 +27,28 @@ namespace SunDofus.Auth.Entities.Requests
 
                 if (sqlReader.Read())
                 {
-                    account.ID = sqlReader.GetInt16("id");
-                    account.Username = sqlReader.GetString("username");
-                    account.Password = sqlReader.GetString("password");
-                    account.Pseudo = sqlReader.GetString("pseudo");
-                    account.Communauty = sqlReader.GetInt16("communauty");
-                    account.Level = sqlReader.GetInt16("gmLevel");
-                    account.Question = sqlReader.GetString("question");
-                    account.Answer = sqlReader.GetString("answer");
-                    account.SubscriptionDate = sqlReader.GetDateTime("subscription");
+                    account = new Models.AccountsModel()
+                    {
+                        ID = sqlReader.GetInt16("id"),
+                        Username = sqlReader.GetString("username"),
+                        Password = sqlReader.GetString("password"),
+                        Pseudo = sqlReader.GetString("pseudo"),
+                        Communauty = sqlReader.GetInt16("communauty"),
+                        Level = sqlReader.GetInt16("gmLevel"),
+                        Question = sqlReader.GetString("question"),
+                        Answer = sqlReader.GetString("answer"),
+                        SubscriptionDate = sqlReader.GetDateTime("subscription"),
+                    };
                 }
 
                 sqlReader.Close();
 
-                account.Characters = LoadCharacters(account.ID);
-                account.Friends = LoadFriends(account.ID);
-                account.Enemies = LoadEnemies(account.ID);
+                if (account != null)
+                {
+                    account.Characters = LoadCharacters(account.ID);
+                    account.Friends = LoadFriends(account.ID);
+                    account.Enemies = LoadEnemies(account.ID);
+                }
             }
 
             return account;
@@ -50,7 +56,7 @@ namespace SunDofus.Auth.Entities.Requests
 
         public static Models.AccountsModel LoadAccount(int accountID)
         {
-            var account = new Models.AccountsModel();
+            Models.AccountsModel account = null;
 
             DatabaseProvider.CheckConnection();
 
@@ -65,22 +71,28 @@ namespace SunDofus.Auth.Entities.Requests
 
                 if (sqlReader.Read())
                 {
-                    account.ID = sqlReader.GetInt16("id");
-                    account.Username = sqlReader.GetString("username");
-                    account.Password = sqlReader.GetString("password");
-                    account.Pseudo = sqlReader.GetString("pseudo");
-                    account.Communauty = sqlReader.GetInt16("communauty");
-                    account.Level = sqlReader.GetInt16("gmLevel");
-                    account.Question = sqlReader.GetString("question");
-                    account.Answer = sqlReader.GetString("answer");
-                    account.SubscriptionDate = sqlReader.GetDateTime("subscription");
+                    account = new Models.AccountsModel()
+                    {
+                        ID = sqlReader.GetInt16("id"),
+                        Username = sqlReader.GetString("username"),
+                        Password = sqlReader.GetString("password"),
+                        Pseudo = sqlReader.GetString("pseudo"),
+                        Communauty = sqlReader.GetInt16("communauty"),
+                        Level = sqlReader.GetInt16("gmLevel"),
+                        Question = sqlReader.GetString("question"),
+                        Answer = sqlReader.GetString("answer"),
+                        SubscriptionDate = sqlReader.GetDateTime("subscription"),
+                    };
                 }
 
                 sqlReader.Close();
 
-                account.Characters = LoadCharacters(account.ID);
-                account.Friends = LoadFriends(account.ID);
-                account.Enemies = LoadEnemies(account.ID);
+                if (account != null)
+                {
+                    account.Characters = LoadCharacters(account.ID);
+                    account.Friends = LoadFriends(account.ID);
+                    account.Enemies = LoadEnemies(account.ID);
+                }
             }
 
             return account;
