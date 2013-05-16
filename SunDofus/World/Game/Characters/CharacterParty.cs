@@ -56,7 +56,7 @@ namespace SunDofus.World.Game.Characters
 
         public void LeaveParty(string name, string kicker = "")
         {
-            if (!Members.Keys.ToList().Any(x => x.Name == name) || (kicker != "" || _ownerID != int.Parse(kicker)))
+            if (!Members.Keys.ToList().Any(x => x.Name == name) || (kicker != "" && _ownerID != int.Parse(kicker)))
                 return;
 
             var character = Members.Keys.ToList().First(x => x.Name == name);

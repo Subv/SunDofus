@@ -889,7 +889,7 @@ namespace SunDofus.World.Network.Realm
             if (!int.TryParse(allDatas[0], out ID) || !int.TryParse(allDatas[1], out pos))
                 return;
 
-            Client.Player.ItemsInventary.MoveItem(int.Parse(allDatas[0]), int.Parse(allDatas[1]), (allDatas.Length >= 3 ? int.Parse(allDatas[2]) : 1));
+            Client.Player.ItemsInventary.MoveItem(ID, pos, quantity);
         }
 
         private void UseItem(string datas)
@@ -1314,7 +1314,7 @@ namespace SunDofus.World.Network.Realm
         {
             if (!Client.Player.State.onExchange)
             {
-                Client.Send("OBE");
+                Client.Send("EBE");
                 return;
             }
 
@@ -1322,7 +1322,7 @@ namespace SunDofus.World.Network.Realm
             var itemID = 0;
             var quantity = 1;
 
-            if (!int.TryParse(datas[0], out itemID) || int.TryParse(datas[1], out quantity))
+            if (!int.TryParse(datas[0], out itemID) || !int.TryParse(datas[1], out quantity))
                 return;
 
             var item = Entities.Requests.ItemsRequests.ItemsList.First(x => x.ID == itemID);
@@ -1330,7 +1330,7 @@ namespace SunDofus.World.Network.Realm
 
             if (quantity <= 0 || !NPC.Model.SellingList.Contains(itemID))
             {
-                Client.Send("OBE");
+                Client.Send("EBE");
                 return;
             }
 
@@ -1348,7 +1348,7 @@ namespace SunDofus.World.Network.Realm
                 Client.Player.ItemsInventary.AddItem(newItem, false);
             }
             else
-                Client.Send("OBE");
+                Client.Send("EBE");
         }
 
         private void ExchangeSell(string datas)
@@ -1364,7 +1364,7 @@ namespace SunDofus.World.Network.Realm
             var itemID = 0;
             var quantity = 1;
 
-            if (!int.TryParse(packet[0], out itemID) || int.TryParse(packet[1], out quantity))
+            if (!int.TryParse(packet[0], out itemID) || !int.TryParse(packet[1], out quantity))
                 return;
 
             if (!Client.Player.ItemsInventary.ItemsList.Any(x => x.ID == itemID) || quantity <= 0)

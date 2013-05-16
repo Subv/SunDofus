@@ -206,10 +206,8 @@ namespace SunDofus.Auth.Entities.Requests
 
             lock (Entities.DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "UPDATE dyn_accounts SET connected=@connected";
+                var sqlText = "UPDATE dyn_accounts SET connected=0";
                 var sqlCommand = new MySqlCommand(sqlText, Entities.DatabaseProvider.Connection);
-
-                sqlCommand.Parameters.Add(new MySqlParameter("@connected", 0));
 
                 sqlCommand.ExecuteNonQuery();
             }

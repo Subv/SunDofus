@@ -47,7 +47,7 @@ namespace SunDofus.World.Game.Characters.Items
 
                     ItemsList.Add(item);
 
-                    Client.Pods += item.Model.Pods;
+                    Client.Pods += (item.Model.Pods * item.Quantity);
                 }
             }
             else if (offline == false)
@@ -80,7 +80,7 @@ namespace SunDofus.World.Game.Characters.Items
                     ItemsList.Add(item);
                 }
 
-                Client.Pods += item.Model.Pods;
+                Client.Pods += (item.Model.Pods * item.Quantity);
                 RefreshBonus();
 
                 Client.NetworkClient.Send(string.Format("OAKO{0}", item.ToString()));
@@ -106,7 +106,7 @@ namespace SunDofus.World.Game.Characters.Items
                     item.ID = ItemsHandler.GetNewID();
 
                     ItemsList.Add(item);
-                    Client.Pods += item.Model.Pods;
+                    Client.Pods += (item.Model.Pods * item.Quantity);
                 }
                 else if (offline == false)
                 {
@@ -126,7 +126,7 @@ namespace SunDofus.World.Game.Characters.Items
                     item.ID = ItemsHandler.GetNewID();
                     ItemsList.Add(item);
 
-                    Client.Pods += item.Model.Pods;
+                    Client.Pods += (item.Model.Pods * item.Quantity);
                     RefreshBonus();
 
                     Client.NetworkClient.Send(string.Format("OAKO{0}", item.ToString()));
