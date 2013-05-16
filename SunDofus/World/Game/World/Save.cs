@@ -2,11 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace SunDofus.World.Game.World
 {
     class Save
     {        
+        private static Timer _timer;
+        public static void InitSaveThread()
+        {
+            _timer = new Timer((e) =>
+            {
+                SaveWorld();
+                _timer.Change(1 * 60 * 1000, Timeout.Infinite);
+            }, null, 1 * 60 * 1000, Timeout.Infinite);
+        }
+
         public static void SaveWorld()
         {
             SaveChararacters();

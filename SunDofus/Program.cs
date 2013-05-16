@@ -68,6 +68,9 @@ namespace SunDofus
                     World.Network.ServersHandler.InitialiseServers();
 
                     World.Entities.Requests.AuthsRequests.LoadAuths();
+
+                    World.Game.World.Save.InitSaveThread();
+
                     World.Entities.DatabaseProvider.Close();
                 }
                 catch (Exception error)
