@@ -47,7 +47,7 @@
       <HintPath>G:\Programmierung\CSHARP\Chatbox - Review\Chatbox - Server\bin\Debug\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="SilverSock">
-      <HintPath>H:\Programmation\Développements\Library\SilverSock.dll</HintPath>
+      <HintPath>G:\Programmierung\CSHARP\Chatbox - Review\Chatbox - Client\bin\Debug\SilverSock.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -115,6 +115,8 @@
     <Compile Include="World\Game\Characters\CharacterEnemies.cs" />
     <Compile Include="World\Game\Characters\CharacterFriends.cs" />
     <Compile Include="World\Game\Exchanges\ExchangePlayer.cs" />
+    <Compile Include="World\Game\Guilds\Guild.cs" />
+    <Compile Include="World\Game\Guilds\GuildMember.cs" />
     <Compile Include="World\Game\Maps\Zaapis\ZaapisManager.cs" />
     <Compile Include="World\Game\Maps\Zaaps\Zaap.cs" />
     <Compile Include="World\Game\Maps\Zaapis\Zaapis.cs" />

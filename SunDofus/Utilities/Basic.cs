@@ -24,6 +24,28 @@ namespace SunDofus.Utilities
             }
         }
 
+        public static int[] GetUpTime()
+        {
+            int[] date = new int[3];
+            double milli = Uptime;
+
+            date[2] = (int)(milli / 1000);
+
+            if (date[2] > 59)
+            {
+                date[1] = (int)Math.Round((double)date[2] / 60);
+                date[2] = date[2] - (date[1] * 60);
+
+                if (date[0] > 59)
+                {
+                    date[0] = (int)Math.Round((double)date[1] / 60);
+                    date[1] = date[1] - (date[0] * 60);
+                }
+            }
+
+            return date;
+        }
+
         private static char[] _hash = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
                 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
                 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'};

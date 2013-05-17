@@ -152,3 +152,4 @@ SunDofus v0.3.1.169 :
 SunDofus v0.3.2.X :
 -> [16.05.2013] Correction de beaucoup de petits bugs (Merci Subv pour son fork et ses corrections)
 -> [16.05.2013] Ajout de la sauvegarde automatique (Merci Subv qui m'a empêché de le faire du coup)
+-> [16.05.2013] Ajout de l'uptime du serveur et de la commande .infos

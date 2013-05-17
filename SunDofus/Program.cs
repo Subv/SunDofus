@@ -79,8 +79,14 @@ namespace SunDofus
                 }
             }
 
-            Loggers.InfosLogger.Write(string.Format("Started in '{0}'ms !", Basic.Uptime));
-            Console.ReadLine();
+            Loggers.InfosLogger.Write(string.Format("Started in '{0}'s !", Basic.GetUpTime()[2]));
+
+            while (true)
+            {
+                Console.ReadKey();
+                Loggers.InfosLogger.Write(string.Format("Uptime : Hours : {0} - Minutes : {1} - Seconds : {2}", 
+                    Basic.GetUpTime()[0], Basic.GetUpTime()[1], Basic.GetUpTime()[2]));
+            }
         }
     }
 }
