@@ -73,7 +73,7 @@ namespace SunDofus.World.Game.Characters.NPC
 
             _movements = new Timer();
             _movements.Enabled = true;
-            _movements.Interval = Utilities.Basic.Rand(1000, 5000);
+            _movements.Interval = Utilities.Basic.Rand(5000, 15000);
             _movements.Elapsed += new ElapsedEventHandler(this.Move);
         }
 
@@ -95,37 +95,34 @@ namespace SunDofus.World.Game.Characters.NPC
 
         private void Move(object e, EventArgs e2)
         {
-            lock (Entities.Requests.MapsRequests.MapsList)
+            _movements.Interval = Utilities.Basic.Rand(5000, 15000);
+
+            var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == MapID);
+
+            var path = new Game.Maps.Pathfinding("", map, MapCell, Dir);
+            var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
+            var newCell = path.NextCell(MapCell, newDir);
+
+            if (newCell <= 0)
+                return;
+
+            path.UpdatePath(Game.Maps.Pathfinding.GetDirChar(Dir) + Game.Maps.Pathfinding.GetCellChars(MapCell) + Game.Maps.Pathfinding.GetDirChar(newDir) +
+                Game.Maps.Pathfinding.GetCellChars(newCell));
+
+            var startpath = path.GetStartPath;
+            var cellpath = path.RemakePath();
+
+            if (!map.RushablesCells.Contains(newCell))
+                return;
+
+            if (cellpath != "")
             {
-                _movements.Interval = Utilities.Basic.Rand(1000, 5000);
+                MapCell = path.Destination;
+                Dir = path.Direction;
 
-                var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == MapID);
+                var packet = string.Format("GA0;1;{0};{1}", ID, startpath + cellpath);
 
-                var path = new Game.Maps.Pathfinding("", map, MapCell, Dir);
-                var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
-                var newCell = path.NextCell(MapCell, newDir);
-
-                if (newCell <= 0)
-                    return;
-
-                path.UpdatePath(Game.Maps.Pathfinding.GetDirChar(Dir) + Game.Maps.Pathfinding.GetCellChars(MapCell) + Game.Maps.Pathfinding.GetDirChar(newDir) +
-                    Game.Maps.Pathfinding.GetCellChars(newCell));
-
-                var startpath = path.GetStartPath;
-                var cellpath = path.RemakePath();
-
-                if (!map.RushablesCells.Contains(newCell))
-                    return;
-
-                if (cellpath != "")
-                {
-                    MapCell = path.Destination;
-                    Dir = path.Direction;
-
-                    var packet = string.Format("GA0;1;{0};{1}", ID, startpath + cellpath);
-
-                    map.Send(packet);
-                }
+                map.Send(packet);
             }
         }
     }

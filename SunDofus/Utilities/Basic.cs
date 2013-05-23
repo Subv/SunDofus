@@ -139,6 +139,25 @@ namespace SunDofus.Utilities
             else return deci.ToString("x");
         }
 
+        public static string ToBase36(int num)
+        {
+            string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            int r;
+            string newNumber = "";
+
+            while (num >= 36)
+            {
+                r = num % 36;
+                newNumber = chars[r] + newNumber;
+                num = num / 36;
+            }
+
+            newNumber = chars[num] + newNumber;
+
+            return newNumber;
+        }
+
         public static int HexToDeci(string hex)
         {
             if (hex == "-1" | hex == "")

@@ -283,6 +283,7 @@ namespace SunDofus.World.Game.Characters
         public List<int> Zaaps;
 
         public Stats.Stats Stats;
+        public Guilds.Guild Guild;
         public InventaryItems ItemsInventary;
         public InventarySpells SpellsInventary;
         public RealmClient NetworkClient;
@@ -479,6 +480,27 @@ namespace SunDofus.World.Game.Characters
                 builder.Append(Utilities.Basic.DeciToHex(Color2)).Append("|");
                 builder.Append(Utilities.Basic.DeciToHex(Color3)).Append("||");
                 builder.Append(GetItems()).Append("|");
+            }
+
+            return builder.ToString();
+        }
+
+        public string PatternGuild()
+        {
+            var member = Guild.Members.First(x => x.Character == this);
+
+            StringBuilder builder = new StringBuilder();
+            {
+                builder.Append(ID).Append(";");
+                builder.Append(Name).Append(";");
+                builder.Append(Level).Append(";");
+                builder.Append(Skin).Append(";");
+                builder.Append(member.Rank).Append(";");
+                builder.Append(member.ExpGaved).Append(";");
+                builder.Append(member.ExpGived).Append(";");
+                builder.Append(member.Rights).Append(";");
+                builder.Append((isConnected ? "1" : "0")).Append(";");
+                builder.Append(Faction.ID).Append(";0");
             }
 
             return builder.ToString();

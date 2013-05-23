@@ -133,6 +133,31 @@ namespace SunDofus.World.Network.Realm
                     if (Player.State.onExchange)
                         SunDofus.World.Game.Exchanges.ExchangesManager.LeaveExchange(Player);
 
+                    if (Player.State.onWaitingGuild)
+                    {
+                        if (Player.State.receiverInviteGuild != -1 || Player.State.senderInviteGuild != -1)
+                        {
+                            if (SunDofus.World.Game.Characters.CharactersManager.CharactersList.Any
+                                (x => x.ID == (Player.State.receiverInviteGuild != -1 ? Player.State.receiverInviteGuild : Player.State.senderInviteGuild)))
+                            {
+
+                                var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First
+                                    (x => x.ID == (Player.State.receiverInviteGuild != -1 ? Player.State.receiverInviteGuild : Player.State.senderInviteGuild));
+                                if (character.isConnected)
+                                {
+                                    character.State.senderInviteGuild = -1;
+                                    character.State.receiverInviteGuild = -1;
+                                    character.State.onWaitingGuild = false;
+                                    character.NetworkClient.Send("gJEc");
+                                }
+
+                                Player.State.receiverInviteGuild = -1;
+                                Player.State.senderInviteGuild = -1;
+                                Player.State.onWaitingGuild = false;
+                            }
+                        }
+                    }
+
                     if (Player.State.onWaitingParty)
                     {
                         if (Player.State.receiverInviteParty != -1 || Player.State.senderInviteParty != -1)

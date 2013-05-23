@@ -13,6 +13,7 @@ namespace SunDofus.World.Game.Maps
         public List<Monsters.MonstersGroup> MonstersGroups;
         public List<Fights.Fight> Fights;
         public List<int> RushablesCells;
+        public Guilds.GuildCollector Collector;
 
         public Entities.Models.Maps.MapModel Model;
 
@@ -69,6 +70,9 @@ namespace SunDofus.World.Game.Maps
 
             if (MonstersGroups.Count > 0)
                 character.NetworkClient.Send(string.Format("GM{0}", MonstersGroupsPattern()));
+
+            if (Collector != null)
+                character.NetworkClient.Send(string.Format("GM{0}", Collector.PatternMap()));
         }
 
         public void DelPlayer(Characters.Character character)
@@ -171,7 +175,7 @@ namespace SunDofus.World.Game.Maps
                 }
                 else return Data;
             }
-            catch (Exception e){ return ""; }
+            catch { return ""; }
         }
 
         private static int CheckSum(string Data)

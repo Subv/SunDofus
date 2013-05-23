@@ -86,6 +86,8 @@ namespace SunDofus.World.Game.World
                 foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.Authentified == true && x.Player.Faction.ID == client.Player.Faction.ID))
                     character.Send(string.Format("cMK!|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
             }
+            else
+                client.Send("BN");
         }
 
         public static void SendPartyMessage(Network.Realm.RealmClient client, string message)
@@ -95,6 +97,19 @@ namespace SunDofus.World.Game.World
                 foreach (var character in client.Player.State.Party.Members.Keys)
                     character.NetworkClient.Send(string.Format("cMK$|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
             }
+            else
+                client.Send("BN");
+        }
+
+        public static void SendGuildMessage(Network.Realm.RealmClient client, string message)
+        {
+            if (client.Player.Guild != null)
+            {
+                foreach (var character in client.Player.Guild.Members.Where(x => x.Character.isConnected))
+                    character.Character.NetworkClient.Send(string.Format("cMK%|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
+            }
+            else
+                client.Send("BN");
         }
 
         public static void SendAdminMessage(Network.Realm.RealmClient client, string message)
@@ -104,6 +119,8 @@ namespace SunDofus.World.Game.World
                 foreach (var character in Network.ServersHandler.RealmServer.Clients.Where(x => x.Authentified == true && x.Infos.Level > 0))
                     character.Send(string.Format("cMK@|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
             }
+            else
+                client.Send("BN");
         }
     }
 }

@@ -62,6 +62,15 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["GI"] = GameInformations;
             RegisteredPackets["GK"] = EndAction;
             RegisteredPackets["GP"] = ChangeAlignmentEnable;
+            RegisteredPackets["gB"] = UpgradeStatsGuild;
+            RegisteredPackets["gb"] = UpgradeSpellsGuild;
+            RegisteredPackets["gC"] = CreateGuild;
+            RegisteredPackets["gH"] = LetCollectorGuild;
+            RegisteredPackets["gI"] = GetGuildInfos;
+            RegisteredPackets["gJ"] = GetGuildJoinRequest;
+            RegisteredPackets["gK"] = ExitGuild;
+            RegisteredPackets["gP"] = ModifyRightGuild;
+            RegisteredPackets["gV"] = CloseGuildPanel;
             RegisteredPackets["iA"] = EnemyAdd;
             RegisteredPackets["iD"] = EnemyDelete;
             RegisteredPackets["iL"] = EnemiesList;
@@ -613,6 +622,518 @@ namespace SunDofus.World.Network.Realm
         private void ParseConsoleMessage(string datas)
         {
             Client.Commander.ParseAdminCommand(datas);
+        }
+
+        #endregion
+
+        #region Guilds
+
+        private void CloseGuildPanel(string datas)
+        {
+            Client.Send(string.Concat("gV", Client.Player.Name));
+        }
+
+        private void CreateGuild(string datas)
+        {
+            //TODO VERIF IF HAST THE CLIENT A GILDAOGEME
+
+            if (Client.Player.Guild != null)
+            {
+                //(Im)Packet vous avez déjà une guilde
+                return;
+            }
+
+            var infos = datas.Split('|');
+
+            if (infos.Length < 5)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            if (infos[0].Contains("-"))
+                infos[0] = "1";
+            if (infos[1].Contains("-"))
+                infos[1] = "0";
+            if (infos[2].Contains("-"))
+                infos[2] = "1";
+            if (infos[3].Contains("-"))
+                infos[3] = "0";
+
+            var bgID = 0;
+            var bgColor = 0;
+            var embID = 0;
+            var embColor = 0;
+
+            if (!int.TryParse(infos[0], out bgID) || !int.TryParse(infos[1], out bgColor) ||
+                !int.TryParse(infos[2], out embID) || !int.TryParse(infos[3], out embColor))
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            if (infos[4].Length > 15)
+            {
+                //(Im)Packet nom de guilde trop long
+                return;
+            }
+
+            if (Entities.Requests.GuildsRequest.GuildsList.Any(x => x.Name == infos[4]))
+            {
+                //(Im)Packet nom de guilde déjà existant
+                return;
+            }
+
+            var ID = (Entities.Requests.GuildsRequest.GuildsList.Count < 1 ? 1 : Entities.Requests.GuildsRequest.GuildsList.OrderByDescending(x => x.ID).ToArray()[0].ID + 1);
+
+            var guild = new World.Game.Guilds.Guild()
+            {
+                ID = ID,
+                Name = infos[4],
+                BgID = bgID,
+                BgColor = bgColor,
+                EmbID = embID,
+                EmbColor = embColor,
+                Exp = 0,
+                Level = 1,
+                CollectorMax = 1,
+                CollectorProspection = 0,
+                CollectorWisdom = 0,
+                CollectorPods = 0,
+            };
+
+            guild.AddMember(new Game.Guilds.GuildMember(Client.Player));
+
+            guild.Spells.Add(462, 1);
+            guild.Spells.Add(461, 1);
+            guild.Spells.Add(460, 1);
+            guild.Spells.Add(459, 1);
+            guild.Spells.Add(458, 1);
+            guild.Spells.Add(457, 1);
+            guild.Spells.Add(456, 1);
+            guild.Spells.Add(455, 1);
+            guild.Spells.Add(454, 1);
+            guild.Spells.Add(453, 1);
+            guild.Spells.Add(452, 1);
+            guild.Spells.Add(451, 1);
+
+            Client.Send(string.Concat("gS", guild.Name, "|", guild.Emblem.Replace(",", "|"), "|", Utilities.Basic.ToBase36(guild.Members[0].Rights)));
+            Client.Send("gV");
+
+            //REMOVE GILDAOGEME
+        }
+
+        private void ExitGuild(string datas)
+        {
+            if (!CharactersManager.CharactersList.Any(x => x.Name == datas))
+            {
+                Client.Send("BN");
+                return;
+            }            
+
+            //TODO, VERIF DROITS
+
+            if (datas == Client.Player.Name)
+            {
+                if (Client.Player.Guild == null)
+                {
+                    Client.Send("BN");
+                    return;
+                }
+
+                var guild = Client.Player.Guild;
+
+                if (guild.Members.Count < 2)
+                {
+                    //(Im)Packet vous ne pouvez pas quitter la guilde étant seul à l'intérieur
+                    return;
+                }
+
+                var member = guild.Members.First(x => x.Character == Client.Player);
+
+                if (member.Rank == 1)
+                {
+                    //(Im)Packet vous ne pouvez pas quitter la guilde étant meneur
+                    return;
+                }
+
+                Client.Send(string.Concat("gKK", Client.Player.Name, "|", Client.Player.Name));
+
+                member.Rank = 0;
+                member.Rights = 0;
+                member.ExpGived = 0;
+                member.ExpGaved = 0;
+
+                guild.Members.Remove(member);
+                Client.Player.Guild = null;
+            }
+            else
+            {
+                var character = CharactersManager.CharactersList.First(x => x.Name == datas);
+
+                if (character.Guild == null || Client.Player.Guild == null || (Client.Player.Guild != character.Guild))
+                {
+                    Client.Send("BN");
+                    return;
+                }
+
+                var guild = Client.Player.Guild;
+
+                var member = guild.Members.First(x => x.Character == character);
+
+                if (member.Rank == 1)
+                {
+                    //(Im)Packet vous ne pouvez pas kicker le meneur de la guilde
+                    return;
+                }
+                
+                if(character.isConnected)
+                    character.NetworkClient.Send(string.Concat("gKK", Client.Player.Name, "|", Client.Player.Name));
+
+                member.Rank = 0;
+                member.Rights = 0;
+                member.ExpGived = 0;
+                member.ExpGaved = 0;
+
+                //(Im)Packet, vous venez de vous faire bannir de la guilde
+                //(Im)Packet, vous venez de bannir character de la guilde
+
+                guild.Members.Remove(member);
+                character.Guild = null;
+            }
+        }
+
+        private void ModifyRightGuild(string datas)
+        {
+            if (Client.Player.Guild == null)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            //TODO VERIF DROITS
+
+            var guild = Client.Player.Guild;
+            var memember = guild.Members.First(x => x.Character == Client.Player);
+            var infos = datas.Split('|');
+
+            var ID = 0;
+            var rank = 0;
+            var rights = 0;
+            var expgived = 0;
+
+            if (!int.TryParse(infos[0], out ID) || !int.TryParse(infos[1], out rank) || !int.TryParse(infos[3], out rights) ||
+                !int.TryParse(infos[2], out expgived) || !CharactersManager.CharactersList.Any(x => x.ID == ID))
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            var character = CharactersManager.CharactersList.First(x => x.ID == ID);
+
+            if(character.Name == Client.Player.Name && Client.Player.Guild.Members.First
+                (x => x.Character.Name == Client.Player.Name).Rights != rights)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            var member = guild.Members.First(x => x.Character == character);
+
+            if (member.Rank == 1 && (member.Rights != rights || member.Rank != rank))
+            {
+                //(Im)Packet impossible changer les droits du meneur
+                return;
+            }
+
+            if (expgived > 90)
+                expgived = 90;
+            else if (expgived < 0)
+                expgived = 0;
+
+            if (rank == 1 && member.Rank != 1 && memember.Rank == 1)
+            {
+                memember.Rank = member.Rank;
+                memember.Rights = member.Rights;
+
+                Client.Send(string.Concat("gS", guild.Name, "|", guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(memember.Rights)));
+
+                member.Rank = 1;
+                member.Rights = 29695;
+                member.ExpGived = expgived;
+
+                if (member.Character.isConnected)
+                    member.Character.NetworkClient.Send(string.Concat("gS", guild.Name, "|", guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(member.Rights)));
+
+                return;
+            }
+
+            member.ExpGived = expgived;
+            member.Rights = rights;
+            member.Rank = rank;
+
+            if (member.Character.isConnected)
+                member.Character.NetworkClient.Send(string.Concat("gS", guild.Name, "|", guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(member.Rights)));
+        }
+
+        private void UpgradeStatsGuild(string datas)
+        {
+            if (Client.Player.Guild == null)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            //TODO, VERIF DROITS
+
+            var guild = Client.Player.Guild;
+
+            switch (datas[0])
+            {
+                case 'p':
+
+                    if (guild.BoostPoints > 0)
+                    {
+                        guild.BoostPoints -= 1;
+                        guild.CollectorProspection += 1;
+                        return;
+                    }
+                    break;
+
+                case 'x':
+                    
+                    if (guild.BoostPoints > 0)
+                    {
+                        guild.BoostPoints -= 1;
+                        guild.CollectorWisdom += 1;
+                        return;
+                    }
+                    break;
+
+                case 'o':
+                    
+                    if (guild.BoostPoints > 0)
+                    {
+                        guild.BoostPoints -= 1;
+                        guild.CollectorPods += 20;
+                        return;
+                    }
+                    break;
+
+                case 'k':
+
+                    if (guild.BoostPoints > 19)
+                    {
+                        guild.BoostPoints -= 20;
+                        guild.CollectorMax += 1;
+                        return;
+                    }
+                    break;
+            }
+
+            Client.Send("BN");
+        }
+
+        private void UpgradeSpellsGuild(string datas)
+        {
+            if (Client.Player.Guild == null)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            var guild = Client.Player.Guild;
+
+            //TODO VERIF DROITS
+
+            var spellID = 0;
+
+            if(!int.TryParse(datas, out spellID) || !guild.Spells.ContainsKey(spellID) || guild.BoostPoints < 5)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            guild.Spells[spellID]++;
+            guild.BoostPoints -= 5;
+
+            GetGuildInfos("B");
+        }
+
+        private void LetCollectorGuild(string datas)
+        {
+            var map = Client.Player.GetMap();
+
+            if (Client.Player.Guild == null || map == null)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            var guild = Client.Player.Guild;
+
+            if (guild.CollectorMax <= guild.Collectors.Count)
+            {
+                //(Im)Packet vous avez trop de perco
+                return;
+            }
+
+            if (map.Collector != null)
+            {
+                //(Im)Packet il y a déjà un percepteur sur la map
+                return;
+            }
+
+            var ID = (Entities.Requests.CollectorsRequests.CollectorsList.Count < 1 ? 1 : Entities.Requests.CollectorsRequests.CollectorsList.OrderByDescending(x => x.ID).ToArray()[0].ID + 1);
+
+            var collector = new Game.Guilds.GuildCollector(map, Client.Player)
+            {
+                ID = ID
+            };
+
+            guild.Collectors.Add(collector);
+            Entities.Requests.CollectorsRequests.CollectorsList.Add(collector);
+
+            //(Im)Packet guilde, un perco a été posé
+            GetGuildInfos("B");
+        }
+
+        private void GetGuildInfos(string datas)
+        {
+            if (Client.Player.Guild == null)
+            {
+                Client.Send("BN");
+                return;
+            }
+
+            var packet = string.Empty;
+            var guild = Client.Player.Guild;
+
+            switch (datas[0])
+            {
+                case 'B':
+
+                    packet = string.Concat("gIB", guild.CollectorMax, "|", guild.Collectors.Count, "|", (guild.Level * 100), "|", guild.Level, "|",
+                          guild.CollectorPods, "|", guild.CollectorProspection, "|", guild.CollectorWisdom, "|", guild.CollectorMax, "|", guild.BoostPoints, "|",
+                          (1000 + (10 * guild.Level)), "|", guild.GetSpells());
+
+                    Client.Send(packet);
+                    return;
+
+                case 'G':
+
+                    var lastLevel = Entities.Requests.LevelsRequests.LevelsList.OrderByDescending(x => x.Guild).Where(x => x.Guild <= guild.Exp).ToArray()[0].Guild;
+                    var nextLevel = Entities.Requests.LevelsRequests.LevelsList.OrderBy(x => x.Guild).Where(x => x.Guild > guild.Exp).ToArray()[0].Guild;
+
+                    packet = string.Concat("gIG1|", lastLevel, "|", guild.Exp, "|", nextLevel, "|", guild.Exp);
+
+                    Client.Send(packet);
+                    return;
+
+                case 'M':
+
+                    Client.Send(string.Concat("gIM+", string.Join("|", from c in guild.Members select c.Character.PatternGuild())));
+                    return;
+
+                case 'T':
+
+                    Client.Send(string.Concat("gITM+", string.Join("|", from c in guild.Collectors select c.PatternGuild())));
+                    return;
+            }
+        }
+
+        private void GetGuildJoinRequest(string datas)
+        {
+            switch (datas[0])
+            {
+                case 'R':
+
+                    if(!CharactersManager.CharactersList.Any(x => x.Name == datas.Substring(1)))
+                    {
+                        Client.Send("BN");
+                        return;
+                    }
+
+                    var receiverCharacter = CharactersManager.CharactersList.First(x => x.Name == datas.Substring(1));
+
+                    if (receiverCharacter.Guild != null || Client.Player.Guild == null || !receiverCharacter.isConnected)
+                    {
+                        if (receiverCharacter.Guild != null)
+                        {
+                            //(ImPacket) La personne a déjà une guilde
+                            return;
+                        }
+
+                        Client.Send("BN");
+                        return;
+                    }
+
+                    Client.Player.State.receiverInviteGuild = receiverCharacter.ID;
+                    receiverCharacter.State.senderInviteGuild = Client.Player.ID;
+
+                    Client.Player.State.onWaitingGuild = true;
+                    receiverCharacter.State.onWaitingGuild = true;
+
+                    Client.Send(string.Concat("gJR", receiverCharacter.Name));
+                    receiverCharacter.NetworkClient.Send(string.Concat("gJr", Client.Player.ID, "|", Client.Player.Name, "|", Client.Player.Guild.Name));
+
+                    break;
+
+                case 'K':
+
+                    var ID = 0;
+
+                    if (!int.TryParse(datas.Substring(1), out ID) || !CharactersManager.CharactersList.Any(x => x.ID == ID))
+                    {
+                        Client.Send("BN");
+                        return;
+                    }
+
+                    var accepttoCharacter = CharactersManager.CharactersList.First(x => x.ID == ID);
+
+                    if (!accepttoCharacter.isConnected || accepttoCharacter.State.receiverInviteGuild == Client.Player.ID)
+                    {
+                        Client.Send("BN");
+                        return;
+                    }
+
+                    Client.Player.State.senderInviteGuild = -1;
+                    accepttoCharacter.State.receiverInviteGuild = -1;
+
+                    Client.Player.State.onWaitingGuild = false;
+                    accepttoCharacter.State.onWaitingGuild = false;
+                    
+                    Client.Player.Guild = accepttoCharacter.Guild;
+                    var member = new Game.Guilds.GuildMember(Client.Player);
+                    var guild = Client.Player.Guild;
+
+                    accepttoCharacter.Guild.Members.Add(member);
+
+                    Client.Send(string.Concat("gS", guild.Name, "|", guild.Emblem.Replace(",", "|"), "|", Utilities.Basic.ToBase36(member.Rights)));
+                    accepttoCharacter.NetworkClient.Send(string.Concat("gJKa", Client.Player.Name));
+
+                    break;
+
+                case 'E':
+
+                    if(!CharactersManager.CharactersList.Any(x => x.Name == datas.Substring(1)))
+                    {
+                        Client.Send("BN");
+                        return;
+                    }
+
+                    var refusetoCharacter = CharactersManager.CharactersList.First(x => x.Name == datas.Substring(1));
+
+                    if (!refusetoCharacter.isConnected || refusetoCharacter.State.receiverInviteGuild == Client.Player.ID)
+                    {
+                        Client.Send("BN");
+                        return;
+                    }
+
+                    refusetoCharacter.NetworkClient.Send("gJEc");
+
+                    break;
+            }
         }
 
         #endregion

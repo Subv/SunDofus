@@ -8,7 +8,7 @@ namespace SunDofus.World.Game.Characters
     class CharacterState
     {
         private int _moveToCell = -1, _actNPC = -1, _actTraided = -1, _actTraider = -1, _actPlayEx = -1;
-        private int _senderInvPar = -1, _recInvPar = -1;
+        private int _senderInvPar = -1, _recInvPar = -1, _senderInvGuild = -1, _recInvGuild = -1;
         private int _followingID = -1;
         private int _onDiaWith = -1;
         private int _challAsked = -1, _challAsker = -1;
@@ -108,6 +108,30 @@ namespace SunDofus.World.Game.Characters
             set
             {
                 _recInvPar = value;
+            }
+        }
+
+        public bool onWaitingGuild = false;
+        public int senderInviteGuild
+        {
+            get
+            {
+                return _senderInvGuild;
+            }
+            set
+            {
+                _senderInvGuild = value;
+            }
+        }
+        public int receiverInviteGuild
+        {
+            get
+            {
+                return _recInvGuild;
+            }
+            set
+            {
+                _recInvGuild = value;
             }
         }
 

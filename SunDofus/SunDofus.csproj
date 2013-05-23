@@ -86,6 +86,8 @@
     <Compile Include="World\Entities\Requests\Client\AuthsRequests.cs" />
     <Compile Include="World\Entities\Requests\Client\CharactersRequests.cs" />
     <Compile Include="World\Entities\Requests\Client\ItemsRequests.cs" />
+    <Compile Include="World\Entities\Requests\World\CollectorsRequests.cs" />
+    <Compile Include="World\Entities\Requests\World\GuildsRequest.cs" />
     <Compile Include="World\Entities\Requests\World\LevelsRequests.cs" />
     <Compile Include="World\Entities\Requests\Maps\MapsRequests.cs" />
     <Compile Include="World\Entities\Requests\Maps\MonstersRequests.cs" />
@@ -114,8 +116,11 @@
     <Compile Include="World\Entities\Requests\Maps\ZaapsRequests.cs" />
     <Compile Include="World\Game\Characters\CharacterEnemies.cs" />
     <Compile Include="World\Game\Characters\CharacterFriends.cs" />
+    <Compile Include="World\Game\Characters\CharacterJobs.cs" />
+    <Compile Include="World\Game\Characters\Jobs\Job.cs" />
     <Compile Include="World\Game\Exchanges\ExchangePlayer.cs" />
     <Compile Include="World\Game\Guilds\Guild.cs" />
+    <Compile Include="World\Game\Guilds\GuildCollector.cs" />
     <Compile Include="World\Game\Guilds\GuildMember.cs" />
     <Compile Include="World\Game\Maps\Zaapis\ZaapisManager.cs" />
     <Compile Include="World\Game\Maps\Zaaps\Zaap.cs" />

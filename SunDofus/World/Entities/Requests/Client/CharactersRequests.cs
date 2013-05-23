@@ -117,47 +117,45 @@ namespace SunDofus.World.Entities.Requests
 
         public static void SaveCharacter(Game.Characters.Character character)
         {
-            if (character.isNewCharacter)
+            if (character.isNewCharacter && !character.isDeletedCharacter)
             {
-                if (character.isDeletedCharacter)
-                    return;
-
                 CreateCharacter(character);
                 return;
             }
-
-            if (character.isDeletedCharacter)
+            else if (character.isDeletedCharacter)
             {
                 DeleteCharacter(character.Name);
                 return;
             }
-
-            lock (DatabaseProvider.ConnectionLocker)
+            else if(!character.isDeletedCharacter && !character.isNewCharacter)
             {
-                var sqlText = "UPDATE dyn_characters SET id=@id, name=@name, level=@level, class=@class, sex=@sex," +
-                    " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp, faction=@faction, zaaps=@zaaps, savepos=@savepos WHERE id=@id";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                lock (DatabaseProvider.ConnectionLocker)
+                {
+                    var sqlText = "UPDATE dyn_characters SET id=@id, name=@name, level=@level, class=@class, sex=@sex," +
+                        " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp, faction=@faction, zaaps=@zaaps, savepos=@savepos WHERE id=@id";
+                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
-                var P = sqlCommand.Parameters;
-                P.Add(new MySqlParameter("@id", character.ID));
-                P.Add(new MySqlParameter("@name", character.Name));
-                P.Add(new MySqlParameter("@level", character.Level));
-                P.Add(new MySqlParameter("@class", character.Class));
-                P.Add(new MySqlParameter("@sex", character.Sex));
-                P.Add(new MySqlParameter("@color", character.Color));
-                P.Add(new MySqlParameter("@color2", character.Color2));
-                P.Add(new MySqlParameter("@color3", character.Color3));
-                P.Add(new MySqlParameter("@mapinfos", character.MapID + "," + character.MapCell + "," + character.Dir));
-                P.Add(new MySqlParameter("@stats", character.SqlStats()));
-                P.Add(new MySqlParameter("@items", character.GetItemsToSave()));
-                P.Add(new MySqlParameter("@spells", character.SpellsInventary.SaveSpells()));
-                P.Add(new MySqlParameter("@exp", character.Exp));
-                P.Add(new MySqlParameter("@faction", string.Concat(character.Faction.ID, ";",
-                    character.Faction.Honor, ";", character.Faction.Deshonor)));
-                P.Add(new MySqlParameter("@zaaps", string.Join(";", character.Zaaps)));
-                P.Add(new MySqlParameter("@savepos", string.Concat(character.SaveMap, ";", character.SaveCell)));
+                    var P = sqlCommand.Parameters;
+                    P.Add(new MySqlParameter("@id", character.ID));
+                    P.Add(new MySqlParameter("@name", character.Name));
+                    P.Add(new MySqlParameter("@level", character.Level));
+                    P.Add(new MySqlParameter("@class", character.Class));
+                    P.Add(new MySqlParameter("@sex", character.Sex));
+                    P.Add(new MySqlParameter("@color", character.Color));
+                    P.Add(new MySqlParameter("@color2", character.Color2));
+                    P.Add(new MySqlParameter("@color3", character.Color3));
+                    P.Add(new MySqlParameter("@mapinfos", character.MapID + "," + character.MapCell + "," + character.Dir));
+                    P.Add(new MySqlParameter("@stats", character.SqlStats()));
+                    P.Add(new MySqlParameter("@items", character.GetItemsToSave()));
+                    P.Add(new MySqlParameter("@spells", character.SpellsInventary.SaveSpells()));
+                    P.Add(new MySqlParameter("@exp", character.Exp));
+                    P.Add(new MySqlParameter("@faction", string.Concat(character.Faction.ID, ";",
+                        character.Faction.Honor, ";", character.Faction.Deshonor)));
+                    P.Add(new MySqlParameter("@zaaps", string.Join(";", character.Zaaps)));
+                    P.Add(new MySqlParameter("@savepos", string.Concat(character.SaveMap, ";", character.SaveCell)));
 
-                sqlCommand.ExecuteNonQuery();
+                    sqlCommand.ExecuteNonQuery();
+                }
             }
         }
 
