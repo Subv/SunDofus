@@ -63,6 +63,7 @@ namespace SunDofus
                     World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsQuestions();
                     World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCs();
 
+                    World.Entities.Requests.BanksRequests.LoadBanks();
                     World.Entities.Requests.CharactersRequests.LoadCharacters();
                     World.Entities.Requests.GuildsRequest.LoadGuilds();
                     World.Entities.Requests.CollectorsRequests.LoadCollectors();

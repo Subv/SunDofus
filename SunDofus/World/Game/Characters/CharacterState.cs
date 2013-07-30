@@ -30,6 +30,7 @@ namespace SunDofus.World.Game.Characters
         public bool onExchange = false;
         public bool onExchangePanel = false;
         public bool onExchangeAccepted = false;
+        public bool onExchangeWithBank = false;
 
         public int moveToCell
         {
@@ -194,7 +195,7 @@ namespace SunDofus.World.Game.Characters
         {
             get
             {
-                return (onMove || onExchange || onWaitingParty || onDialoging || isChallengeAsked || isChallengeAsker);
+                return (onMove || onExchange || onWaitingParty || onDialoging || isChallengeAsked || isChallengeAsker || onExchangeWithBank);
             }
         }
     }

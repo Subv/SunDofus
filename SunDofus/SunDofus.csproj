@@ -86,6 +86,7 @@
     <Compile Include="World\Entities\Requests\Client\AuthsRequests.cs" />
     <Compile Include="World\Entities\Requests\Client\CharactersRequests.cs" />
     <Compile Include="World\Entities\Requests\Client\ItemsRequests.cs" />
+    <Compile Include="World\Entities\Requests\World\BanksRequests.cs" />
     <Compile Include="World\Entities\Requests\World\CollectorsRequests.cs" />
     <Compile Include="World\Entities\Requests\World\GuildsRequest.cs" />
     <Compile Include="World\Entities\Requests\World\LevelsRequests.cs" />
@@ -114,6 +115,9 @@
     <Compile Include="World\Entities\Models\Spells\SpellToLearn.cs" />
     <Compile Include="World\Entities\Requests\Maps\ZaapisRequests.cs" />
     <Compile Include="World\Entities\Requests\Maps\ZaapsRequests.cs" />
+    <Compile Include="World\Game\Bank\Bank.cs" />
+    <Compile Include="World\Game\Bank\BankExchange.cs" />
+    <Compile Include="World\Game\Bank\BankManager.cs" />
     <Compile Include="World\Game\Characters\CharacterEnemies.cs" />
     <Compile Include="World\Game\Characters\CharacterFriends.cs" />
     <Compile Include="World\Game\Characters\CharacterJobs.cs" />

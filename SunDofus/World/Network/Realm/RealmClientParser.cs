@@ -639,7 +639,7 @@ namespace SunDofus.World.Network.Realm
 
             if (Client.Player.Guild != null)
             {
-                //(Im)Packet vous avez déjà une guilde
+                Client.Player.NetworkClient.Send("Ea");
                 return;
             }
 
@@ -672,15 +672,9 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
-            if (infos[4].Length > 15)
+            if (infos[4].Length > 15 || Entities.Requests.GuildsRequest.GuildsList.Any(x => x.Name == infos[4]))
             {
-                //(Im)Packet nom de guilde trop long
-                return;
-            }
-
-            if (Entities.Requests.GuildsRequest.GuildsList.Any(x => x.Name == infos[4]))
-            {
-                //(Im)Packet nom de guilde déjà existant
+                Client.Player.NetworkClient.Send("Ean");
                 return;
             }
 
@@ -745,7 +739,7 @@ namespace SunDofus.World.Network.Realm
 
                 if (guild.Members.Count < 2)
                 {
-                    //(Im)Packet vous ne pouvez pas quitter la guilde étant seul à l'intérieur
+                    Client.Player.NetworkClient.Send("Im1101");
                     return;
                 }
 
@@ -753,7 +747,7 @@ namespace SunDofus.World.Network.Realm
 
                 if (member.Rank == 1)
                 {
-                    //(Im)Packet vous ne pouvez pas quitter la guilde étant meneur
+                    Client.Player.NetworkClient.Send("Im1101");
                     return;
                 }
 
@@ -766,6 +760,7 @@ namespace SunDofus.World.Network.Realm
 
                 guild.Members.Remove(member);
                 Client.Player.Guild = null;
+                Client.Player.NetworkClient.Send("Im0176");
             }
             else
             {
@@ -783,7 +778,7 @@ namespace SunDofus.World.Network.Realm
 
                 if (member.Rank == 1)
                 {
-                    //(Im)Packet vous ne pouvez pas kicker le meneur de la guilde
+                    Client.Player.NetworkClient.Send("Im1101");
                     return;
                 }
                 
@@ -796,7 +791,7 @@ namespace SunDofus.World.Network.Realm
                 member.ExpGaved = 0;
 
                 //(Im)Packet, vous venez de vous faire bannir de la guilde
-                //(Im)Packet, vous venez de bannir character de la guilde
+                Client.Player.NetworkClient.Send(string.Concat("Im0177;", character.Name));
 
                 guild.Members.Remove(member);
                 character.Guild = null;
@@ -842,7 +837,7 @@ namespace SunDofus.World.Network.Realm
 
             if (member.Rank == 1 && (member.Rights != rights || member.Rank != rank))
             {
-                //(Im)Packet impossible changer les droits du meneur
+                Client.Player.NetworkClient.Send("Im1101");
                 return;
             }
 
@@ -974,13 +969,13 @@ namespace SunDofus.World.Network.Realm
 
             if (guild.CollectorMax <= guild.Collectors.Count)
             {
-                //(Im)Packet vous avez trop de perco
+                Client.Player.NetworkClient.SendMessage("Vous avez trop de percepteurs !");
                 return;
             }
 
             if (map.Collector != null)
             {
-                //(Im)Packet il y a déjà un percepteur sur la map
+                Client.Player.NetworkClient.SendMessage("Un percepteur est déjà présent sur la map !");
                 return;
             }
 
@@ -994,7 +989,7 @@ namespace SunDofus.World.Network.Realm
             guild.Collectors.Add(collector);
             Entities.Requests.CollectorsRequests.CollectorsList.Add(collector);
 
-            //(Im)Packet guilde, un perco a été posé
+            Client.Player.Guild.SendMessage(string.Concat("Un percepteur vient d'être posé par <b>", Client.Player.Name, "</b> en [", Client.Player.GetMap().Model.PosX, ",", Client.Player.GetMap().Model.PosY, "] !"));
             GetGuildInfos("B");
         }
 
@@ -1025,7 +1020,7 @@ namespace SunDofus.World.Network.Realm
                     var lastLevel = Entities.Requests.LevelsRequests.LevelsList.OrderByDescending(x => x.Guild).Where(x => x.Guild <= guild.Exp).ToArray()[0].Guild;
                     var nextLevel = Entities.Requests.LevelsRequests.LevelsList.OrderBy(x => x.Guild).Where(x => x.Guild > guild.Exp).ToArray()[0].Guild;
 
-                    packet = string.Concat("gIG1|", lastLevel, "|", guild.Exp, "|", nextLevel, "|", guild.Exp);
+                    packet = string.Concat("gIG1|", guild.Level, "|", lastLevel, "|", guild.Exp, "|", nextLevel);
 
                     Client.Send(packet);
                     return;
@@ -1060,7 +1055,7 @@ namespace SunDofus.World.Network.Realm
                     {
                         if (receiverCharacter.Guild != null)
                         {
-                            //(ImPacket) La personne a déjà une guilde
+                            Client.Player.NetworkClient.Send("Le joueur est déjà membre d'une guilde !");
                             return;
                         }
 
@@ -1091,7 +1086,7 @@ namespace SunDofus.World.Network.Realm
 
                     var accepttoCharacter = CharactersManager.CharactersList.First(x => x.ID == ID);
 
-                    if (!accepttoCharacter.isConnected || accepttoCharacter.State.receiverInviteGuild == Client.Player.ID)
+                    if (!accepttoCharacter.isConnected || accepttoCharacter.State.receiverInviteGuild != Client.Player.ID)
                     {
                         Client.Send("BN");
                         return;

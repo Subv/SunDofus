@@ -14,8 +14,8 @@ namespace SunDofus.World.Game.World
             _timer = new Timer((e) =>
             {
                 SaveWorld();
-                _timer.Change(1 * 60 * 1000, Timeout.Infinite);
-            }, null, 1 * 60 * 1000, Timeout.Infinite);
+                _timer.Change(Utilities.Config.GetIntElement("AutoSaveTime") * 60 * 1000, Timeout.Infinite);
+            }, null, Utilities.Config.GetIntElement("AutoSaveTime") * 60 * 1000, Timeout.Infinite);
         }
 
         public static void SaveWorld()
@@ -27,6 +27,7 @@ namespace SunDofus.World.Game.World
             SaveChararacters();
             SaveGuilds();
             SaveCollectors();
+            SaveBanks();
 
             Characters.CharactersManager.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1165"));
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StopMaintenancePacket().GetPacket());
@@ -51,6 +52,12 @@ namespace SunDofus.World.Game.World
         {
             foreach (var collector in Entities.Requests.CollectorsRequests.CollectorsList)
                 Entities.Requests.CollectorsRequests.SaveCollector(collector);
+        }
+
+        private static void SaveBanks()
+        {
+            foreach (var bank in Entities.Requests.BanksRequests.BanksList)
+                Entities.Requests.BanksRequests.SaveBank(bank);
         }
     }
 }

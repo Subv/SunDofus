@@ -291,6 +291,7 @@ namespace SunDofus.World.Game.Characters
         public CharacterState State;
         public CharacterFaction Faction;
         public CharacterChannels Channels;
+        public CharacterJobs Jobs;
 
         public CharacterFriends Friends;
         public CharacterEnemies Enemies;
@@ -303,6 +304,7 @@ namespace SunDofus.World.Game.Characters
             ItemsInventary = new InventaryItems(this);
             SpellsInventary = new InventarySpells(this);
             Faction = new CharacterFaction(this);
+            Jobs = new CharacterJobs(this);
 
             Channels = new CharacterChannels(this);
             Friends = new CharacterFriends(this);

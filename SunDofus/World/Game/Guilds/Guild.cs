@@ -194,6 +194,7 @@ namespace SunDofus.World.Game.Guilds
         public void AddMember(GuildMember member)
         {
             Members.Add(member);
+            member.Character.Guild = this;
 
             if (Members.Count < 2)
             {
@@ -210,6 +211,11 @@ namespace SunDofus.World.Game.Guilds
         public void Send(string message)
         {
             Members.Where(x => x.Character.isConnected).ToList().ForEach(x => x.Character.NetworkClient.Send(message));
+        }
+
+        public void SendMessage(string message)
+        {
+            Members.Where(x => x.Character.isConnected).ToList().ForEach(x => x.Character.NetworkClient.Send(string.Concat("cs<font color=\"663399\">", message, "</font>")));
         }
 
         public string GetSpells()
@@ -259,6 +265,9 @@ namespace SunDofus.World.Game.Guilds
             foreach (var c in datas.Split('|'))
             {
                 var memberInfos = c.Split(';');
+
+                if (!Characters.CharactersManager.CharactersList.Any(x => x.ID == int.Parse(memberInfos[0])))
+                    continue;
 
                 var character = Characters.CharactersManager.CharactersList.First(x => x.ID == int.Parse(memberInfos[0]));
                 character.Guild = this;

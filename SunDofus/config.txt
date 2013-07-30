@@ -5,7 +5,7 @@ $World true;
 <!-- IF REALM -->
 
 $Auth_Ip 127.0.0.1;
-$Auth_Port 485;
+$Auth_Port 466;
 $Sync_Ip 127.0.0.1;
 $Sync_Port 486;
 
@@ -38,6 +38,8 @@ $AntiSpamRecruitment 60000;
 
 $MustMonstersMove true;
 $MustNPCsMove true;
+
+$AutoSaveTime 5;
 
 $StartLevel 1;
 $StartKamas 0;

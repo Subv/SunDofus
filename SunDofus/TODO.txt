@@ -1,2 +1,1 @@
-﻿Revoir les droits des modérateurs / administrateurs / animateurs
-Faire les conditions des items et les armes à deux mains + bouclier, ...
+﻿-> Finir les guildes (ImPacket + la gestion des droits)

@@ -85,6 +85,10 @@ namespace SunDofus.World.Network.Realm
                         Client.Send("gn");
                         break;
 
+                    case "bank":
+                        Game.Bank.BankManager.OpenBank(Client.Player);
+                        break;
+
                     default:
                         Client.SendConsoleMessage("Cannot parse your ChatCommand !");
                         break;
@@ -214,11 +218,6 @@ namespace SunDofus.World.Network.Realm
                     case "all":
                         SunDofus.World.Game.World.Save.SaveWorld();
                         Client.SendConsoleMessage("World saved !", 0);
-                        break;
-
-                    case "char":
-                        SunDofus.World.Game.World.Save.SaveChararacters();
-                        Client.SendConsoleMessage("Characters saved !", 0);
                         break;
 
                     default:
