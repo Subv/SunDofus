@@ -63,9 +63,10 @@ namespace SunDofus.World.Game.Maps
             lock (Characters)
                 Characters.Add(character);
 
-            character.NetworkClient.Send(string.Format("GM{0}", CharactersPattern()));
+            if (Characters.Count > 0)
+                character.NetworkClient.Send(string.Format("GM{0}", CharactersPattern()));
 
-            if(Npcs.Count > 0)
+            if (Npcs.Count > 0)
                 character.NetworkClient.Send(string.Format("GM{0}", NPCsPattern()));
 
             if (MonstersGroups.Count > 0)

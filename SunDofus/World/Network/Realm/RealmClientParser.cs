@@ -793,7 +793,6 @@ namespace SunDofus.World.Network.Realm
                 member.ExpGived = 0;
                 member.ExpGaved = 0;
 
-                //(Im)Packet, vous venez de vous faire bannir de la guilde
                 Client.Player.NetworkClient.Send(string.Concat("Im0177;", character.Name));
 
                 guild.Members.Remove(member);
@@ -984,7 +983,10 @@ namespace SunDofus.World.Network.Realm
 
             var ID = Client.Player.GetMap().NextNpcID();
 
-            var collector = new Game.Guilds.GuildCollector(map, Client.Player, ID);
+            var collector = new Game.Guilds.GuildCollector(map, Client.Player, ID)
+            {
+                isNewCollector = true
+            };
 
             guild.Collectors.Add(collector);
             Entities.Requests.CollectorsRequests.CollectorsList.Add(collector);
@@ -1032,7 +1034,8 @@ namespace SunDofus.World.Network.Realm
 
                 case 'T':
 
-                    Client.Send(string.Concat("gITM+", string.Join("|", from c in guild.Collectors select c.PatternGuild())));
+                    packet = string.Concat("gITM+", string.Join("|", from c in guild.Collectors select c.PatternGuild()));
+                    Client.Send(packet.Substring(0, packet.Length - 1));
                     return;
             }
         }

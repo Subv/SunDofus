@@ -153,9 +153,12 @@ SunDofus v0.3.2.X :
 -> [16.05.2013] Correction de beaucoup de petits bugs (Merci Subv pour son fork et ses corrections)
 -> [16.05.2013] Ajout de la sauvegarde automatique (Merci Subv qui m'a empêché de le faire du coup)
 -> [16.05.2013] Ajout de l'uptime du serveur et de la commande .infos
--> [23.05.2013] (à finir)Ajout total des guildes (hormis enclos & maison, et la récolte de percepteur) { percepteur, canaux, droits, affichages, etc etc }
 -> [23.05.2013] Ajout d'une base pour les métiers (merci Subv)
 -> [24.05.2013] (à finir)Ajout total des banques
 -> [24.05.2013] (à finir)Ajout des questions à paramètres (ex : banque avec le nombre de kamas)
+-> [17.08.2013] Amélioration des performances par un multi-Thread entre le realm/game
+-> [17.08.2013] Ajout du README.TXT et suppression d'une classe qui n'avait pas lieu d'être (SyncAction.cs)
+-> [17.08.2013] Ajout des guildes (invitations, expulsions, rang, exp, affichage, ... Il manque la gestion complète des droits envers une action, les enclos et les maisons)
+-> [17.08.2013] Ajout des percepteurs (pose, déplacement, affichage)
 
 SunDofus v0.3.3.X
