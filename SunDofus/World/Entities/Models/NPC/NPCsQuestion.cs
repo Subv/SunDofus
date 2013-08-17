@@ -34,6 +34,7 @@ namespace SunDofus.World.Entities.Models.NPC
 
         public NPCsQuestion RescueQuestion;
         public List<NPCsAnswer> Answers;
+        public List<string> Params;
 
         public List<Game.World.Conditions.NPCConditions> Conditions;
 
@@ -41,6 +42,7 @@ namespace SunDofus.World.Entities.Models.NPC
         {
             Answers = new List<NPCsAnswer>();
             Conditions = new List<Game.World.Conditions.NPCConditions>();
+            Params = new List<string>();
         }
 
         public bool HasConditions(Game.Characters.Character _character)

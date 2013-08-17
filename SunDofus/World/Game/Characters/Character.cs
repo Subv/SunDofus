@@ -920,6 +920,22 @@ namespace SunDofus.World.Game.Characters
 
         #endregion
 
+        #region Params
+
+        public string GetParam(string paramName)
+        {
+            switch (paramName)
+            {
+                case "kamas":
+                    return Kamas.ToString();
+
+                default:
+                    return "";
+            }
+        }
+
+        #endregion
+
         #region ToString
 
         public override string ToString()

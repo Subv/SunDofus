@@ -2291,39 +2291,65 @@ namespace SunDofus.World.Network.Realm
             if (!int.TryParse(datas, out id))
                 return;
 
-            if (!Client.Player.GetMap().Npcs.Any(x => x.ID == id) || Client.Player.State.Occuped)
+            if ((!Client.Player.GetMap().Npcs.Any(x => x.ID == id) && Client.Player.GetMap().Collector.ID != id) || Client.Player.State.Occuped)
             {
                 Client.Send("BN");
                 return;
             }
 
-            var npc = Client.Player.GetMap().Npcs.First(x => x.ID == id);
-
-            if (npc.Model.Question == null)
+            if (Client.Player.GetMap().Npcs.Any(x => x.ID == id)) //Is also a NPC
             {
-                Client.Send("BN");
-                Client.SendMessage("Dialogue inexistant !");
-                return;
-            }
+                var npc = Client.Player.GetMap().Npcs.First(x => x.ID == id);
 
-            Client.Player.State.onDialoging = true;
-            Client.Player.State.onDialogingWith = npc.ID;
-
-            Client.Send(string.Format("DCK{0}", npc.ID));
-
-            if (npc.Model.Question.Answers.Count(x => x.HasConditions(Client.Player)) == 0)
-                Client.Send(string.Format("DQ{0}", npc.Model.Question.QuestionID));
-            else
-            {
-                var packet = string.Format("DQ{0}|", npc.Model.Question.QuestionID);
-
-                foreach (var answer in npc.Model.Question.Answers)
+                if (npc.Model.Question == null)
                 {
-                    if (answer.HasConditions(Client.Player))
-                        packet += string.Format("{0};", answer.AnswerID);
+                    Client.Send("BN");
+                    Client.SendMessage("Dialogue inexistant !");
+                    return;
+                }
+
+                Client.Player.State.onDialoging = true;
+                Client.Player.State.onDialogingWith = npc.ID;
+
+                Client.Send(string.Format("DCK{0}", npc.ID));
+
+                var packet = string.Format("DQ{0}", npc.Model.Question.QuestionID);
+
+                if(npc.Model.Question.Params.Count > 0)
+                {
+                    packet = string.Format("{0};", packet);
+
+                    foreach (var param in npc.Model.Question.Params)
+                        packet = string.Format("{0},", Client.Player.GetParam(param));
+
+                    packet = packet.Substring(0, packet.Length - 1);
+                }
+
+                packet = string.Format("{0}|", packet);
+
+                if (npc.Model.Question.Answers.Count(x => x.HasConditions(Client.Player)) != 0)
+                {
+                    foreach (var answer in npc.Model.Question.Answers)
+                    {
+                        if (answer.HasConditions(Client.Player))
+                            packet += string.Format("{0};", answer.AnswerID);
+                    }
                 }
 
                 Client.Send(packet.Substring(0, packet.Length - 1));
+            }
+            else //Is also a collector
+            {
+                var collector = Client.Player.GetMap().Collector;
+
+                Client.Player.State.onDialoging = true;
+                Client.Player.State.onDialogingWith = collector.ID;
+                Client.Send(string.Format("DCK{0}", collector.ID));
+
+                var packet = string.Format("DQ1;{0},{1},{2},{3},{4}", 
+                    collector.Guild.Name, collector.Guild.CollectorPods, collector.Guild.CollectorProspection, collector.Guild.CollectorWisdom, collector.Guild.Collectors.Count);
+
+                Client.Send(packet);
             }
         }
 

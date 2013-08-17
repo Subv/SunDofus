@@ -122,6 +122,8 @@ namespace SunDofus.World.Entities.Requests
                             question.Conditions.Add(condiObject);
                     }
 
+                    question.Params = sqlReader.GetString("params").Split(',').ToList();
+
                     lock(QuestionsList)
                         QuestionsList.Add(question);
                 }
