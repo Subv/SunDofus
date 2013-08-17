@@ -22,67 +22,78 @@ namespace SunDofus
 
             if (Config.GetBoolElement("Realm"))
             {
-                try
-                {
-                    Auth.Network.ServersHandler.InitialiseServers();
-                    Auth.Entities.DatabaseProvider.InitializeConnection();
+                var realmthread = new System.Threading.Thread(new System.Threading.ThreadStart(new Action(delegate()
+                    {
+                        try
+                        {
+                            Auth.Network.ServersHandler.InitialiseServers();
+                            Auth.Entities.DatabaseProvider.InitializeConnection();
 
-                }
-                catch (Exception error)
-                {
-                    Console.WriteLine(error);
-                }
+                            Loggers.InfosLogger.Write(string.Format("Realm started in '{0}'s !", Basic.GetUpTime()[2]));
+                        }
+                        catch (Exception error)
+                        {
+                            Console.WriteLine(error);
+                        }
+                    })));
+
+                realmthread.Start();
             }
 
             if (Config.GetBoolElement("World"))
             {
-                try
-                {
-                    Console.Title = string.Format("{0} | Server '{1}'", Console.Title, Config.GetIntElement("ServerID"));
+                var gamethread = new System.Threading.Thread(new System.Threading.ThreadStart(new Action(delegate()
+                    {
+                        try
+                        {
+                            Console.Title = string.Format("{0} | Server '{1}'", Console.Title, Config.GetIntElement("ServerID"));
 
-                    World.Entities.DatabaseProvider.InitializeConnection();
+                            World.Entities.DatabaseProvider.InitializeConnection();
 
-                    World.Entities.Requests.LevelsRequests.LoadLevels();
+                            World.Entities.Requests.LevelsRequests.LoadLevels();
 
-                    World.Entities.Requests.ItemsRequests.LoadItems();
-                    World.Entities.Requests.ItemsRequests.LoadItemsSets();
-                    World.Entities.Requests.ItemsRequests.LoadUsablesItems();
+                            World.Entities.Requests.ItemsRequests.LoadItems();
+                            World.Entities.Requests.ItemsRequests.LoadItemsSets();
+                            World.Entities.Requests.ItemsRequests.LoadUsablesItems();
 
-                    World.Entities.Requests.SpellsRequests.LoadSpells();
-                    World.Entities.Requests.SpellsRequests.LoadSpellsToLearn();
+                            World.Entities.Requests.SpellsRequests.LoadSpells();
+                            World.Entities.Requests.SpellsRequests.LoadSpellsToLearn();
 
-                    World.Entities.Requests.MonstersRequests.LoadMonsters();
-                    World.Entities.Requests.MonstersRequests.LoadMonstersLevels();
+                            World.Entities.Requests.MonstersRequests.LoadMonsters();
+                            World.Entities.Requests.MonstersRequests.LoadMonstersLevels();
 
-                    World.Entities.Requests.MapsRequests.LoadMaps();
-                    World.Entities.Requests.TriggersRequests.LoadTriggers();
-                    World.Entities.Requests.ZaapsRequests.LoadZaaps();
-                    World.Entities.Requests.ZaapisRequests.LoadZaapis();
+                            World.Entities.Requests.MapsRequests.LoadMaps();
+                            World.Entities.Requests.TriggersRequests.LoadTriggers();
+                            World.Entities.Requests.ZaapsRequests.LoadZaaps();
+                            World.Entities.Requests.ZaapisRequests.LoadZaapis();
 
-                    World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsAnswers();
-                    World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsQuestions();
-                    World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCs();
+                            World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsAnswers();
+                            World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCsQuestions();
+                            World.Entities.Requests.NoPlayerCharacterRequests.LoadNPCs();
 
-                    World.Entities.Requests.BanksRequests.LoadBanks();
-                    World.Entities.Requests.CharactersRequests.LoadCharacters();
-                    World.Entities.Requests.GuildsRequest.LoadGuilds();
-                    World.Entities.Requests.CollectorsRequests.LoadCollectors();
+                            World.Entities.Requests.BanksRequests.LoadBanks();
+                            World.Entities.Requests.CharactersRequests.LoadCharacters();
+                            World.Entities.Requests.GuildsRequest.LoadGuilds();
+                            World.Entities.Requests.CollectorsRequests.LoadCollectors();
 
-                    World.Network.ServersHandler.InitialiseServers();
+                            World.Network.ServersHandler.InitialiseServers();
 
-                    World.Entities.Requests.AuthsRequests.LoadAuths();
+                            World.Entities.Requests.AuthsRequests.LoadAuths();
 
-                    World.Game.World.Save.InitSaveThread();
+                            World.Game.World.Save.InitSaveThread();
 
-                    World.Entities.DatabaseProvider.Close();
-                }
-                catch (Exception error)
-                {
-                    Console.WriteLine(error);
-                }
+                            World.Entities.DatabaseProvider.Close();
+
+                            Loggers.InfosLogger.Write(string.Format("World started in '{0}'s !", Basic.GetUpTime()[2]));
+                        }
+                        catch (Exception error)
+                        {
+                            Console.WriteLine(error);
+                        }
+                    })));
+
+                gamethread.Start();
             }
-
-            Loggers.InfosLogger.Write(string.Format("Started in '{0}'s !", Basic.GetUpTime()[2]));
 
             while (true)
             {

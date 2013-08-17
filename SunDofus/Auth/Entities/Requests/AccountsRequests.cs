@@ -18,7 +18,7 @@ namespace SunDofus.Auth.Entities.Requests
             lock (DatabaseProvider.ConnectionLocker)
             {
 
-                var sqlText = "SELECT * FROM dyn_accounts WHERE username=@username";
+                var sqlText = "SELECT * FROM accounts WHERE username=@username";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 sqlCommand.Parameters.Add(new MySqlParameter("@username", username));
@@ -63,7 +63,7 @@ namespace SunDofus.Auth.Entities.Requests
             lock (DatabaseProvider.ConnectionLocker)
             {
 
-                var sqlText = "SELECT * FROM dyn_accounts WHERE id=@id";
+                var sqlText = "SELECT * FROM accounts WHERE id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
                 sqlCommand.Parameters.Add(new MySqlParameter("@id", accountID));
 
@@ -104,7 +104,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT serverID, characterName FROM dyn_accounts_char WHERE accountID=@id";
+                var sqlText = "SELECT serverID, characterName FROM accounts_characters WHERE accountID=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
                 sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
 
@@ -184,7 +184,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT id FROM dyn_accounts WHERE pseudo=@pseudo";
+                var sqlText = "SELECT id FROM accounts WHERE pseudo=@pseudo";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", pseudo));
@@ -206,7 +206,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             lock (Entities.DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "UPDATE dyn_accounts SET connected=0";
+                var sqlText = "UPDATE accounts SET connected=0";
                 var sqlCommand = new MySqlCommand(sqlText, Entities.DatabaseProvider.Connection);
 
                 sqlCommand.ExecuteNonQuery();

@@ -14,7 +14,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_levels";
+                var sqlText = "SELECT * FROM levels";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();

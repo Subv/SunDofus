@@ -60,7 +60,7 @@ namespace SunDofus.World.Entities.Requests
             {
                 lock (DatabaseProvider.ConnectionLocker)
                 {
-                    var sqlText = "UPDATE guild SET ID=@ID, Name=@Name, Level=@Level, Exp=@Exp, Stats=@Stats," +
+                    var sqlText = "UPDATE guilds SET ID=@ID, Name=@Name, Level=@Level, Exp=@Exp, Stats=@Stats," +
                         " Members=@Members, Emblem=@Emblem WHERE ID=@ID";
                     var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 

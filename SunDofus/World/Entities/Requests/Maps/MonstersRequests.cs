@@ -14,7 +14,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_creatures";
+                var sqlText = "SELECT * FROM creatures";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
@@ -70,7 +70,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_creatures_levels";
+                var sqlText = "SELECT * FROM creatures_levels";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();

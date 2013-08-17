@@ -13,7 +13,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM dyn_auths";
+                var sqlText = "SELECT * FROM authservers";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();

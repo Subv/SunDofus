@@ -193,7 +193,11 @@
     <Content Include="config.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Databases\sungame.sql" />
+    <Content Include="Databases\sunrealm.sql" />
     <Content Include="favicon.ico" />
+    <Content Include="Librairies\MySql.Data.dll" />
+    <Content Include="Librairies\SilverSock.dll" />
     <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup />

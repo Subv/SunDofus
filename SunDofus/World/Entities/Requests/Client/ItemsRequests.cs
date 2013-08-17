@@ -16,7 +16,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_items";
+                var sqlText = "SELECT * FROM items";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
@@ -51,7 +51,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_items_sets";
+                var sqlText = "SELECT * FROM items_sets";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
@@ -80,7 +80,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_items_usables";
+                var sqlText = "SELECT * FROM items_usables";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();

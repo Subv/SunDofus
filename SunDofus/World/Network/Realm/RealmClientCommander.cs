@@ -226,10 +226,11 @@ namespace SunDofus.World.Network.Realm
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 Client.SendConsoleMessage("Cannot parse your AdminCommand !");
                 Client.SendConsoleMessage("Use the command 'Help' for more informations !");
+                Client.SendConsoleMessage(string.Concat("Sources : ", ex.ToString()));
             }
         }
 

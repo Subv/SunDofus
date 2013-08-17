@@ -17,7 +17,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = string.Format("SELECT * FROM dyn_gifts WHERE Target={0}", accID);
+                var sqlText = string.Format("SELECT * FROM gifts WHERE Target={0}", accID);
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();

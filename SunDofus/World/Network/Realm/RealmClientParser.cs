@@ -694,6 +694,7 @@ namespace SunDofus.World.Network.Realm
                 CollectorProspection = 0,
                 CollectorWisdom = 0,
                 CollectorPods = 0,
+                isNewGuild = true
             };
 
             guild.AddMember(new Game.Guilds.GuildMember(Client.Player));
@@ -713,6 +714,8 @@ namespace SunDofus.World.Network.Realm
 
             Client.Send(string.Concat("gS", guild.Name, "|", guild.Emblem.Replace(",", "|"), "|", Utilities.Basic.ToBase36(guild.Members[0].Rights)));
             Client.Send("gV");
+
+            Entities.Requests.GuildsRequest.GuildsList.Add(guild);
 
             //REMOVE GILDAOGEME
         }
@@ -1166,6 +1169,12 @@ namespace SunDofus.World.Network.Realm
             Client.Player.LoadMap();
 
             Client.Send(string.Concat("FO", (Client.Player.Friends.willSeeWhenConnected ? "+" : "-")));
+
+            if (Client.Player.Guild != null)
+            {
+                var guild = Client.Player.Guild;
+                Client.Send(string.Concat("gS", guild.Name, "|", guild.Emblem.Replace(",", "|"), "|", Utilities.Basic.ToBase36(guild.Members.First(x => x.Character == Client.Player).Rights)));
+            }
         }
 
         private void GameInformations(string datas)

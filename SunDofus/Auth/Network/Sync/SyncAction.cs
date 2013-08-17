@@ -19,7 +19,7 @@ namespace SunDofus.Auth.Network.Sync
             {
                 if (add)
                 {
-                    var sqlText = "INSERT INTO dyn_accounts_char VALUES (@charname, @server, @account)";
+                    var sqlText = "INSERT INTO accounts_characters VALUES (@charname, @server, @account)";
                     var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
 
                     sqlCommand.Parameters.Add(new MySqlParameter("@charname", character));
@@ -30,7 +30,7 @@ namespace SunDofus.Auth.Network.Sync
                 }
                 else
                 {
-                    var sqlText = "DELETE FROM dyn_accounts_char WHERE characterName=@charname";
+                    var sqlText = "DELETE FROM accounts_characters WHERE characterName=@charname";
                     var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
 
                     sqlCommand.Parameters.Add(new MySqlParameter("@charname", character));
@@ -49,7 +49,7 @@ namespace SunDofus.Auth.Network.Sync
 
             lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "UPDATE dyn_accounts SET connected=@connected WHERE Id=@id";
+                var sqlText = "UPDATE accounts SET connected=@connected WHERE Id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
 
                 sqlCommand.Parameters.Add(new MySqlParameter("@id", accountID));
@@ -68,7 +68,7 @@ namespace SunDofus.Auth.Network.Sync
 
             lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "DELETE FROM dyn_gifts WHERE id=@id";
+                var sqlText = "DELETE FROM gifts WHERE id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, SunDofus.Auth.Entities.DatabaseProvider.Connection);
 
                 sqlCommand.Parameters.Add(new MySqlParameter("@id", giftID));

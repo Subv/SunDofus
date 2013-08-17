@@ -14,7 +14,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM datas_triggers";
+                var sqlText = "SELECT * FROM triggers";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
@@ -47,7 +47,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "INSERT INTO datas_triggers VALUES(@mapid, @cellid, @action, @args, @condi)";
+                var sqlText = "INSERT INTO triggers VALUES(@mapid, @cellid, @action, @args, @condi)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;

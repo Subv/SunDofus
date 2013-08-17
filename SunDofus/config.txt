@@ -14,7 +14,7 @@ $Login_Version 1.29.1;
 $Realm_Database_Server localhost;
 $Realm_Database_User root;
 $Realm_Database_Pass ;
-$Realm_Database_Name sundofus;
+$Realm_Database_Name sunrealm;
 
 $Max_Clients_inQueue 50;
 $Time_PerClient 500;
@@ -26,7 +26,7 @@ $Subscription_Time true;
 $World_Database_Server localhost;
 $World_Database_User root;
 $World_Database_Pass ;
-$World_Database_Name sundofus;
+$World_Database_Name sungame;
 
 $ServerId 6;
 $ServerIp 127.0.0.1;

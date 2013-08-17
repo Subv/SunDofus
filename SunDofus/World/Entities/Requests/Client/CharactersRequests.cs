@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "SELECT * FROM dyn_characters";
+                var sqlText = "SELECT * FROM characters";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var sqlResult = sqlCommand.ExecuteReader();
@@ -86,7 +86,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "INSERT INTO dyn_characters VALUES(@id, @name, @level, @class, @sex, @color, @color2, @color3, @mapinfos, @stats, @items, @spells, @exp, @faction, @zaaps, @savepos)";
+                var sqlText = "INSERT INTO characters VALUES(@id, @name, @level, @class, @sex, @color, @color2, @color3, @mapinfos, @stats, @items, @spells, @exp, @faction, @zaaps, @savepos)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;
@@ -131,7 +131,7 @@ namespace SunDofus.World.Entities.Requests
             {
                 lock (DatabaseProvider.ConnectionLocker)
                 {
-                    var sqlText = "UPDATE dyn_characters SET id=@id, name=@name, level=@level, class=@class, sex=@sex," +
+                    var sqlText = "UPDATE characters SET id=@id, name=@name, level=@level, class=@class, sex=@sex," +
                         " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp, faction=@faction, zaaps=@zaaps, savepos=@savepos WHERE id=@id";
                     var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
@@ -163,7 +163,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "DELETE FROM dyn_characters WHERE name=@CharName";
+                var sqlText = "DELETE FROM characters WHERE name=@CharName";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 sqlCommand.Parameters.Add(new MySqlParameter("@CharName", name));
