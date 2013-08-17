@@ -80,8 +80,9 @@ namespace SunDofus.World.Game.Guilds
         public Maps.Map Map;
         private Timer _moveTimer;
 
-        public GuildCollector(Maps.Map map, Characters.Character owner)
+        public GuildCollector(Maps.Map map, Characters.Character owner, int id)
         {
+            ID = id;
             isInFight = false;
             Guild = owner.Guild;
 

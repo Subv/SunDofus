@@ -95,7 +95,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "INSERT INTO guilds VALUES(@ID, @Name, @Emblem, @Level, @Exp, @Stats, @Members)";
+                var sqlText = "INSERT INTO guilds VALUES(@ID, @Name, @Emblem, @Level, @Exp, @Members, @Stats)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;

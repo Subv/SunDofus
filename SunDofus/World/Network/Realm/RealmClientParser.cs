@@ -982,12 +982,9 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
-            var ID = (Entities.Requests.CollectorsRequests.CollectorsList.Count < 1 ? 1 : Entities.Requests.CollectorsRequests.CollectorsList.OrderByDescending(x => x.ID).ToArray()[0].ID + 1);
+            var ID = Client.Player.GetMap().NextNpcID();
 
-            var collector = new Game.Guilds.GuildCollector(map, Client.Player)
-            {
-                ID = ID
-            };
+            var collector = new Game.Guilds.GuildCollector(map, Client.Player, ID);
 
             guild.Collectors.Add(collector);
             Entities.Requests.CollectorsRequests.CollectorsList.Add(collector);

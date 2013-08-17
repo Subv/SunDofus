@@ -25,11 +25,9 @@ namespace SunDofus.World.Entities.Requests
                     var map = MapsRequests.MapsList.First(x => x.Model.ID == int.Parse(mappos[0]));
                     var character = Game.Characters.CharactersManager.CharactersList.First(x => x.ID == sqlResult.GetInt32("OwnerID"));
 
-                    var collector = new Game.Guilds.GuildCollector(map, character)
+                    var collector = new Game.Guilds.GuildCollector(map, character, sqlResult.GetInt32("ID"))
                     {
-                        ID = sqlResult.GetInt32("ID"),
-
-                        isNewCollector = false,
+                        isNewCollector = false
                     };
 
                     collector.Name[0] = int.Parse(sqlResult.GetString("Name").Split(';')[0]);
