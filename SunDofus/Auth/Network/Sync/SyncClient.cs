@@ -162,18 +162,18 @@ namespace SunDofus.Auth.Network.Sync
                 lock (Server.GetClients)
                     Server.GetClients.Add(datas);
 
-                SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), true);
+                Entities.Requests.AccountsRequests.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), true);
             }
         }
 
         private void ReceiveToUpdateFriend(string[] datas, bool add)
         {
-            SyncAction.UpdateFriend(int.Parse(datas[1]), datas[2], add);
+            Entities.Requests.AccountsRequests.UpdateFriend(int.Parse(datas[1]), datas[2], add);
         }
 
         private void ReceiveToUpdateEnemy(string[] datas, bool add)
         {
-            SyncAction.UpdateEnemy(int.Parse(datas[1]), datas[2], add);
+            Entities.Requests.AccountsRequests.UpdateEnemy(int.Parse(datas[1]), datas[2], add);
         }
 
         private void ReceiveNewDisconnectedClient(string datas)
@@ -186,23 +186,23 @@ namespace SunDofus.Auth.Network.Sync
                 lock (Server.GetClients)
                     Server.GetClients.Remove(datas);
 
-                SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), false);
+                Entities.Requests.AccountsRequests.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), false);
             }
         }
 
         private void ReceiveNewCreatedCharacter(string[] datas)
         {
-            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID);
+            Entities.Requests.AccountsRequests.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID);
         }
 
         private void ReceiveNewDeletedCharacter(string[] datas)
         {
-            SyncAction.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID, false);
+            Entities.Requests.AccountsRequests.UpdateCharacters(int.Parse(datas[1]), datas[2], Server.ID, false);
         }
 
         private void ReceiveNewDeletedGifts(string[] datas)
         {
-            SyncAction.DeleteGift(int.Parse(datas[1]), int.Parse(datas[2]));
+            Entities.Requests.GiftsRequests.DeleteGift(int.Parse(datas[1]), int.Parse(datas[2]));
         }
 
         private void ChangeState(State state, bool force = false)
@@ -249,7 +249,7 @@ namespace SunDofus.Auth.Network.Sync
                     lock(Server.GetClients)
                         Server.GetClients.Add(pseudo);
 
-                    SyncAction.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(pseudo), true);
+                    Entities.Requests.AccountsRequests.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(pseudo), true);
                 }
             }
         }

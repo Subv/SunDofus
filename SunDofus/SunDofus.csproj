@@ -75,7 +75,6 @@
     <Compile Include="Auth\Network\Auth\AuthQueue.cs" />
     <Compile Include="Auth\Network\Auth\AuthServer.cs" />
     <Compile Include="Auth\Network\ServersHandler.cs" />
-    <Compile Include="Auth\Network\Sync\SyncAction.cs" />
     <Compile Include="Auth\Network\Sync\SyncClient.cs" />
     <Compile Include="Auth\Network\Sync\SyncServer.cs" />
     <Compile Include="Program.cs" />

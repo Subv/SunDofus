@@ -42,5 +42,23 @@ namespace SunDofus.Auth.Entities.Requests
 
             return list;
         }
+
+        public static void DeleteGift(int giftID, int accountID)
+        {
+            if (accountID == -1)
+                return;
+
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
+            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            {
+                var sqlText = "DELETE FROM gifts WHERE id=@id";
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                sqlCommand.Parameters.Add(new MySqlParameter("@id", giftID));
+
+                sqlCommand.ExecuteNonQuery();
+            }
+        }
     }
 }

@@ -207,7 +207,115 @@ namespace SunDofus.Auth.Entities.Requests
             lock (Entities.DatabaseProvider.ConnectionLocker)
             {
                 var sqlText = "UPDATE accounts SET connected=0";
-                var sqlCommand = new MySqlCommand(sqlText, Entities.DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                sqlCommand.ExecuteNonQuery();
+            }
+        }
+
+        public static void UpdateFriend(int accID, string targetPseudo, bool add)
+        {
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
+            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            {
+                if (add)
+                {
+                    var sqlText = "INSERT INTO accounts_friends VALUES (@id, @pseudo)";
+                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    var sqlText = "DELETE FROM accounts_friends WHERE accID=@id AND targetPseudo=@pseudo";
+                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void UpdateEnemy(int accID, string targetPseudo, bool add)
+        {
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
+            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            {
+                if (add)
+                {
+                    var sqlText = "INSERT INTO accounts_enemies VALUES (@id, @pseudo)";
+                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    var sqlText = "DELETE FROM accounts_enemies WHERE accID=@id AND targetPseudo=@pseudo";
+                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@id", accID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@pseudo", targetPseudo));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
+        }
+        public static void UpdateCharacters(int accountID, string character, int serverID, bool add = true)
+        {
+            if (accountID == -1)
+                return;
+
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
+            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            {
+                if (add)
+                {
+                    var sqlText = "INSERT INTO accounts_characters VALUES (@charname, @server, @account)";
+                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@charname", character));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@server", serverID));
+                    sqlCommand.Parameters.Add(new MySqlParameter("@account", accountID));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    var sqlText = "DELETE FROM accounts_characters WHERE characterName=@charname";
+                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                    sqlCommand.Parameters.Add(new MySqlParameter("@charname", character));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void UpdateConnectedValue(int accountID, bool isConnected)
+        {
+            if (accountID == -1)
+                return;
+
+            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+
+            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            {
+                var sqlText = "UPDATE accounts SET connected=@connected WHERE Id=@id";
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                sqlCommand.Parameters.Add(new MySqlParameter("@id", accountID));
+                sqlCommand.Parameters.Add(new MySqlParameter("@connected", (isConnected ? 1 : 0)));
 
                 sqlCommand.ExecuteNonQuery();
             }
