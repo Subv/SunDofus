@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : Localhost
 Source Server Version : 50612
 Source Host           : localhost:3306
-Source Database       : sundofus
+Source Database       : sunrealm
 
 Target Server Type    : MYSQL
 Target Server Version : 50612
 File Encoding         : 65001
 
-Date: 2013-08-17 11:20:37
+Date: 2013-08-18 14:40:19
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -56,8 +56,8 @@ CREATE TABLE `accounts_characters` (
 -- ----------------------------
 -- Records of accounts_characters
 -- ----------------------------
-INSERT INTO `accounts_characters` VALUES ('Luvveki', '6', '2');
 INSERT INTO `accounts_characters` VALUES ('Xoyte', '6', '1');
+INSERT INTO `accounts_characters` VALUES ('Weky', '6', '2');
 
 -- ----------------------------
 -- Table structure for `accounts_enemies`
