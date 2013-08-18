@@ -16,11 +16,37 @@ namespace SunDofus.World.Game.Bank
             Character = character;
         }
 
-        public static void MoveKamas(long length, bool add = true)
+        public void MoveKamas(long length, bool add = true)
         {
+            if (add)
+            {
+                if (length > Character.Kamas)
+                    length = Character.Kamas;
+                else if (length < 0)
+                    length = 0;
+
+                Bank.Kamas += length;
+                Character.Kamas -= length;
+
+                Character.SendChararacterStats();
+                Character.NetworkClient.Send(string.Format("EsKG{0}", Bank.Kamas));
+            }
+            else
+            {
+                if (length > Bank.Kamas)
+                    length = Bank.Kamas;
+                else if (length < 0)
+                    length = 0;
+
+                Bank.Kamas -= length;
+                Character.Kamas += length;
+
+                Character.SendChararacterStats();
+                Character.NetworkClient.Send(string.Format("EsKG{0}", Bank.Kamas));
+            }
         }
 
-        public static void MoveItem(int itemID, int quantity, bool add = true)
+        public void MoveItem(int itemID, int quantity, bool add = true)
         {
         }
     }
