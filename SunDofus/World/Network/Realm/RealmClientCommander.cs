@@ -86,7 +86,7 @@ namespace SunDofus.World.Network.Realm
                         break;
 
                     case "bank":
-                        Game.Bank.BankManager.OpenBank(Client.Player);
+                        Game.Bank.BanksManager.OpenBank(Client.Player);
                         break;
 
                     default:

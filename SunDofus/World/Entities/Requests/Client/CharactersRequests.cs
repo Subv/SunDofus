@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
-
+using SunDofus.World.Game.Characters;
 namespace SunDofus.World.Entities.Requests
 {
     class CharactersRequests
     {
+        public static List<Character> CharactersList = new List<Character>();
+
         public static void LoadCharacters()
         {
             lock (DatabaseProvider.ConnectionLocker)
@@ -72,14 +74,14 @@ namespace SunDofus.World.Entities.Requests
                     else
                         character.Faction.Level = Entities.Requests.LevelsRequests.LevelsList.Where(x => x.Alignment <= character.Faction.Honor).OrderByDescending(x => x.Alignment).ToArray()[0].ID;
 
-                    lock (Game.Characters.CharactersManager.CharactersList)
-                        Game.Characters.CharactersManager.CharactersList.Add(character);
+                    lock (CharactersList)
+                        CharactersList.Add(character);
                 }
 
                 sqlResult.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' characters from the database !", Game.Characters.CharactersManager.CharactersList.Count));
+            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' characters from the database !", World.Entities.Requests.CharactersRequests.CharactersList.Count));
         }
 
         public static void CreateCharacter(Game.Characters.Character character)
@@ -170,6 +172,11 @@ namespace SunDofus.World.Entities.Requests
 
                 sqlCommand.ExecuteNonQuery();
             }
+        }
+
+        public static bool ExistsName(string name)
+        {
+            return CharactersList.Any(x => x.Name == name);
         }
     }
 }

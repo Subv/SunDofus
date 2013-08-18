@@ -191,7 +191,7 @@ namespace SunDofus.World.Game.Characters
         public CharacterParty Party;
         public List<Character> Followers;
 
-        public bool Occuped
+        public bool Busy
         {
             get
             {

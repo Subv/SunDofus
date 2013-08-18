@@ -39,9 +39,9 @@ namespace SunDofus.World.Game.World
 
         public static void SendPrivateMessage(Network.Realm.RealmClient client, string receiver, string message)
         {
-            if (CharactersManager.CharactersList.Any(x => x.Name == receiver))
+            if (SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.Name == receiver))
             {
-                var character = CharactersManager.CharactersList.First(x => x.Name == receiver);
+                var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.Name == receiver);
 
                 if (character.isConnected == true && !character.NetworkClient.Enemies.Contains(client.Infos.Pseudo))
                 {

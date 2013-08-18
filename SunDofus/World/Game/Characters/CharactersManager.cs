@@ -5,13 +5,7 @@ using System.Text;
 
 namespace SunDofus.World.Game.Characters
 {
-    class CharactersManager
+    class CharactersRequests
     {
-        public static List<Character> CharactersList = new List<Character>();
-
-        public static bool ExistsName(string name)
-        {
-            return CharactersList.Any(x => x.Name == name);
-        }
     }
 }

@@ -68,7 +68,7 @@ namespace SunDofus.World.Entities.Requests
         {
             lock (DatabaseProvider.ConnectionLocker)
             {
-                var sqlText = "INSERT INTO collectors VALUES(@Owner, @Kamas, @Items)";
+                var sqlText = "INSERT INTO banks VALUES(@Owner, @Kamas, @Items)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
 
                 var P = sqlCommand.Parameters;

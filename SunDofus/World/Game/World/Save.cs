@@ -22,14 +22,14 @@ namespace SunDofus.World.Game.World
         {
             Entities.DatabaseProvider.Open();
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StartMaintenancePacket().GetPacket());
-            Characters.CharactersManager.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1164"));
+            SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1164"));
 
             SaveChararacters();
             SaveGuilds();
             SaveCollectors();
             SaveBanks();
 
-            Characters.CharactersManager.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1165"));
+            SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1165"));
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StopMaintenancePacket().GetPacket());
             Entities.DatabaseProvider.Close();
 
@@ -38,7 +38,7 @@ namespace SunDofus.World.Game.World
 
         private static void SaveChararacters()
         {
-            foreach (var character in Characters.CharactersManager.CharactersList)
+            foreach (var character in SunDofus.World.Entities.Requests.CharactersRequests.CharactersList)
                 Entities.Requests.CharactersRequests.SaveCharacter(character);
         }
 

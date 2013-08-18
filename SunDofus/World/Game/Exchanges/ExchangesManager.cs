@@ -34,9 +34,9 @@ namespace SunDofus.World.Game.Exchanges
 
             if (canceler.State.actualTraided != -1)
             {
-                if (SunDofus.World.Game.Characters.CharactersManager.CharactersList.Any(x => x.ID == canceler.State.actualTraided))
+                if (SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == canceler.State.actualTraided))
                 {
-                    var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == canceler.State.actualTraided);
+                    var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.actualTraided);
 
                     if (character.isConnected == true && must)
                         character.NetworkClient.Send("EV");
@@ -63,9 +63,9 @@ namespace SunDofus.World.Game.Exchanges
 
             if (canceler.State.actualTraider != -1)
             {
-                if (SunDofus.World.Game.Characters.CharactersManager.CharactersList.Any(x => x.ID == canceler.State.actualTraider))
+                if (SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == canceler.State.actualTraider))
                 {
-                    var character = SunDofus.World.Game.Characters.CharactersManager.CharactersList.First(x => x.ID == canceler.State.actualTraider);
+                    var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.actualTraider);
 
                     if (character.isConnected == true && must)
                         character.NetworkClient.Send("EV");

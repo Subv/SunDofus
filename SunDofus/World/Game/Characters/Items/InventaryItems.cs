@@ -412,7 +412,7 @@ namespace SunDofus.World.Game.Characters.Items
 
             var usable = Entities.Requests.ItemsRequests.UsablesList.First(x => x.Base == item.Model.ID);
 
-            var character = CharactersManager.CharactersList.First(x => x.ID == charID);
+            var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == charID);
 
             if (!ItemsHandler.ConditionsAvaliable(item.Model, Client))
             {

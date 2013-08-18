@@ -266,10 +266,10 @@ namespace SunDofus.World.Game.Guilds
             {
                 var memberInfos = c.Split(';');
 
-                if (!Characters.CharactersManager.CharactersList.Any(x => x.ID == int.Parse(memberInfos[0])))
+                if (!SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == int.Parse(memberInfos[0])))
                     continue;
 
-                var character = Characters.CharactersManager.CharactersList.First(x => x.ID == int.Parse(memberInfos[0]));
+                var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == int.Parse(memberInfos[0]));
                 character.Guild = this;
 
                 var member = new GuildMember(character);
