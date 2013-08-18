@@ -1967,6 +1967,54 @@ namespace SunDofus.World.Network.Realm
 
                 case 'O': //Items
 
+                    var itemID = 0;
+                    var quantity = 0;
+                    var infos = new string[0];
+
+                    if (Client.Player.State.onExchangeWithBank)
+                    {
+                        var additem = true;
+                        infos = datas.Substring(2).Split('|');
+
+                        if (datas[1] == '-')
+                            additem = false;
+
+                        itemID = 0;
+                        quantity = 0;
+                        SunDofus.World.Game.Characters.Items.CharacterItem item = null;
+
+                        if (!int.TryParse(infos[0], out itemID) || !int.TryParse(infos[1], out quantity))
+                        {
+                            Client.Send("EME");
+                            return;
+                        }
+
+                        if (additem)
+                        {
+                            if (Client.Player.ItemsInventary.ItemsList.Any(x => x.ID == itemID))
+                                item = Client.Player.ItemsInventary.ItemsList.First(x => x.ID == itemID);
+                            else
+                                return;
+                        }
+                        else
+                        {
+                            var bank = Game.Bank.BanksManager.FindExchange(Client.Player).Bank;
+
+                            if (bank.Items.Any(x => x.ID == itemID))
+                                item = bank.Items.First(x => x.ID == itemID);
+                            else
+                                return;
+                        }
+
+                        if (quantity <= 0)
+                            quantity = 1;
+                        else if (quantity > item.Quantity)
+                            quantity = item.Quantity;
+
+                        Game.Bank.BanksManager.FindExchange(Client.Player).MoveItem(item, quantity, additem);
+                        return;
+                    }
+
                     var character2 = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.actualPlayerExchange);
 
                     if (!Client.Player.State.onExchangePanel || !character2.State.onExchangePanel || character2.State.actualPlayerExchange != Client.Player.ID)
@@ -1979,10 +2027,10 @@ namespace SunDofus.World.Network.Realm
                         x.memberTwo.Character.ID == character2.ID) || (x.memberTwo.Character.ID == Client.Player.ID && x.memberOne.Character.ID == character2.ID));
 
                     var add = (datas.Substring(1, 1) == "+" ? true : false);
-                    var infos = datas.Substring(2).Split('|');
+                    infos = datas.Substring(2).Split('|');
 
-                    var itemID = 0;
-                    var quantity = 0;
+                    itemID = 0;
+                    quantity = 0;
 
                     if (!int.TryParse(infos[0], out itemID) || !int.TryParse(infos[1], out quantity))
                         return;

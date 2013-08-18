@@ -101,6 +101,11 @@ namespace SunDofus.World.Game.Characters.Items
             return item;
         }
 
+        public string StorageString()
+        {
+            return string.Format("{0}|{1}|{2}|{3}", ID, Utilities.Basic.DeciToHex(_quantity), Model.ID, EffectsInfos());
+        }
+
         public string SaveString()
         {
             return string.Format("{0}~{1}~{2}~{3}", Utilities.Basic.DeciToHex(Model.ID), Utilities.Basic.DeciToHex(_quantity),

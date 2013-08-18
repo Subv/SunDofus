@@ -46,8 +46,53 @@ namespace SunDofus.World.Game.Bank
             }
         }
 
-        public void MoveItem(int itemID, int quantity, bool add = true)
+        public void MoveItem(SunDofus.World.Game.Characters.Items.CharacterItem item, int quantity, bool add = true)
         {
+            if (add)
+            {
+                Character.ItemsInventary.DeleteItem(item.ID, quantity);
+
+                if (Bank.Items.Any(x => x.EffectsInfos() == item.EffectsInfos() && x.Model.ID == item.Model.ID && x.Position == item.Position))
+                {
+                    var sameitem = Bank.Items.First(x => x.EffectsInfos() == item.EffectsInfos() && x.Model.ID == item.Model.ID && x.Position == item.Position);
+                    sameitem.Quantity += quantity;
+                    
+                    Character.NetworkClient.Send(string.Format("EsKO+{0}", sameitem.StorageString()));
+                    return;
+                }
+
+                var newitem = item.Copy();
+                newitem.Quantity = quantity;
+
+                Bank.Items.Add(newitem);
+                Character.NetworkClient.Send(string.Format("EsKO+{0}", newitem.StorageString()));
+            }
+            else
+            {
+                var pods = item.Model.Pods * quantity;
+
+                if (pods + Character.Pods > Character.Stats.maxPods.Total())
+                {
+                    Character.NetworkClient.SendMessage("Vous êtes trop lourd pour éxecuter cette action !");
+                    return;
+                }
+
+                if (quantity == item.Quantity)
+                {
+                    Bank.Items.Remove(item);
+                    Character.NetworkClient.Send(string.Format("EsKO-{0}", item.StorageString()));
+                    Character.ItemsInventary.AddItem(item, false);
+                }
+                else
+                {
+                    item.Quantity -= quantity;
+                    Character.NetworkClient.Send(string.Format("EsKO+{0}", item.StorageString()));
+
+                    var newitem = item.Copy();
+                    newitem.Quantity = quantity;
+                    Character.ItemsInventary.AddItem(newitem, false);
+                }
+            }
         }
     }
 }
