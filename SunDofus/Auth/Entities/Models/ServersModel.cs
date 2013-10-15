@@ -8,89 +8,23 @@ namespace SunDofus.Auth.Entities.Models
 {
     class ServersModel
     {
-        private int _ID, _port, _state, opeID;
-        private string _IP, _passKey;
+        public int ID { get; set; }
+        public int Port { get; set; }
+        public int State { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-                opeID = _ID * 75;
-            }
-        }
-        public int Port
-        {
-            get
-            {
-                return _port;
-            }
-            set
-            {
-                _port = value;
-            }
-        }
-        public int State
-        {
-            get
-            {
-                return _state;
-            }
-            set
-            {
-                _state = value;
-            }
-        }
+        public string IP { get; set; }
+        public string PassKey { get; set; }
 
-        public string IP
-        {
-            get
-            {
-                return _IP;
-            }
-            set
-            {
-                _IP = value;
-            }
-        }
-        public string PassKey
-        {
-            get
-            {
-                return _passKey;
-            }
-            set
-            {
-                _passKey = value;
-            }
-        }
-
-        private List<string> _clients;
-
-        public List<string> GetClients
-        {
-            get 
-            {
-                return _clients;
-            }
-            set 
-            {
-                _clients = value;
-            }
-        }
+        public List<string> Clients { get; set; }
 
         public ServersModel()
         {
-            _clients = new List<string>();
+            Clients = new List<string>();
         }
 
         public override string ToString()
         {
-            return string.Format("{0};{1};{2};1", _ID, _state, opeID);
+            return string.Format("{0};{1};{2};1", ID, State, (ID * 75));
         }
     }
 }

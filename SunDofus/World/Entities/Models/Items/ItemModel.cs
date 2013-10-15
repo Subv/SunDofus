@@ -7,82 +7,20 @@ namespace SunDofus.World.Entities.Models.Items
 {
     class ItemModel
     {
-        private int _ID, _type, _level, _pods, _price, _set;
+        public int ID { get; set; }
+        public int Type { get; set; }
+        public int Level { get; set; }
+        public int Pods { get; set; }
+        public int Price { get; set; }
+        public int Set { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Type 
-        { 
-            get 
-            { 
-                return _type; 
-            }
-            set 
-            {
-                _type = value;
-            }
-        }
-        public int Level
-        {
-            get
-            {
-                return _level;
-            }
-            set
-            {
-                _level = value;
-            }
-        }
-        public int Pods
-        {
-            get
-            {
-                return _pods;
-            }
-            set
-            {
-                _pods = value;
-            }
-        }
-        public int Price
-        {
-            get
-            {
-                return _price;
-            }
-            set
-            {
-                _price = value;
-            }
-        }
-        public int Set
-        {
-            get
-            {
-                return _set;
-            }
-            set
-            {
-                _set = value;
-            }
-        }
+        public bool isUsable { get; set; }
+        public bool isTwoHands { get; set; }
 
-        public bool isUsable;
-        public bool isTwoHands;
+        public string Jet { get; set; }
+        public string Condistr { get; set; }
 
-        public string Jet;
-        public string Condistr;
-
-        public List<Game.Effects.EffectItem> EffectsList;
+        public List<Game.Effects.EffectItem> EffectsList { get; set; }
 
         public ItemModel()
         {

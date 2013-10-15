@@ -7,45 +7,12 @@ namespace SunDofus.World.Entities.Models.Spells
 {
     class SpellModel
     {
-        private int _ID, _sprite;
-        private string _spriteinfos;
+        public int ID { get; set; }
+        public int Sprite { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Sprite
-        {
-            get
-            {
-                return _sprite;
-            }
-            set
-            {
-                _sprite = value;
-            }
-        }
+        public string SpriteInfos { get; set; }
 
-        public string SpriteInfos
-        {
-            get
-            {
-                return _spriteinfos;
-            }
-            set
-            {
-                _spriteinfos = value;
-            }
-        }
-
-        public List<SpellLevelModel> Levels;
+        public List<SpellLevelModel> Levels { get; set; }
 
         public SpellModel()
         {
@@ -55,13 +22,13 @@ namespace SunDofus.World.Entities.Models.Spells
             SpriteInfos = "";
         }
 
-        public void ParseLevel(string _datas)
+        public void ParseLevel(string datas)
         {
-            if (_datas == "-1")
+            if (datas == "-1")
                 return;
 
             var level = new SpellLevelModel();
-            var stats = _datas.Split(',');
+            var stats = datas.Split(',');
 
             var effect = stats[0];
             var effectCC = stats[1];

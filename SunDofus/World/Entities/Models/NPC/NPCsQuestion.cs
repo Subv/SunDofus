@@ -7,36 +7,14 @@ namespace SunDofus.World.Entities.Models.NPC
 {
     class NPCsQuestion
     {
-        private int _questionID, _resQuesID;
+        public int QuestionID { get; set; }
+        public int RescueQuestionID { get; set; }
 
-        public int QuestionID
-        {
-            get
-            {
-                return _questionID;
-            }
-            set
-            {
-                _questionID = value;
-            }
-        }
-        public int RescueQuestionID
-        {
-            get
-            {
-                return _resQuesID;
-            }
-            set
-            {
-                _resQuesID = value;
-            }
-        }
+        public NPCsQuestion RescueQuestion { get; set; }
+        public List<NPCsAnswer> Answers { get; set; }
+        public List<string> Params { get; set; }
 
-        public NPCsQuestion RescueQuestion;
-        public List<NPCsAnswer> Answers;
-        public List<string> Params;
-
-        public List<Game.World.Conditions.NPCConditions> Conditions;
+        public List<Game.World.Conditions.NPCConditions> Conditions { get; set; }
 
         public NPCsQuestion()
         {
@@ -45,11 +23,11 @@ namespace SunDofus.World.Entities.Models.NPC
             Params = new List<string>();
         }
 
-        public bool HasConditions(Game.Characters.Character _character)
+        public bool HasConditions(Game.Characters.Character character)
         {
             foreach (var condi in Conditions)
             {
-                if (condi.HasCondition(_character))
+                if (condi.HasCondition(character))
                     continue;
                 else
                     return false;

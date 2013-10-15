@@ -14,7 +14,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadNPCs()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM npcs";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -78,12 +78,12 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' npcs from the database !", NpcsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' npcs from the database !", NpcsList.Count));
         }
 
         public static void LoadNPCsQuestions()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM npcs_questions";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -134,12 +134,12 @@ namespace SunDofus.World.Entities.Requests
             foreach (var question in QuestionsList.Where(x => x.RescueQuestionID != -1))
                 question.RescueQuestion = QuestionsList.First(x => x.QuestionID == question.RescueQuestionID);
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' npcsQuestions from the database !", QuestionsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' npcsQuestions from the database !", QuestionsList.Count));
         }
 
         public static void LoadNPCsAnswers()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM npcs_answers";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -176,7 +176,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' npcsAnswers from the database !", AnswersList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' npcsAnswers from the database !", AnswersList.Count));
         }
     }
 }

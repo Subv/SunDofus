@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadMaps()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM maps";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -66,7 +66,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' maps from the database !", MapsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' maps from the database !", MapsList.Count));
         }
     }
 }

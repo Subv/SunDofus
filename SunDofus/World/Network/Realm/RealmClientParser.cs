@@ -311,7 +311,7 @@ namespace SunDofus.World.Network.Realm
             }
             catch (Exception e)
             {
-                Utilities.Loggers.ErrorsLogger.Write(e.ToString());
+                Utilities.Loggers.Errors.Write(e.ToString());
             }
         }
 

@@ -14,7 +14,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadItems()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM items";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -44,12 +44,12 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' items from the database !", ItemsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' items from the database !", ItemsList.Count));
         }
 
         public static void LoadItemsSets()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM items_sets";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -73,12 +73,12 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' items sets from the database !", SetsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' items sets from the database !", SetsList.Count));
         }
 
         public static void LoadUsablesItems()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM items_usables";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -107,7 +107,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' items usables from the database !", UsablesList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' items usables from the database !", UsablesList.Count));
         }
     }
 }

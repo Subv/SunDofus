@@ -28,7 +28,7 @@ namespace SunDofus.World.Network.Realm
             if (socket == null) 
                 return;
 
-            Utilities.Loggers.InfosLogger.Write("New inputted client connection !");
+            Utilities.Loggers.Debug.Write("New inputted client connection !");
 
             lock(Clients)
                 Clients.Add(new RealmClient(socket));
@@ -36,12 +36,12 @@ namespace SunDofus.World.Network.Realm
 
         public void OnListeningServer(string remote)
         {
-            Utilities.Loggers.StatusLogger.Write(string.Format("RealmServer started on <{0}> !", remote));
+            Utilities.Loggers.Status.Write(string.Format("RealmServer started on <{0}> !", remote));
         }
 
         public void OnListeningFailedServer(Exception exception)
         {
-            Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot start the RealmServer because : {0}", exception.ToString()));
+            Utilities.Loggers.Errors.Write(string.Format("Cannot start the RealmServer because : {0}", exception.ToString()));
         }
     }
 }

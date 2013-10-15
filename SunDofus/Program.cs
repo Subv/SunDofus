@@ -7,6 +7,7 @@ using SunDofus.Auth.Entities;
 using SunDofus.Auth.Entities.Requests;
 using SunDofus.World.Network;
 using System.Reflection;
+using System.Threading;
 
 namespace SunDofus
 {
@@ -15,21 +16,21 @@ namespace SunDofus
         static void Main(string[] args)
         {
             Basic.Uptime = Environment.TickCount;
-            Console.Title = string.Concat("SunDofus v", Utilities.Config.Version(Assembly.GetExecutingAssembly().FullName.Split(',')[1].Replace("Version=", "").Trim()));
+            Console.Title = string.Concat("SunDofus v", Config.Version(Assembly.GetExecutingAssembly().FullName.Split(',')[1].Replace("Version=", "").Trim()));
 
             Config.LoadConfiguration();
             Loggers.InitializeLoggers();
 
             if (Config.GetBoolElement("Realm"))
             {
-                var realmthread = new System.Threading.Thread(new System.Threading.ThreadStart(new Action(delegate()
+                var realmthread = new Thread(new ThreadStart(new Action(delegate()
                     {
                         try
                         {
                             Auth.Network.ServersHandler.InitialiseServers();
                             Auth.Entities.DatabaseProvider.InitializeConnection();
 
-                            Loggers.InfosLogger.Write(string.Format("Realm started in '{0}'s !", Basic.GetUpTime()[2]));
+                            Loggers.Debug.Write(string.Format("Realm started in '{0}'s !", Basic.GetUpTime()[2]));
                         }
                         catch (Exception error)
                         {
@@ -42,7 +43,7 @@ namespace SunDofus
 
             if (Config.GetBoolElement("World"))
             {
-                var gamethread = new System.Threading.Thread(new System.Threading.ThreadStart(new Action(delegate()
+                var gamethread = new Thread(new ThreadStart(new Action(delegate()
                     {
                         try
                         {
@@ -84,7 +85,7 @@ namespace SunDofus
 
                             World.Entities.DatabaseProvider.Close();
 
-                            Loggers.InfosLogger.Write(string.Format("World started in '{0}'s !", Basic.GetUpTime()[2]));
+                            Loggers.Debug.Write(string.Format("World started in '{0}'s !", Basic.GetUpTime()[2]));
                         }
                         catch (Exception error)
                         {
@@ -98,7 +99,7 @@ namespace SunDofus
             while (true)
             {
                 Console.ReadKey();
-                Loggers.InfosLogger.Write(string.Format("Uptime : Hours : {0} - Minutes : {1} - Seconds : {2}", 
+                Loggers.Debug.Write(string.Format("Uptime : Hours : {0} - Minutes : {1} - Seconds : {2}", 
                     Basic.GetUpTime()[0], Basic.GetUpTime()[1], Basic.GetUpTime()[2]));
             }
         }

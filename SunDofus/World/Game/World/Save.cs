@@ -33,7 +33,7 @@ namespace SunDofus.World.Game.World
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StopMaintenancePacket().GetPacket());
             Entities.DatabaseProvider.Close();
 
-            Utilities.Loggers.StatusLogger.Write("Save of the World successfull !");
+            Utilities.Loggers.Status.Write("Save of the World successfull !");
         }
 
         private static void SaveChararacters()

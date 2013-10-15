@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadBanks()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM banks";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -36,7 +36,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlResult.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' banks from the database !", BanksList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' banks from the database !", BanksList.Count));
         }
 
         public static void SaveBank(Game.Bank.Bank bank)
@@ -48,7 +48,7 @@ namespace SunDofus.World.Entities.Requests
             }
             else
             {
-                lock (DatabaseProvider.ConnectionLocker)
+                lock (DatabaseProvider.Locker)
                 {
                     var sqlText = "UPDATE banks SET Owner=@Owner, Kamas=@Kamas, Items=@Items WHERE Owner=@Owner";
                     var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -66,7 +66,7 @@ namespace SunDofus.World.Entities.Requests
 
         private static void CreateBank(Game.Bank.Bank bank)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "INSERT INTO banks VALUES(@Owner, @Kamas, @Items)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

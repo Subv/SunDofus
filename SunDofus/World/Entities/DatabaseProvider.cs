@@ -8,47 +8,40 @@ namespace SunDofus.World.Entities
 {
     class DatabaseProvider
     {
-        public static MySqlConnection Connection;
-        public static object ConnectionLocker;
+        public static MySqlConnection Connection { get; set; }
+        public static object Locker { get; set; }
 
         public static void InitializeConnection()
         {
             Connection = new MySqlConnection();
-            ConnectionLocker = new object();
+            Locker = new object();
 
-            try
-            {
-                Connection.ConnectionString = string.Format("server={0};uid={1};pwd='{2}';database={3}", 
-                    Utilities.Config.GetStringElement("World_Database_Server"), 
-                    Utilities.Config.GetStringElement("World_Database_User"), 
-                    Utilities.Config.GetStringElement("World_Database_Pass"), 
-                    Utilities.Config.GetStringElement("World_Database_Name"));
+            Connection.ConnectionString = string.Format("server={0};uid={1};pwd='{2}';database={3}",
+                Utilities.Config.GetStringElement("WORLD_DATABASE_SERVER"),
+                Utilities.Config.GetStringElement("WORLD_DATABASE_USER"),
+                Utilities.Config.GetStringElement("WORLD_DATABASE_PASS"),
+                Utilities.Config.GetStringElement("WORLD_DATABASE_NAME"));
 
-                lock (ConnectionLocker)
-                    Connection.Open();
+            lock (Locker)
+                Connection.Open();
 
-                Utilities.Loggers.StatusLogger.Write("Connected to the World_Database !");
-            }
-            catch (Exception e)
-            {
-                Utilities.Loggers.ErrorsLogger.Write(string.Format("Can't connect to the database : {0}", e.ToString()));
-            }
+            Utilities.Loggers.Status.Write("Connected to the Worlds' Database !");
         }
 
         public static void Open()
         {
-            lock (ConnectionLocker)
+            lock (Locker)
                 Connection.Open();
 
-            Utilities.Loggers.StatusLogger.Write("Reconnected to the World_Database !");
+            Utilities.Loggers.Status.Write("Reconnected to the Worlds' Database !");
         }
 
         public static void Close()
         {
-            lock (ConnectionLocker)
+            lock (Locker)
                 Connection.Close();
 
-            Utilities.Loggers.StatusLogger.Write("Diconnected from the World_Database !");
+            Utilities.Loggers.Status.Write("Diconnected from the Worlds 'Database !");
         }
     }
 }

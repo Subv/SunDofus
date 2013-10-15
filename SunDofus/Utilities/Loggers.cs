@@ -7,45 +7,45 @@ namespace SunDofus.Utilities
 {
     class Loggers
     {
-        public static Logger StatusLogger;
-        public static Logger InfosLogger;
-        public static Logger ErrorsLogger;
+        public static Logger Status { get; set; }
+        public static Logger Debug { get; set; }
+        public static Logger Errors { get; set; }
 
         public static void InitializeLoggers()
         {
-            StatusLogger = new Logger("Status", Basic.Locker, ConsoleColor.Green);
-            InfosLogger = new Logger("Infos", Basic.Locker, ConsoleColor.Magenta, Config.GetBoolElement("DEBUG"));
-            ErrorsLogger = new Logger("Errors", Basic.Locker, ConsoleColor.Yellow);
+            Status = new Logger("Status", Basic.Locker, ConsoleColor.Green);
+            Debug = new Logger("Debug", Basic.Locker, ConsoleColor.Magenta, Config.GetBoolElement("DEBUG"));
+            Errors = new Logger("Errors", Basic.Locker, ConsoleColor.Yellow);
 
-            StatusLogger.Write(string.Format("Loggers loaded and started : MODE DEBUG = {0}", Config.GetBoolElement("DEBUG").ToString().ToUpper()));
+            Status.Write(string.Format("Loggers loaded and started : MODE DEBUG = {0}", Config.GetBoolElement("DEBUG").ToString().ToUpper()));
         }
 
         public class Logger
         {
-            private string _name;
-            private object _locker;
-            private bool _write;
-            private ConsoleColor _color;
+            private string name;
+            private object locker;
+            private bool write;
+            private ConsoleColor color;
 
             public Logger(string text, object locker, ConsoleColor color, bool write = true)
             {
-                _name = text;
-                _locker = locker;
-                _color = color;
-                _write = write;
+                this.name = text;
+                this.locker = locker;
+                this.color = color;
+                this.write = write;
             }
 
             public void Write(string text, bool line = true)
             {
-                if (!_write)
+                if (!write)
                     return;
 
-                lock (_locker)
+                lock (locker)
                 {
-                    Console.ForegroundColor = _color;
-                    Console.Write(string.Format("{0} > {1} > ", DateTime.Now.ToString(), _name));
+                    Console.ForegroundColor = color;
+                    Console.Write(string.Format("{0} > {1} > ", DateTime.Now.ToString(), name));
                     Console.ResetColor();
-                    Console.Write(string.Format("{0}{1}", text, (line ? Environment.NewLine : "")));
+                    Console.Write(string.Concat(text, (line ? Environment.NewLine : "")));
                 }
             }
         }

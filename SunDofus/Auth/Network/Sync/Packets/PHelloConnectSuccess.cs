@@ -5,11 +5,11 @@ using System.Text;
 
 namespace SunDofus.Auth.Network.Sync.Packets
 {
-    class HelloConnectPacket
+    class PHelloConnectSuccess
     {
         public string GetPacket()
         {
-            return new MasterPacket(Utilities.Basic.DeciToHex(10)).ToString();
+            return new MasterPacket(Utilities.Basic.DeciToHex(30)).ToString();
         }
     }
 }

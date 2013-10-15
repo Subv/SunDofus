@@ -8,104 +8,20 @@ namespace SunDofus.Auth.Entities.Models
 {
     class AccountsModel
     {
-        private int _ID, _level, _communauty;
-        private string _username, _password, _pseudo, _question, _answer;
+        public int ID { get; set; }
+        public int Level { get; set; }
+        public int Communauty { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Level
-        {
-            get
-            {
-                return _level;
-            }
-            set
-            {
-                _level = value;
-            }
-        }
-        public int Communauty
-        {
-            get
-            {
-                return _communauty;
-            }
-            set
-            {
-                _communauty = value;
-            }
-        }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Pseudo { get; set; }
+        public string Question { get; set; }
+        public string Answer { get; set; }
 
-        public string Username
-        {
-            get
-            {
-                return _username;
-            }
-            set
-            {
-                _username = value;
-            }
-        }
-        public string Password
-        {
-            get
-            {
-                return _password;
-            }
-            set
-            {
-                _password = value;
-            }
-        }
-        public string Pseudo
-        {
-            get
-            {
-                return _pseudo;
-            }
-            set
-            {
-                _pseudo = value;
-            }
-        }
-        public string Question
-        {
-            get
-            {
-                return _question;
-            }
-            set
-            {
-                _question = value;
-            }
-        }
-        public string Answer
-        {
-            get
-            {
-                return _answer;
-            }
-            set
-            {
-                _answer = value;
-            }
-        }
-
-        public DateTime SubscriptionDate;
-        public Dictionary<int, List<string>> Characters;
-
-        public List<string> Friends;
-        public List<string> Enemies;
+        public DateTime SubscriptionDate { get; set; }
+        public Dictionary<int, List<string>> Characters { get; set; }
+        public List<string> Friends { get; set; }
+        public List<string> Enemies { get; set; }
 
         public AccountsModel()
         {
@@ -120,7 +36,7 @@ namespace SunDofus.Auth.Entities.Models
         {
             var time = SubscriptionDate.Subtract(DateTime.Now).TotalMilliseconds;
 
-            if (Utilities.Config.GetBoolElement("Subscription_Time") == false)
+            if (Utilities.Config.GetBoolElement("SUBSCRIPTION_TIME") == false)
                 return 31536000000;
 
             else if (SubscriptionDate.Subtract(DateTime.Now).TotalMilliseconds <= 1)

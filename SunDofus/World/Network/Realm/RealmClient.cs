@@ -61,7 +61,7 @@ namespace SunDofus.World.Network.Realm
             lock(_packetLocker)
                 this.SendDatas(message);
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to <{0}> : {1}", myIp(), message));
+            Utilities.Loggers.Debug.Write(string.Format("Sent to <{0}> : {1}", IP, message));
         }
 
         public void ParseCharacters()
@@ -111,7 +111,7 @@ namespace SunDofus.World.Network.Realm
 
         private void ReceivedPackets(string _datas)
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Receive datas from @<{0}>@ : {1}", myIp(), _datas));
+            Utilities.Loggers.Debug.Write(string.Format("Receive datas from @<{0}>@ : {1}", IP, _datas));
 
             lock (_packetLocker)
                 _parser.Parse(_datas);
@@ -119,7 +119,7 @@ namespace SunDofus.World.Network.Realm
 
         private void Disconnected()
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("New closed client @<{0}>@ connection !", myIp()));
+            Utilities.Loggers.Debug.Write(string.Format("New closed client @<{0}>@ connection !", IP));
 
             if (_isAuth == true)
             {

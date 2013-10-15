@@ -7,84 +7,21 @@ namespace SunDofus.World.Entities.Models.Levels
 {
     class LevelModel
     {
-        private int _ID;
-        private long _character, _job, _alignment, _guild, _mount;
+        public int ID { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
+        public long Character { get; set; }
+        public long Job { get; set; }
+        public long Alignment { get; set; }
+        public long Guild { get; set; }
+        public long Mount { get; set; }
 
-        public long Character
+        public LevelModel(long max = 0)
         {
-            get
-            {
-                return _character;
-            }
-            set
-            {
-                _character = value;
-            }
-        }
-        public long Job
-        {
-            get
-            {
-                return _job;
-            }
-            set
-            {
-                _job = value;
-            }
-        }
-        public long Alignment
-        {
-            get
-            {
-                return _alignment;
-            }
-            set
-            {
-                _alignment = value;
-            }
-        }
-        public long Guild
-        {
-            get
-            {
-                return _guild;
-            }
-            set
-            {
-                _guild = value;
-            }
-        }
-        public long Mount
-        {
-            get
-            {
-                return _mount;
-            }
-            set
-            {
-                _mount = value;
-            }
-        }
-
-        public LevelModel(long _max = 0)
-        {
-            Character = _max;
-            Job = _max;
-            Mount = _max;
-            Alignment = _max;
-            Guild = _max;
+            Character = max;
+            Job = max;
+            Mount = max;
+            Alignment = max;
+            Guild = max;
         }
     }
 }

@@ -9,18 +9,18 @@ namespace SunDofus.Utilities
     {
         public static object Locker = new object();
 
-        private static int _startTime;
-        private static Random _randomizer = new Random();
+        private static int startTime;
+        private static Random randomizer = new Random();
 
         public static int Uptime
         {
             get
             {
-                return (Environment.TickCount - _startTime);
+                return (Environment.TickCount - startTime);
             }
             set
             {
-                _startTime = value;
+                startTime = value;
             }
         }
 
@@ -46,7 +46,7 @@ namespace SunDofus.Utilities
             return date;
         }
 
-        private static char[] _hash = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+        private static char[] hash = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
                 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
                 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'};
 
@@ -56,8 +56,8 @@ namespace SunDofus.Utilities
 
             for (var i = 1; i <= lenght; i++)
             {
-                var randomInt = _randomizer.Next(0, _hash.Length);
-                str += _hash[randomInt];
+                var randomInt = randomizer.Next(0, hash.Length);
+                str += hash[randomInt];
             }
 
             return str;
@@ -78,11 +78,11 @@ namespace SunDofus.Utilities
                 var PKey = key[i];
                 var APass = (int)PPass / 16;
                 var AKey = (int)PPass % 16;
-                var ANB = (APass + (int)PKey) % _hash.Length;
-                var ANB2 = (AKey + (int)PKey) % _hash.Length;
+                var ANB = (APass + (int)PKey) % hash.Length;
+                var ANB2 = (AKey + (int)PKey) % hash.Length;
 
-                _Crypted += _hash[ANB];
-                _Crypted += _hash[ANB2];
+                _Crypted += hash[ANB];
+                _Crypted += hash[ANB2];
 
             }
 
@@ -94,38 +94,44 @@ namespace SunDofus.Utilities
 
         public static int Rand(int min, int max)
         {
-            return _randomizer.Next(min, max + 1);
+            return randomizer.Next(min, max + 1);
         }
 
-        public static string GetVowels()
+        public static string GetVowel
         {
-            return _vowels.Substring((Rand(0, _vowels.Length - 1)), 1);
+            get
+            {
+                return _vowels.Substring((Rand(0, _vowels.Length - 1)), 1);
+            }
         }
 
-        public static string GetConsonants()
+        public static string GetConsonant
         {
-            return _consonants.Substring((Rand(0, _consonants.Length - 1)), 1);
+            get
+            {
+                return _consonants.Substring((Rand(0, _consonants.Length - 1)), 1);
+            }
         }
 
         public static string RandomName()
         {
-            var name = GetConsonants().ToUpper();
-            name += GetVowels();
+            var name = GetConsonant.ToUpper();
+            name += GetVowel;
 
             if (Rand(0, 1) == 0)
-                name += GetVowels();
+                name += GetVowel;
 
-            name += GetConsonants();
+            name += GetConsonant;
 
             if (Rand(0, 1) == 0)
                 name += name[name.Length - 1].ToString();
 
-            name += GetVowels();
+            name += GetVowel;
 
             if (Rand(0, 1) == 0)
             {
-                name += GetConsonants();
-                name += GetVowels();
+                name += GetConsonant;
+                name += GetVowel;
             }
 
             return name;

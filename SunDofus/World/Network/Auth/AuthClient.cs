@@ -43,7 +43,7 @@ namespace SunDofus.World.Network.Auth
             if (isLogged == false && force == false)
                 return;
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("Sent to {0} : {1}", myIp(), message));
+            Utilities.Loggers.Debug.Write(string.Format("Sent to {0} : {1}", IP, message));
 
             lock(_packetLocker)
                 this.SendDatas(message);
@@ -59,7 +59,7 @@ namespace SunDofus.World.Network.Auth
 
         private void FailedToConnect(Exception exception)
         {
-            Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot connect to AuthServer because {0}", exception.ToString()));
+            Utilities.Loggers.Errors.Write(string.Format("Cannot connect to AuthServer because {0}", exception.ToString()));
         }
 
         private void DatasArrival(string datas)
@@ -70,7 +70,7 @@ namespace SunDofus.World.Network.Auth
 
         private void Disconnected()
         {
-            Utilities.Loggers.StatusLogger.Write("Connection with the AuthServer closed !");
+            Utilities.Loggers.Status.Write("Connection with the AuthServer closed !");
             _timer.Start();
         }
 
@@ -98,7 +98,7 @@ namespace SunDofus.World.Network.Auth
             }
             catch (Exception e)
             {
-                Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse AuthServer's packet ({0}) because : {1}", datas, e.ToString()));
+                Utilities.Loggers.Errors.Write(string.Format("Cannot parse AuthServer's packet ({0}) because : {1}", datas, e.ToString()));
             }
         }
 
@@ -113,7 +113,7 @@ namespace SunDofus.World.Network.Auth
         private void ReceiveHelloConnectSuccess()
         {
             isLogged = true;
-            Utilities.Loggers.InfosLogger.Write("Connected with the AuthenticationServer !");
+            Utilities.Loggers.Debug.Write("Connected with the AuthenticationServer !");
 
             if (ServersHandler.RealmServer.PseudoClients.Count > 0)
                 Send(new Packets.ListOfConnectedPacket().GetPacket(ServersHandler.RealmServer.PseudoClients.Values));

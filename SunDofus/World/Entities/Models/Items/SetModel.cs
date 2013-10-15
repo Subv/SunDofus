@@ -8,21 +8,10 @@ namespace SunDofus.World.Entities.Models.Items
 {
     class SetModel
     {
-        private int _ID;
+        public int ID { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public Dictionary<int, List<EffectItem>> BonusList;
-        public List<int> ItemsList;
+        public Dictionary<int, List<EffectItem>> BonusList { get; set; }
+        public List<int> ItemsList { get; set; }
 
         public SetModel()
         {

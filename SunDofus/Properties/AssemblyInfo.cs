@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ghost ©")]
 [assembly: AssemblyProduct("DOFUS Emulator")]
-[assembly: AssemblyCopyright("Copyright Ghost ©  2012 -> 2013")]
+[assembly: AssemblyCopyright("Copyright Ghost © 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.3.2.188")]
-[assembly: AssemblyFileVersion("0.3.2.188")]
+[assembly: AssemblyVersion("0.3.2.194")]
+[assembly: AssemblyFileVersion("0.3.2.194")]

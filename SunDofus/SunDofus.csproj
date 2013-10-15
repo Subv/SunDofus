@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SunDofus</RootNamespace>
     <AssemblyName>SunDofus</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -65,10 +65,10 @@
     <Compile Include="Auth\Entities\Requests\AccountsRequests.cs" />
     <Compile Include="Auth\Entities\Requests\GiftsRequests.cs" />
     <Compile Include="Auth\Entities\Requests\ServersRequests.cs" />
-    <Compile Include="Auth\Network\Sync\Packets\HelloConnectPacket.cs" />
-    <Compile Include="Auth\Network\Sync\Packets\HelloConnectSuccessPacket.cs" />
+    <Compile Include="Auth\Network\Sync\Packets\PHelloConnect.cs" />
+    <Compile Include="Auth\Network\Sync\Packets\PHelloConnectSuccess.cs" />
     <Compile Include="Auth\Network\Sync\Packets\MasterPacket.cs" />
-    <Compile Include="Auth\Network\Sync\Packets\TransferPacket.cs" />
+    <Compile Include="Auth\Network\Sync\Packets\PTransfer.cs" />
     <Compile Include="Master\TCPClient.cs" />
     <Compile Include="Master\TCPServer.cs" />
     <Compile Include="Auth\Network\Auth\AuthClient.cs" />
@@ -197,10 +197,12 @@
     <Content Include="favicon.ico" />
     <Content Include="Librairies\MySql.Data.dll" />
     <Content Include="Librairies\SilverSock.dll" />
-    <Content Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Databases\Paths\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

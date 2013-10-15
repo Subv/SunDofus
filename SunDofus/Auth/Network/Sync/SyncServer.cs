@@ -8,24 +8,12 @@ namespace SunDofus.Auth.Network.Sync
 {
     class SyncServer : Master.TCPServer
     {
-        private List<SyncClient> _clients;
-
-        public List<SyncClient> Clients
-        {
-            get
-            {
-                return _clients;
-            }
-            set
-            {
-                _clients = value;
-            }
-        }
+        public List<SyncClient> Clients { get; set; }
 
         public SyncServer()
-            : base(Utilities.Config.GetStringElement("Sync_Ip"), Utilities.Config.GetIntElement("Sync_Port"))
+            : base(Utilities.Config.GetStringElement("SYNC_IP"), Utilities.Config.GetIntElement("SYNC_PORT"))
         {
-            _clients = new List<SyncClient>();
+            Clients = new List<SyncClient>();
 
             this.SocketClientAccepted += new AcceptSocketHandler(this.OnAcceptedClient);
             this.ListeningServer += new ListeningServerHandler(this.OnListeningServer);
@@ -37,7 +25,7 @@ namespace SunDofus.Auth.Network.Sync
             if (socket == null) 
                 return;
 
-            Utilities.Loggers.InfosLogger.Write(string.Format("New imputed sync connection <{0}> !", socket.IP));
+            Utilities.Loggers.Debug.Write(string.Format("New imputed sync connection <{0}> !", socket.IP));
 
             lock (Clients)
                 Clients.Add(new SyncClient(socket));
@@ -45,12 +33,12 @@ namespace SunDofus.Auth.Network.Sync
 
         private void OnListeningServer(string remote)
         {
-            Utilities.Loggers.StatusLogger.Write(string.Format("SyncServer starded on <{0}> !", remote));
+            Utilities.Loggers.Status.Write(string.Format("SyncServer starded on <{0}> !", remote));
         }
 
         private void OnListeningFailedServer(Exception exception)
         {
-            Utilities.Loggers.ErrorsLogger.Write(string.Format("SyncServer can't start : {0}", exception.ToString()));
+            Utilities.Loggers.Errors.Write(string.Format("SyncServer can't start : {0}", exception.ToString()));
         }
     }
 }

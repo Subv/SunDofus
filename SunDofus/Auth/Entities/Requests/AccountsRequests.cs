@@ -15,7 +15,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             DatabaseProvider.CheckConnection();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
 
                 var sqlText = "SELECT * FROM accounts WHERE username=@username";
@@ -60,7 +60,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             DatabaseProvider.CheckConnection();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
 
                 var sqlText = "SELECT * FROM accounts WHERE id=@id";
@@ -102,7 +102,7 @@ namespace SunDofus.Auth.Entities.Requests
         {
             var dico = new Dictionary<int, List<string>>();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT serverID, characterName FROM accounts_characters WHERE accountID=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -132,7 +132,7 @@ namespace SunDofus.Auth.Entities.Requests
         {
             var friends = new List<string>();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT targetPseudo FROM accounts_friends WHERE accID=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -156,7 +156,7 @@ namespace SunDofus.Auth.Entities.Requests
         {
             var enemies = new List<string>();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT targetPseudo FROM accounts_enemies WHERE accID=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -182,7 +182,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             DatabaseProvider.CheckConnection();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT id FROM accounts WHERE pseudo=@pseudo";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -204,7 +204,7 @@ namespace SunDofus.Auth.Entities.Requests
         {
             DatabaseProvider.CheckConnection();
 
-            lock (Entities.DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "UPDATE accounts SET connected=0";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -215,9 +215,9 @@ namespace SunDofus.Auth.Entities.Requests
 
         public static void UpdateFriend(int accID, string targetPseudo, bool add)
         {
-            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+            DatabaseProvider.CheckConnection();
 
-            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 if (add)
                 {
@@ -244,9 +244,9 @@ namespace SunDofus.Auth.Entities.Requests
 
         public static void UpdateEnemy(int accID, string targetPseudo, bool add)
         {
-            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+            DatabaseProvider.CheckConnection();
 
-            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 if (add)
                 {
@@ -275,9 +275,9 @@ namespace SunDofus.Auth.Entities.Requests
             if (accountID == -1)
                 return;
 
-            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+            DatabaseProvider.CheckConnection();
 
-            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 if (add)
                 {
@@ -307,9 +307,9 @@ namespace SunDofus.Auth.Entities.Requests
             if (accountID == -1)
                 return;
 
-            SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
+            DatabaseProvider.CheckConnection();
 
-            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "UPDATE accounts SET connected=@connected WHERE Id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

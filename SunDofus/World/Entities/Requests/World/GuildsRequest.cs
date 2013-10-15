@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadGuilds()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM guilds";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -41,7 +41,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlResult.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' guilds from the database !", GuildsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' guilds from the database !", GuildsList.Count));
         }
 
         public static void SaveGuild(Game.Guilds.Guild guild)
@@ -58,7 +58,7 @@ namespace SunDofus.World.Entities.Requests
             }
             else if (!guild.mustDelete && !guild.isNewGuild)
             {
-                lock (DatabaseProvider.ConnectionLocker)
+                lock (DatabaseProvider.Locker)
                 {
                     var sqlText = "UPDATE guilds SET ID=@ID, Name=@Name, Level=@Level, Exp=@Exp, Stats=@Stats," +
                         " Members=@Members, Emblem=@Emblem WHERE ID=@ID";
@@ -80,7 +80,7 @@ namespace SunDofus.World.Entities.Requests
 
         private static void DeleteGuild(int guildID)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "DELETE FROM guilds WHERE ID=@ID";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -93,7 +93,7 @@ namespace SunDofus.World.Entities.Requests
 
         private static void CreateGuild(Game.Guilds.Guild guild)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "INSERT INTO guilds VALUES(@ID, @Name, @Emblem, @Level, @Exp, @Members, @Stats)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

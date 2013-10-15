@@ -8,129 +8,26 @@ namespace SunDofus.World.Entities.Models.Spells
 {
     class SpellLevelModel
     {
-        private int _lvl, _cost, _minRP, _maxRP, _cc, _ec, _maxPerT, _maxPerP, _turnNum;
-        private string _type;
+        public int Level { get; set; }
+        public int Cost { get; set; }
+        public int MinRP { get; set; }
+        public int MaxRP { get; set; }
+        public int CC { get; set; }
+        public int EC { get; set; }
+        public int MaxPerTurn { get; set; }
+        public int MaxPerPlayer { get; set; }
+        public int TurnNumber { get; set; }
 
-        public List<Game.Effects.EffectSpell> Effects;
-        public List<Game.Effects.EffectSpell> CriticalEffects;
+        public bool isOnlyViewLine { get; set; }
+        public bool isOnlyLine { get; set; }
+        public bool isAlterablePO { get; set; }
+        public bool isECEndTurn { get; set; }
+        public bool isEmptyCell { get; set; }
 
-        public int Level
-        {
-            get
-            {
-                return _lvl;
-            }
-            set
-            {
-                _lvl = value;
-            }
-        }
-        public int Cost
-        {
-            get
-            {
-                return _cost;
-            }
-            set
-            {
-                _cost = value;
-            }
-        }
-        public int MinRP
-        {
-            get
-            {
-                return _minRP;
-            }
-            set
-            {
-                _minRP = value;
-            }
-        }
-        public int MaxRP
-        {
-            get
-            {
-                return _maxRP;
-            }
-            set
-            {
-                _maxRP = value;
-            }
-        }
-        public int CC
-        {
-            get
-            {
-                return _cc;
-            }
-            set
-            {
-                _cc = value;
-            }
-        }
-        public int EC
-        {
-            get
-            {
-                return _ec;
-            }
-            set
-            {
-                _ec = value;
-            }
-        }
-        public int MaxPerTurn
-        {
-            get
-            {
-                return _maxPerT;
-            }
-            set
-            {
-                _maxPerT = value;
-            }
-        }
-        public int MaxPerPlayer
-        {
-            get
-            {
-                return _maxPerP;
-            }
-            set
-            {
-                 _maxPerP = value;
-            }
-        }
-        public int TurnNumber
-        {
-            get
-            {
-                return _turnNum;
-            }
-            set
-            {
-                _turnNum = value;
-            }
-        }
+        public string Type { get; set; }
 
-        public bool isOnlyViewLine;
-        public bool isOnlyLine;
-        public bool isAlterablePO;
-        public bool isECEndTurn;
-        public bool isEmptyCell;
-
-        public string Type
-        {
-            get
-            {
-                return _type;
-            }
-            set
-            {
-                _type = value;
-            }
-        }
+        public List<Game.Effects.EffectSpell> Effects { get; set; }
+        public List<Game.Effects.EffectSpell> CriticalEffects { get; set; }
 
         public SpellLevelModel()
         {
@@ -153,9 +50,9 @@ namespace SunDofus.World.Entities.Models.Spells
             isEmptyCell = false;
         }
 
-        public void ParseEffect(string _datas, bool _CC)
+        public void ParseEffect(string datas, bool CC)
         {
-            var List = _datas.Split('|');
+            var List = datas.Split('|');
 
             foreach (var actualEffect in List)
             {
@@ -206,7 +103,7 @@ namespace SunDofus.World.Entities.Models.Spells
                     effect.Target = new Target(23);
                 }
 
-                if (_CC == true)
+                if (CC == true)
                 {
                     lock(CriticalEffects)
                         CriticalEffects.Add(effect);

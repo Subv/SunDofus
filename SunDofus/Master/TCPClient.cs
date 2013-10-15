@@ -8,16 +8,9 @@ namespace SunDofus.Master
 {
     class TCPClient
     {
-        private SilverSocket _socket;
-        private bool _isConnected = false;
+        private SilverSocket socket;
 
-        public bool Connected
-        {
-            get
-            {
-                return _isConnected;
-            }
-        }
+        public bool Connected { get; set; }
 
         protected delegate void DisconnectedSocketHandler();
         protected DisconnectedSocketHandler DisconnectedSocket;
@@ -49,38 +42,41 @@ namespace SunDofus.Master
                 evnt(exception);
         }
 
-        public TCPClient(SilverSocket socket)
+        public TCPClient(SilverSocket nsocket)
         {
-            _socket = socket;
+            socket = nsocket;
 
-            _socket.OnConnected += new SilverEvents.Connected(this.OnConnected);
-            _socket.OnSocketClosedEvent += new SilverEvents.SocketClosed(this.OnDisconnected);
-            _socket.OnDataArrivalEvent += new SilverEvents.DataArrival(this.OnDatasArrival);
-            _socket.OnFailedToConnect += new SilverEvents.FailedToConnect(this.OnFailedToConnect);
+            socket.OnConnected += new SilverEvents.Connected(this.OnConnected);
+            socket.OnSocketClosedEvent += new SilverEvents.SocketClosed(this.OnDisconnected);
+            socket.OnDataArrivalEvent += new SilverEvents.DataArrival(this.OnDatasArrival);
+            socket.OnFailedToConnect += new SilverEvents.FailedToConnect(this.OnFailedToConnect);
         }
 
         #region Functions
 
         public void ConnectTo(string ip, int port)
         {
-            _socket.ConnectTo(ip, port);
+            socket.ConnectTo(ip, port);
         }
 
-        public string myIp()
+        public string IP
         {
-            return _socket.IP;
+            get
+            {
+                return socket.IP;
+            }
         }
 
         public void Disconnect()
         {
-            _socket.CloseSocket();
+            socket.CloseSocket();
         }
 
         protected void SendDatas(string message)
         {
             try
             {
-                _socket.Send(Encoding.UTF8.GetBytes(string.Format("{0}\x00", message)));
+                socket.Send(Encoding.UTF8.GetBytes(string.Concat(message, "\x00")));
             }
             catch { }
         }
@@ -97,7 +93,7 @@ namespace SunDofus.Master
 
         private void OnConnected()
         {
-            _isConnected = true;
+            Connected = true;
         }
 
         private void OnFailedToConnect(Exception e)
@@ -107,7 +103,7 @@ namespace SunDofus.Master
 
         private void OnDisconnected()
         {
-            _isConnected = false;
+            Connected = false;
 
             OnDisconnectedSocket();
         }

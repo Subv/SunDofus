@@ -11,7 +11,7 @@ namespace SunDofus.World.Entities.Requests
     {
         public static void LoadAuths()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM authservers";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadTriggers()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM triggers";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -40,12 +40,12 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' triggers from the database !", TriggersList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' triggers from the database !", TriggersList.Count));
         }
 
         public static void InsertTrigger(Models.Maps.TriggerModel trigger)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "INSERT INTO triggers VALUES(@mapid, @cellid, @action, @args, @condi)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

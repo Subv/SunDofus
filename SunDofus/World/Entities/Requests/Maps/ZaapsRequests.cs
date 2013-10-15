@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadZaaps()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM zaaps";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -37,7 +37,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' zaaps from the database !", ZaapsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' zaaps from the database !", ZaapsList.Count));
         }
 
         private static bool ParseZaap(World.Game.Maps.Zaaps.Zaap zaap)

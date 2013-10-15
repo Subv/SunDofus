@@ -13,7 +13,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadSpells()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM spells";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -39,12 +39,12 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' spells from the database !", SpellsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' spells from the database !", SpellsList.Count));
         }
 
         public static void LoadSpellsToLearn()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM spells_learn";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -68,7 +68,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' spells to learn from the database !", SpellsToLearnList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' spells to learn from the database !", SpellsToLearnList.Count));
         }
     }
 }

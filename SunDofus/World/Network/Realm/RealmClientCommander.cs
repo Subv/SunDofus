@@ -61,7 +61,7 @@ namespace SunDofus.World.Network.Realm
                 Client.SendConsoleMessage("Cannot parse your AdminCommand !");
                 Client.SendConsoleMessage("Use the command 'Help' for more informations !");
 
-                Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse command from <{0}> because : {1}", Client.myIp(), e.ToString()));
+                Utilities.Loggers.Errors.Write(string.Format("Cannot parse command from <{0}> because : {1}", Client.IP, e.ToString()));
             }
         }
 
@@ -97,7 +97,7 @@ namespace SunDofus.World.Network.Realm
             catch (Exception e)
             {
                 Client.SendMessage("Cannot parse your ChatCommand !");
-                Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse command from <{0}> because : {1}", Client.myIp(), e.ToString()));
+                Utilities.Loggers.Errors.Write(string.Format("Cannot parse command from <{0}> because : {1}", Client.IP, e.ToString()));
             }
         }
 

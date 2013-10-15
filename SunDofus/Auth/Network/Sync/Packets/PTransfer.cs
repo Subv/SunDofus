@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SunDofus.Auth.Network.Sync.Packets
 {
-    class TransferPacket
+    class PTransfer
     {
         public string GetPacket(params object[] datas)
         {

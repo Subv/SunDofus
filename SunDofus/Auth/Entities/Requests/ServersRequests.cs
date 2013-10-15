@@ -9,23 +9,15 @@ namespace SunDofus.Auth.Entities.Requests
 {
     class ServersRequests
     {
-        private static List<Models.ServersModel> _servers;
-
-        public static List<Models.ServersModel> Cache
-        {
-            get
-            {
-                return _servers;
-            }
-        }
+        public static List<Models.ServersModel> Cache { get; set; }
 
         public static void LoadCache()
         {
-            _servers = new List<Models.ServersModel>();
+            Cache = new List<Models.ServersModel>();
 
             DatabaseProvider.CheckConnection();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM gameservers";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -42,8 +34,8 @@ namespace SunDofus.Auth.Entities.Requests
                         PassKey = sqlReader.GetString("PassKey"),
                     };
 
-                    lock (_servers)
-                        _servers.Add(server);
+                    lock (Cache)
+                        Cache.Add(server);
                 }
 
                 sqlReader.Close();

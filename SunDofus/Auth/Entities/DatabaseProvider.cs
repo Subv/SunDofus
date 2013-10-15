@@ -9,45 +9,46 @@ namespace SunDofus.Auth.Entities
 {
     class DatabaseProvider
     {
-        public static MySqlConnection Connection;
-        public static object ConnectionLocker;
+        public static MySqlConnection Connection { get; set; }
+        public static object Locker { get; set; }
 
-        private static Timer _timer;
-        private static bool _isConnected;
-        private static int _lastAction;
+        private static Timer timer;
+        private static bool isConnected;
+        private static int lastAction;
 
-        private static int _getLastActionTime
+        private static int getLastActionTime
         {
             get
             {
-                return (Environment.TickCount - _lastAction);
+                return (Environment.TickCount - lastAction);
             }
         }
 
         public static void InitializeConnection()
         {
-            _isConnected = false;
+            isConnected = false;
 
-            Connection = new MySqlConnection(string.Format("server={0};uid={1};pwd='{2}';database={3}",
-                    Utilities.Config.GetStringElement("Realm_Database_Server"),
-                    Utilities.Config.GetStringElement("Realm_Database_User"),
-                    Utilities.Config.GetStringElement("Realm_Database_Pass"),
-                    Utilities.Config.GetStringElement("Realm_Database_Name")));
+            Connection = new MySqlConnection();
+            Locker = new object();
 
-            ConnectionLocker = new object();
+            Connection.ConnectionString = string.Format("server={0};uid={1};pwd='{2}';database={3}",
+                    Utilities.Config.GetStringElement("REALM_DATABASE_SERVER"),
+                    Utilities.Config.GetStringElement("REALM_DATABASE_USER"),
+                    Utilities.Config.GetStringElement("REALM_DATABASE_PASS"),
+                    Utilities.Config.GetStringElement("REALM_DATABASE_NAME"));
 
-            lock (ConnectionLocker)
+            lock (Locker)
                 Connection.Open();
 
-            _isConnected = true;
-            _lastAction = Environment.TickCount;
+            isConnected = true;
+            lastAction = Environment.TickCount;
 
-            Utilities.Loggers.StatusLogger.Write("Connected to the Realm_Database !");
+            Utilities.Loggers.Status.Write("Connected to the Realms' Database !");
 
-            _timer = new Timer();
-            _timer.Interval = 60000;
-            _timer.Elapsed += new ElapsedEventHandler(UpdateConnection);
-            _timer.Start();
+            timer = new Timer();
+            timer.Interval = 60000;
+            timer.Elapsed += new ElapsedEventHandler(UpdateConnection);
+            timer.Start();
 
             Requests.AccountsRequests.ResetConnectedValue();
             Requests.ServersRequests.LoadCache();
@@ -55,34 +56,34 @@ namespace SunDofus.Auth.Entities
 
         public static void CheckConnection()
         {
-            if (!_isConnected)
+            if (!isConnected)
                 ReConnect();
 
-            _lastAction = Environment.TickCount;
+            lastAction = Environment.TickCount;
         }
 
         private static void ReConnect()
         {
-            lock (ConnectionLocker)
+            lock (Locker)
                 Connection.Open();
             
-            _isConnected = true;
-            _timer.Start();
+            isConnected = true;
+            timer.Start();
 
-            Utilities.Loggers.StatusLogger.Write("Reconnected to the Realm_Database !");
+            Utilities.Loggers.Status.Write("Reconnected to the Realms' Database !");
         }
 
         private static void UpdateConnection(object sender, EventArgs e)
         {
-            if (_getLastActionTime >= 5000)
+            if (getLastActionTime >= 5000)
             {
-                _isConnected = false;
-                _timer.Stop();
+                isConnected = false;
+                timer.Stop();
 
-                lock(ConnectionLocker)
+                lock(Locker)
                     Connection.Close();
 
-                Utilities.Loggers.StatusLogger.Write("Disconnected from the Realm_Database !");
+                Utilities.Loggers.Status.Write("Disconnected from the RealmS' Database !");
             }
         }
     }

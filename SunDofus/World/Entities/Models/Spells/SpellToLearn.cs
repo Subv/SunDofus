@@ -7,52 +7,10 @@ namespace SunDofus.World.Entities.Models.Spells
 {
     class SpellToLearnModel
     {
-        private int _race, _lvl, _spellID, _pos;
-
-        public int Race
-        {
-            get
-            {
-                return _race;
-            }
-            set
-            {
-                _race = value;
-            }
-        }
-        public int Level
-        {
-            get
-            {
-                return _lvl;
-            }
-            set
-            {
-                _lvl = value;
-            }
-        }
-        public int SpellID
-        {
-            get
-            {
-                return _spellID;
-            }
-            set
-            {
-                _spellID = value;
-            }
-        }
-        public int Pos
-        {
-            get
-            {
-                return _pos;
-            }
-            set
-            {
-                _pos = value;
-            }
-        }
+        public int Race { get; set; }
+        public int Level { get; set; }
+        public int SpellID { get; set; }
+        public int Pos { get; set; }
 
         public SpellToLearnModel()
         {

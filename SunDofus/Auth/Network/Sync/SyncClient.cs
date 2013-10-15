@@ -9,22 +9,22 @@ namespace SunDofus.Auth.Network.Sync
 {
     class SyncClient : Master.TCPClient
     {
-        public ServersModel Server;
+        private State state;
+        private object locker;
 
-        private State _state;
-        private object _packetLocker;
+        public ServersModel Server { get; set; }
 
         public SyncClient(SilverSocket socket) : base(socket)
         {
-            _state = State.OnAuthentication;
-            _packetLocker = new object();
+            state = State.OnAuthentication;
+            locker = new object();
 
             this.ReceivedDatas += new ReceiveDatasHandler(this.PacketsReceived);
             this.DisconnectedSocket += new DisconnectedSocketHandler(this.Disconnected);
 
             Server = null;
 
-            Send(new Packets.HelloConnectPacket().GetPacket());
+            Send(new Packets.PHelloConnect().GetPacket());
         }
 
         public void SendTicket(string key, Auth.AuthClient client)
@@ -34,29 +34,29 @@ namespace SunDofus.Auth.Network.Sync
                 client.Account.SubscriptionTime(), string.Join("+", Entities.Requests.GiftsRequests.GetGiftsByAccountID(client.Account.ID)),
                 string.Join("+", client.Account.Friends), string.Join("+", client.Account.Enemies) };
 
-            Send(new Packets.TransferPacket().GetPacket(datas));
+            Send(new Packets.PTransfer().GetPacket(datas));
         }
 
         public void Send(string message)
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Send to Sync [{0}] : {1}", myIp(), message));
+            Utilities.Loggers.Debug.Write(string.Format("Send to Sync [{0}] : {1}", IP, message));
 
-            lock (_packetLocker)
+            lock (locker)
                 this.SendDatas(message);
         }
 
         private void PacketsReceived(string datas)
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Received from sync [{0}] : {1}", myIp(), datas));
+            Utilities.Loggers.Debug.Write(string.Format("Received from sync [{0}] : {1}", IP, datas));
 
-            lock (_packetLocker)
+            lock (locker)
                 Parse(datas);
         }
 
         private void Disconnected()
         {
             ChangeState(State.OnDisconnected);
-            Utilities.Loggers.InfosLogger.Write(string.Format("New closed sync connection <{0}> !", this.myIp()));
+            Utilities.Loggers.Debug.Write(string.Format("New closed sync connection <{0}> !", this.IP));
 
             lock (ServersHandler.SyncServer.Clients)
                 ServersHandler.SyncServer.Clients.Remove(this);
@@ -72,7 +72,7 @@ namespace SunDofus.Auth.Network.Sync
                 switch (nummer)
                 {
                     case 20:
-                        Authentication(int.Parse(datas[1]), datas[2], int.Parse(datas[3]), datas[4]);
+                        Authentication(datas);
                         return;
 
                     case 40:
@@ -124,29 +124,41 @@ namespace SunDofus.Auth.Network.Sync
                         return;
                 }
             }
-            catch (Exception e)
+            catch (Exception error)
             {
-                Utilities.Loggers.ErrorsLogger.Write(string.Format("Cannot parse sync packet : {0}", e.ToString()));
+                Utilities.Loggers.Errors.Write(string.Format("Cannot parse sync packet : {0}", error.ToString()));
             }
         }
 
-        private void Authentication(int serverId, string serverIp, int serverPort, string pass)
+        private void Authentication(string[] datas)
         {
+            var serverId = 0;
+            var serverPort = 0;
+
+            if (datas.Length < 4 || !int.TryParse(datas[1], out serverId) || !int.TryParse(datas[3], out serverPort))
+            {
+                Disconnect();
+                return;
+            }
+
+            var serverIp = datas[2];
+            var pass = datas[4];
+
             if (Entities.Requests.ServersRequests.Cache.Any(x => x.ID == serverId && x.IP == serverIp && x.Port == serverPort && x.State == 0))
             {
                 var requieredServer = Entities.Requests.ServersRequests.Cache.First(x => x.ID == serverId && x.IP == serverIp && x.Port == serverPort && x.State == 0);
 
-                if (!myIp().Contains(serverIp) || pass != requieredServer.PassKey)
+                if (!IP.Contains(serverIp) || pass != requieredServer.PassKey)
                 {
                     Disconnect();
                     return;
                 }
 
                 Server = requieredServer;
-                Send(new Packets.HelloConnectSuccessPacket().GetPacket());
+                Send(new Packets.PHelloConnectSuccess().GetPacket());
 
                 ChangeState(SyncClient.State.OnConnected, true);
-                Utilities.Loggers.InfosLogger.Write(string.Format("Sync <{0}> authentified !", this.myIp()));
+                Utilities.Loggers.Debug.Write(string.Format("Sync <{0}> authentified !", this.IP));
             }
             else
                 Disconnect();
@@ -154,13 +166,13 @@ namespace SunDofus.Auth.Network.Sync
 
         private void ReceiveNewConnectedClient(string datas)
         {
-            if (_state == State.OnConnected)
+            if (state == State.OnConnected)
                 return;
 
-            if (!Server.GetClients.Contains(datas))
+            if (!Server.Clients.Contains(datas))
             {
-                lock (Server.GetClients)
-                    Server.GetClients.Add(datas);
+                lock (Server.Clients)
+                    Server.Clients.Add(datas);
 
                 Entities.Requests.AccountsRequests.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), true);
             }
@@ -178,13 +190,13 @@ namespace SunDofus.Auth.Network.Sync
 
         private void ReceiveNewDisconnectedClient(string datas)
         {
-            if (_state != State.OnConnected)
+            if (state != State.OnConnected)
                 return;
 
-            if (Server.GetClients.Contains(datas))
+            if (Server.Clients.Contains(datas))
             {
-                lock (Server.GetClients)
-                    Server.GetClients.Remove(datas);
+                lock (Server.Clients)
+                    Server.Clients.Remove(datas);
 
                 Entities.Requests.AccountsRequests.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(datas), false);
             }
@@ -210,9 +222,9 @@ namespace SunDofus.Auth.Network.Sync
             if (Server == null || state == State.OnDisconnected && !force)
                 return;
 
-            this._state = state;
+            this.state = state;
 
-            switch (this._state)
+            switch (this.state)
             {
                 case State.OnAuthentication:
                     Server.State = 0;
@@ -237,17 +249,17 @@ namespace SunDofus.Auth.Network.Sync
 
         private void ParseListConnected(string _datas)
         {
-            if (_state != State.OnConnected)
+            if (state != State.OnConnected)
                 return;
 
             var packet = _datas.Substring(3).Split('|');
 
             foreach (var pseudo in packet)
             {
-                if (!Server.GetClients.Contains(pseudo))
+                if (!Server.Clients.Contains(pseudo))
                 {
-                    lock(Server.GetClients)
-                        Server.GetClients.Add(pseudo);
+                    lock(Server.Clients)
+                        Server.Clients.Add(pseudo);
 
                     Entities.Requests.AccountsRequests.UpdateConnectedValue(Entities.Requests.AccountsRequests.GetAccountID(pseudo), true);
                 }

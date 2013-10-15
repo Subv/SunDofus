@@ -8,63 +8,55 @@ namespace SunDofus.Auth.Network.Auth
 {
     class AuthQueue
     {
-        private static List<AuthClient> _clients;
+        public static List<AuthClient> Clients { get; set; }
 
-        public static List<AuthClient> Clients
-        {
-            get
-            {
-                return _clients;
-            }
-        }
-
-        private static Timer _reloadTimer;
-        private static bool _isRunning;
+        private static Timer timer;
+        private static bool isRunning;
 
         public static void Start()
         {
-            _clients = new List<AuthClient>();
+            Clients = new List<AuthClient>();
 
-            _reloadTimer = new Timer();
+            timer = new Timer();
             {
-                _reloadTimer.Interval = Utilities.Config.GetIntElement("Time_PerClient");
-                _reloadTimer.Enabled = true;
-                _reloadTimer.Elapsed += new ElapsedEventHandler(RefreshQueue);
-                _reloadTimer.Start();
+                timer.Interval = Utilities.Config.GetIntElement("TIME_PERCLIENT");
+                timer.Enabled = true;
+                timer.Elapsed += new ElapsedEventHandler(RefreshQueue);
+                timer.Start();
             }
 
-            _isRunning = true;
-            Utilities.Loggers.StatusLogger.Write("Queue for the servers' list started !");
+            isRunning = true;
+            Utilities.Loggers.Status.Write("Queue for the servers' list started !");
         }
 
         public static void AddinQueue(AuthClient client)
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Add {0} in queue !", client.myIp()));
+            Utilities.Loggers.Debug.Write(string.Format("Add {0} in queue !", client.IP));
 
-            lock(_clients)
-                _clients.Add(client);
+            lock (Clients)
+                Clients.Add(client);
 
-            if (!_isRunning)
+            if (!isRunning)
             {
-                _isRunning = true;
-                _reloadTimer.Start();
+                isRunning = true;
+                timer.Start();
             }
         }
 
         private static void RefreshQueue(object sender, EventArgs e)
         {
-            if (_clients.Count <= 0)
+            if (Clients.Count <= 0)
                 return;
 
-            _clients[0].CheckAccount();
+            Clients[0].SendInformations(); 
 
-            lock (_clients)
-                _clients.Remove(_clients[0]);
+            lock (Clients)
+                Clients.Remove(Clients[0]);
 
-            if (_clients.Count <= 0)
+            if (Clients.Count <= 0)
             {
-                _isRunning = false;
-                _reloadTimer.Stop();
+                isRunning = false;
+                timer.Stop();
             }
         }
     }

@@ -7,33 +7,10 @@ namespace SunDofus.World.Entities.Models.NPC
 {
     class NPCsAnswer
     {
-        private int _answerID;
-        private string _effects;
+        public int AnswerID { get; set; }
+        public string Effects { get; set; }
 
-        public int AnswerID
-        {
-            get
-            {
-                return _answerID;
-            }
-            set
-            {
-                _answerID = value;
-            }
-        }
-        public string Effects
-        {
-            get
-            {
-                return _effects;
-            }
-            set
-            {
-                _effects = value;
-            }
-        }
-
-        public List<Game.World.Conditions.NPCConditions> Conditions;
+        public List<Game.World.Conditions.NPCConditions> Conditions { get; set; }
 
         public NPCsAnswer()
         {
@@ -53,11 +30,11 @@ namespace SunDofus.World.Entities.Models.NPC
             catch { }
         }
 
-        public bool HasConditions(Game.Characters.Character _character)
+        public bool HasConditions(Game.Characters.Character character)
         {
             foreach (var condi in Conditions)
             {
-                if (condi.HasCondition(_character))
+                if (condi.HasCondition(character))
                     continue;
                 else
                     return false;

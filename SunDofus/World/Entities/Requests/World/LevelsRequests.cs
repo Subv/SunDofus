@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadLevels()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM levels";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -38,7 +38,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' levels from the database !", LevelsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' levels from the database !", LevelsList.Count));
         }
 
         public static Models.Levels.LevelModel ReturnLevel(int _level)

@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadMonsters()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM creatures";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -63,12 +63,12 @@ namespace SunDofus.World.Entities.Requests
                 sqlReader.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' monsters from the database !", MonstersList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' monsters from the database !", MonstersList.Count));
         }
 
         public static void LoadMonstersLevels()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM creatures_levels";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

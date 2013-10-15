@@ -8,16 +8,16 @@ namespace SunDofus.Utilities
 {
     class Config
     {
-        private static Configuration _config;
-        private static string _version;
+        private static Configuration config;
+        private static string version;
 
-        public static string Version(string version = "")
+        public static string Version(string nversion = "")
         {
             if (version == "")
-                return _version;
+                return version;
 
-            _version = version;
-            return _version;
+            version = nversion;
+            return version;
         }
 
         public static void LoadConfiguration()
@@ -25,25 +25,25 @@ namespace SunDofus.Utilities
             if (!File.Exists("config.txt"))
                 throw new Exception("Unable to find the file 'config.txt' !");
 
-            _config = new Configuration();
-            _config.LoadConfiguration();
+            config = new Configuration();
+            config.LoadConfiguration();
         }
 
         public static int GetIntElement(string value)
         {
-            return int.Parse(_config.Values[value.ToUpper()]);
+            return int.Parse(config.Values[value.ToUpper()]);
         }
         public static string GetStringElement(string value)
         {
-            return _config.Values[value.ToUpper()];
+            return config.Values[value.ToUpper()];
         }
         public static bool GetBoolElement(string value)
         {
-            return bool.Parse(_config.Values[value.ToUpper()]);
+            return bool.Parse(config.Values[value.ToUpper()]);
         }
         public static long GetLongElement(string value)
         {
-            return long.Parse(_config.Values[value.ToUpper()]);
+            return long.Parse(config.Values[value.ToUpper()]);
         }
 
         private class Configuration

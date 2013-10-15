@@ -8,8 +8,8 @@ namespace SunDofus.Master
 {
     class TCPServer
     {
-        private SilverServer _server;
-        private string _remote;
+        private SilverServer server;
+        private string remote;
 
         protected delegate void AcceptSocketHandler(SilverSocket socket);
         protected AcceptSocketHandler SocketClientAccepted;
@@ -43,19 +43,19 @@ namespace SunDofus.Master
 
         public TCPServer(string ip, int port)
         {
-            _remote = string.Format("{0}:{1}", ip, port);
+            remote = string.Format("{0}:{1}", ip, port);
 
-            _server = new SilverServer(ip, port);
+            server = new SilverServer(ip, port);
             {
-                _server.OnAcceptSocketEvent += new SilverEvents.AcceptSocket(this.AcceptSocket);
-                _server.OnListeningEvent += new SilverEvents.Listening(this.OnListen);
-                _server.OnListeningFailedEvent += new SilverEvents.ListeningFailed(this.OnListenFailed);
+                server.OnAcceptSocketEvent += new SilverEvents.AcceptSocket(this.AcceptSocket);
+                server.OnListeningEvent += new SilverEvents.Listening(this.OnListen);
+                server.OnListeningFailedEvent += new SilverEvents.ListeningFailed(this.OnListenFailed);
             }
         }
 
         public void Start()
         {
-            _server.WaitConnection();
+            server.WaitConnection();
         }
 
         #region Events
@@ -67,7 +67,7 @@ namespace SunDofus.Master
 
         private void OnListen()
         {
-            OnListeningServer(_remote);
+            OnListeningServer(remote);
         }
 
         private void OnListenFailed(Exception exception)

@@ -15,10 +15,12 @@ namespace SunDofus.Auth.Entities.Requests
 
             DatabaseProvider.CheckConnection();
 
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
-                var sqlText = string.Format("SELECT * FROM gifts WHERE Target={0}", accID);
+                var sqlText = "SELECT * FROM gifts WHERE Target=@target";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+
+                sqlCommand.Parameters.Add(new MySqlParameter("@target", accID));
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
@@ -50,7 +52,7 @@ namespace SunDofus.Auth.Entities.Requests
 
             SunDofus.Auth.Entities.DatabaseProvider.CheckConnection();
 
-            lock (SunDofus.Auth.Entities.DatabaseProvider.ConnectionLocker)
+            lock (SunDofus.Auth.Entities.DatabaseProvider.Locker)
             {
                 var sqlText = "DELETE FROM gifts WHERE id=@id";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

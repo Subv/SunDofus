@@ -9,8 +9,8 @@ namespace SunDofus.Auth.Network
 {
     class ServersHandler
     {
-        public static AuthServer AuthServer;
-        public static SyncServer SyncServer;
+        public static AuthServer AuthServer { get; set; }
+        public static SyncServer SyncServer { get; set; }
 
         public static void InitialiseServers()
         {

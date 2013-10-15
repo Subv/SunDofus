@@ -9,89 +9,61 @@ namespace SunDofus.Auth.Network.Auth
 {
     class AuthClient : Master.TCPClient
     {
-        public AccountsModel Account;
-        public AccountState State;
+        public AccountsModel Account { get; set; }
+        public AccountState State { get; set; }
 
-        private object _packetLocker;
-        private string _actualInfos;
-        private string _key;
+        private object locker;
+        private string key;
 
         public AuthClient(SilverSocket socket) : base(socket)
         {
-            _packetLocker = new object();
-            _key = Utilities.Basic.RandomString(32);
+            locker = new object();
+            key = Utilities.Basic.RandomString(32);
 
             this.DisconnectedSocket += new DisconnectedSocketHandler(this.Disconnected);
             this.ReceivedDatas += new ReceiveDatasHandler(this.PacketReceived);
 
-            Send(string.Format("HC{0}", _key));
+            Send(string.Concat("HC", key));
         }
 
         public void SendInformations()
         {
-            Send(string.Format("Ad{0}",Account.Pseudo));
-            Send(string.Format("Ac{0}", Account.Communauty));
+            Send(string.Concat("Ad", Account.Pseudo));
+            Send(string.Concat("Ac", Account.Communauty));
 
             RefreshHosts();
 
-            Send(string.Format("AlK{0}", Account.Level));
-            Send(string.Format("AQ{0}", Account.Question));
+            Send(string.Concat("AlK", Account.Level));
+            Send(string.Concat("AQ", Account.Question));
         }
 
         public void RefreshHosts()
         {
-            var packet = string.Format("AH{0}",
+            var packet = string.Concat("AH",
                 string.Join("|", Entities.Requests.ServersRequests.Cache));
 
             Send(packet);
         }
 
-        public void CheckAccount()
-        {
-            if (!_actualInfos.Contains("#1"))
-                return;
-
-            var infos = _actualInfos.Split('#');
-            var username = infos[0];
-            var password = infos[1];
-
-            var requestedAccount = Entities.Requests.AccountsRequests.LoadAccount(username);
-
-            if (requestedAccount != null && Utilities.Basic.Encrypt(requestedAccount.Password, _key) == password)
-            {
-                Account = requestedAccount;
-
-                Utilities.Loggers.InfosLogger.Write(string.Format("Client <{0}> authentified !", Account.Pseudo));
-                State = AccountState.OnServersList;
-
-                SendInformations();
-            }
-            else
-            {
-                Send("AlEx");
-                this.Disconnect();
-            }
-        }
-
         public void Send(string message)
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Send to [{0}] : {1}", myIp(), message));
+            Utilities.Loggers.Debug.Write(string.Format("Send to [{0}] : {1}", this.IP, message));
 
-            lock (_packetLocker)
+            lock (locker)
                 this.SendDatas(message);
         }
 
         private void PacketReceived(string datas)
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("Receive from client [{0}] : {1}", this.myIp(), datas));
+            Utilities.Loggers.Debug.Write(string.Format("Receive from client [{0}] : {1}", this.IP, datas));
 
-            lock (_packetLocker)
+            lock (locker)
                 Parse(datas);
         }
 
         private void Disconnected()
         {
-            Utilities.Loggers.InfosLogger.Write(string.Format("New closed client connection <{0}> !", this.myIp()));
+            Utilities.Loggers.Debug.Write(string.Format("New closed client connection <{0}> !", this.IP));
 
             lock (ServersHandler.AuthServer.Clients)
                 ServersHandler.AuthServer.Clients.Remove(this);
@@ -99,20 +71,18 @@ namespace SunDofus.Auth.Network.Auth
 
         private void Parse(string datas)
         {
-            if (datas.Contains("#1"))
-            {
-                _actualInfos = datas;
-                return;
-            }
-
             switch (State)
             {
                 case AccountState.OnCheckingVersion:
                     ParseVersionPacket(datas);
                     return;
 
+                case AccountState.OnCheckingAccount:
+                    CheckAccount(datas);
+                    return;
+
                 case AccountState.OnCheckingQueue:
-                    SendVersionPacket();
+                    SendQueuePacket();
                     return;
 
                 case AccountState.OnServersList:
@@ -121,17 +91,30 @@ namespace SunDofus.Auth.Network.Auth
             }
         }
 
-        private void SendVersionPacket()
+        private void SendQueuePacket()
         {
             Send(string.Format("Af{0}|{1}|0|2", (AuthQueue.Clients.IndexOf(this) + 1),
                 (AuthQueue.Clients.Count > 2 ? AuthQueue.Clients.Count : 3)));
         }
 
-        private void ParseVersionPacket(string datas)
+        private void CheckAccount(string datas)
         {
-            if (datas.Contains(Utilities.Config.GetStringElement("Login_Version")))
+            if (!datas.Contains("#1"))
+                return;
+
+            var infos = datas.Split('#');
+            var username = infos[0];
+            var password = infos[1];
+
+            var requestedAccount = Entities.Requests.AccountsRequests.LoadAccount(username);
+
+            if (requestedAccount != null && Utilities.Basic.Encrypt(requestedAccount.Password, key) == password)
             {
-                if (AuthQueue.Clients.Count >= Utilities.Config.GetIntElement("Max_Clients_inQueue"))
+                Account = requestedAccount;
+
+                Utilities.Loggers.Debug.Write(string.Format("Client <{0}> authentified !", Account.Pseudo));
+
+                if (AuthQueue.Clients.Count >= Utilities.Config.GetIntElement("MAX_CLIENTS_INQUEUE"))
                 {
                     Send("M00\0");
                     this.Disconnect();
@@ -144,7 +127,18 @@ namespace SunDofus.Auth.Network.Auth
             }
             else
             {
-                Send(string.Format("AlEv{0}", Utilities.Config.GetStringElement("Login_Version")));
+                Send("AlEx");
+                this.Disconnect();
+            }
+        }
+
+        private void ParseVersionPacket(string datas)
+        {
+            if (datas.Contains(Utilities.Config.GetStringElement("LOGIN_VERSION")))
+                State = AccountState.OnCheckingAccount;
+            else
+            {
+                Send(string.Concat("AlEv", Utilities.Config.GetStringElement("LOGIN_VERSION")));
                 this.Disconnect();
             }
         }
@@ -160,20 +154,20 @@ namespace SunDofus.Auth.Network.Auth
             {
                 case 'F':
 
-                    if (Entities.Requests.ServersRequests.Cache.Any(x => x.GetClients.Contains(datas.Substring(2))))
+                    if (Entities.Requests.ServersRequests.Cache.Any(x => x.Clients.Contains(datas.Substring(2))))
                     {
-                        packet = string.Format("AF{0}", 
-                            Entities.Requests.ServersRequests.Cache.First(x => x.GetClients.Contains(datas.Substring(2))).ID);
+                        packet = string.Concat("AF", 
+                            Entities.Requests.ServersRequests.Cache.First(x => x.Clients.Contains(datas.Substring(2))).ID);
 
                         Send(packet);
                     }
-                    Send("AF");
 
+                    Send("AF");
                     return;
 
                 case 'x':
 
-                    packet = string.Format("AxK{0}", Account.SubscriptionTime());
+                    packet = string.Concat("AxK", Account.SubscriptionTime());
 
                     foreach (var server in Entities.Requests.ServersRequests.Cache)
                     {
@@ -184,7 +178,6 @@ namespace SunDofus.Auth.Network.Auth
                     }
 
                     Send(packet);
-
                     return;
 
                 case 'X':
@@ -194,22 +187,19 @@ namespace SunDofus.Auth.Network.Auth
                     if (!int.TryParse(datas.Substring(2), out id))
                         return;
 
-                    if (ServersHandler.SyncServer.Clients.Any(x => x.Server.ID == id))
-                    {
-                        var server = ServersHandler.SyncServer.Clients.First(x => x.Server.ID == id);
-                        var key = Utilities.Basic.RandomString(16);
-
-                        server.SendTicket(key, this);
-
-                        packet = string.Format("AYK{0}:{1};{2}", server.Server.IP, server.Server.Port, key);
-                        Send(packet);
-                    }
-                    else
+                    if (!ServersHandler.SyncServer.Clients.Any(x => x.Server.ID == id))
                     {
                         Send("BN");
                         this.Disconnect();
                     }
 
+                    var choosenServer = ServersHandler.SyncServer.Clients.First(x => x.Server.ID == id);
+                    var key = Utilities.Basic.RandomString(16);
+
+                    choosenServer.SendTicket(key, this);
+                    packet = string.Format("AYK{0}:{1};{2}", choosenServer.Server.IP, choosenServer.Server.Port, key);
+
+                    Send(packet);
                     return;
             }
         }
@@ -217,6 +207,7 @@ namespace SunDofus.Auth.Network.Auth
         public enum AccountState
         {
             OnCheckingVersion,
+            OnCheckingAccount,
             OnCheckingQueue,
             OnServersList,
         }

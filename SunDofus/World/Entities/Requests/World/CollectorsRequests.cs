@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadCollectors()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM collectors";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -47,7 +47,7 @@ namespace SunDofus.World.Entities.Requests
                 sqlResult.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' collectors from the database !", CollectorsList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' collectors from the database !", CollectorsList.Count));
         }
 
         public static void SaveCollector(Game.Guilds.GuildCollector collector)
@@ -64,7 +64,7 @@ namespace SunDofus.World.Entities.Requests
             }
             else if (!collector.mustDelete && !collector.isNewCollector)
             {
-                lock (DatabaseProvider.ConnectionLocker)
+                lock (DatabaseProvider.Locker)
                 {
                     var sqlText = "UPDATE collectors SET ID=@ID, Name=@Name, OwnerID=@Owner, Mappos=@Mappos, GuildID=@GuildID WHERE ID=@ID";
                     var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -84,7 +84,7 @@ namespace SunDofus.World.Entities.Requests
 
         private static void DeleteCollector(int collectorID)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "DELETE FROM collectors WHERE ID=@ID";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -97,7 +97,7 @@ namespace SunDofus.World.Entities.Requests
 
         private static void CreateCollector(Game.Guilds.GuildCollector collector)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "INSERT INTO collectors VALUES(@ID, @Owner, @Mappos, @Name, @GuildID)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);

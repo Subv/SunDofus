@@ -12,7 +12,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadCharacters()
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "SELECT * FROM characters";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -81,12 +81,12 @@ namespace SunDofus.World.Entities.Requests
                 sqlResult.Close();
             }
 
-            Utilities.Loggers.StatusLogger.Write(string.Format("Loaded '{0}' characters from the database !", World.Entities.Requests.CharactersRequests.CharactersList.Count));
+            Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' characters from the database !", World.Entities.Requests.CharactersRequests.CharactersList.Count));
         }
 
         public static void CreateCharacter(Game.Characters.Character character)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "INSERT INTO characters VALUES(@id, @name, @level, @class, @sex, @color, @color2, @color3, @mapinfos, @stats, @items, @spells, @exp, @faction, @zaaps, @savepos)";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
@@ -131,7 +131,7 @@ namespace SunDofus.World.Entities.Requests
             }
             else if(!character.isDeletedCharacter && !character.isNewCharacter)
             {
-                lock (DatabaseProvider.ConnectionLocker)
+                lock (DatabaseProvider.Locker)
                 {
                     var sqlText = "UPDATE characters SET id=@id, name=@name, level=@level, class=@class, sex=@sex," +
                         " color=@color, color2=@color2, color3=@color3, mappos=@mapinfos, stats=@stats, items=@items, spells=@spells, experience=@exp, faction=@faction, zaaps=@zaaps, savepos=@savepos WHERE id=@id";
@@ -163,7 +163,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void DeleteCharacter(string name)
         {
-            lock (DatabaseProvider.ConnectionLocker)
+            lock (DatabaseProvider.Locker)
             {
                 var sqlText = "DELETE FROM characters WHERE name=@CharName";
                 var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
