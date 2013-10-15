@@ -9,11 +9,11 @@ namespace SunDofus.World.Game.Characters
     {
         private Character character;
 
-        public bool willSeeWhenConnected = false;
+        public bool WillNotifyWhenConnected { get; set; }
 
-        public CharacterFriends(Character _character)
+        public CharacterFriends(Character character)
         {
-            character = _character;
+            this.character = character;
         }
 
         public void SendFriends()

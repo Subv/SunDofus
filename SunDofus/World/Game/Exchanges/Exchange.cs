@@ -7,7 +7,8 @@ namespace SunDofus.World.Game.Exchanges
 {
     class Exchange
     {
-        public ExchangePlayer memberOne, memberTwo;
+        public ExchangePlayer memberOne { get; set; }
+        public ExchangePlayer memberTwo { get; set; }
 
         public Exchange(ExchangePlayer playerOne, ExchangePlayer playerTwo)
         {
@@ -17,17 +18,17 @@ namespace SunDofus.World.Game.Exchanges
 
         public void Reset()
         {
-            if (!memberOne.isNpc)
-                memberOne.Character.State.onExchangeAccepted = false;
+            if (!memberOne.IsNpc)
+                memberOne.Character.State.OnExchangeAccepted = false;
 
-            if (!memberTwo.isNpc)
-                memberTwo.Character.State.onExchangeAccepted = false;
+            if (!memberTwo.IsNpc)
+                memberTwo.Character.State.OnExchangeAccepted = false;
 
-            memberOne.Send(string.Format("EK0{0}", memberOne.ID));
-            memberOne.Send(string.Format("EK0{0}", memberTwo.ID));
+            memberOne.Send(string.Concat("EK0", memberOne.ID));
+            memberOne.Send(string.Concat("EK0", memberTwo.ID));
 
-            memberTwo.Send(string.Format("EK0{0}", memberTwo.ID));
-            memberTwo.Send(string.Format("EK0{0}", memberOne.ID));
+            memberTwo.Send(string.Concat("EK0", memberTwo.ID));
+            memberTwo.Send(string.Concat("EK0", memberOne.ID));
         }
 
         public void MoveGold(Characters.Character character, long kamas)
@@ -38,16 +39,16 @@ namespace SunDofus.World.Game.Exchanges
 
                 memberOne.Kamas = kamas;
 
-                memberOne.Send(string.Format("EMKG{0}", kamas));
-                memberTwo.Send(string.Format("EmKG{0}", kamas));
+                memberOne.Send(string.Concat("EMKG", kamas));
+                memberTwo.Send(string.Concat("EmKG", kamas));
             }
             else if (memberTwo.Character == character)
             {
                 Reset();
                 memberTwo.Kamas = kamas;
 
-                memberTwo.Send(string.Format("EMKG{0}", kamas));
-                memberOne.Send(string.Format("EmKG{0}", kamas));
+                memberTwo.Send(string.Concat("EMKG", kamas));
+                memberOne.Send(string.Concat("EmKG", kamas));
             }
         }
 
@@ -95,8 +96,8 @@ namespace SunDofus.World.Game.Exchanges
                         {
                             memberOne.Items.Remove(Item);
 
-                            memberOne.Send(string.Format("EMKO-{0}", Item.Item.ID));
-                            memberTwo.Send(string.Format("EmKO-{0}", Item.Item.ID));
+                            memberOne.Send(string.Concat("EMKO-", Item.Item.ID));
+                            memberTwo.Send(string.Concat("EmKO-", Item.Item.ID));
                         }
                         else
                         {
@@ -150,8 +151,8 @@ namespace SunDofus.World.Game.Exchanges
                         {
                             memberTwo.Items.Remove(Item);
 
-                            memberTwo.Send(string.Format("EMKO-{0}", Item.Item.ID));
-                            memberOne.Send(string.Format("EmKO-{0}", Item.Item.ID));
+                            memberTwo.Send(string.Concat("EMKO-", Item.Item.ID));
+                            memberOne.Send(string.Concat("EmKO-", Item.Item.ID));
                         }
                         else
                         {

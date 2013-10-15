@@ -7,10 +7,10 @@ namespace SunDofus.World.Game.Characters
 {
     class CharacterParty
     {
-        public Dictionary<Character, int> Members;
+        public Dictionary<Character, int> Members { get; set; }
 
-        private string _ownerName = "";
-        private int _ownerID = -1;
+        private string ownerName;
+        private int ownerID;
 
         public CharacterParty(Character leader)
         {
@@ -19,8 +19,8 @@ namespace SunDofus.World.Game.Characters
             lock (Members)
                 Members.Add(leader, 1);
 
-            _ownerID = leader.ID;
-            _ownerName = leader.Name;
+            ownerID = leader.ID;
+            ownerName = leader.Name;
         }
 
         public void AddMember(Character member)
@@ -32,18 +32,18 @@ namespace SunDofus.World.Game.Characters
 
             if (Members.Count == 2)
             {
-                Send(string.Format("PCK{0}", _ownerName));
-                Send(string.Format("PL{0}", _ownerID));
-                Send(string.Format("PM{0}", PartyPattern()));
+                Send(string.Concat("PCK", ownerName));
+                Send(string.Concat("PL", ownerID));
+                Send(string.Concat("PM", PartyPattern()));
             }
             else
             {
-                member.NetworkClient.Send(string.Format("PCK{0}", _ownerName));
-                member.NetworkClient.Send(string.Format("PL{0}", _ownerID));
-                member.NetworkClient.Send(string.Format("PM{0}", PartyPattern()));
+                member.NetworkClient.Send(string.Concat("PCK", ownerName));
+                member.NetworkClient.Send(string.Concat("PL", ownerID));
+                member.NetworkClient.Send(string.Concat("PM", PartyPattern()));
 
                 foreach (var character in Members.Keys.ToList().Where(x => x != member))
-                    character.NetworkClient.Send(string.Format("PM{0}", character.PatternOnParty()));
+                    character.NetworkClient.Send(string.Concat("PM", character.PatternOnParty()));
             }
 
             UpdateMembers();
@@ -51,12 +51,12 @@ namespace SunDofus.World.Game.Characters
 
         public void UpdateMembers()
         {
-            Send(string.Format("PM~{0}", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty())));
+            Send(string.Concat("PM~", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty())));
         }
 
         public void LeaveParty(string name, string kicker = "")
         {
-            if (!Members.Keys.ToList().Any(x => x.Name == name) || (kicker != "" && _ownerID != int.Parse(kicker)))
+            if (!Members.Keys.ToList().Any(x => x.Name == name) || (kicker != "" && ownerID != int.Parse(kicker)))
                 return;
 
             var character = Members.Keys.ToList().First(x => x.Name == name);
@@ -65,16 +65,16 @@ namespace SunDofus.World.Game.Characters
             lock (Members)
                 Members.Remove(character);
 
-            Send(string.Format("PM-{0}", character.ID));
+            Send(string.Concat("PM-", character.ID));
 
-            if (character.State.isFollow)
+            if (character.State.IsFollow)
             {
                 character.State.Followers.Clear();
-                character.State.isFollow = false;
+                character.State.IsFollow = false;
             }
 
             if (character.isConnected)
-                character.NetworkClient.Send(string.Format("PV{0}", kicker));
+                character.NetworkClient.Send(string.Concat("PV", kicker));
 
             if (Members.Count == 1)
             {
@@ -84,9 +84,9 @@ namespace SunDofus.World.Game.Characters
                 Members.Remove(last);
 
                 if (last.isConnected)
-                    last.NetworkClient.Send(string.Format("PV{0}", kicker));
+                    last.NetworkClient.Send(string.Concat("PV", kicker));
             }
-            else if (_ownerID == character.ID)
+            else if (ownerID == character.ID)
                 GetNewLeader();
 
             if(Members.Count >= 2)
@@ -104,15 +104,15 @@ namespace SunDofus.World.Game.Characters
             var character = Members.Keys.ToList()[0];
             Members[character] = 1;
 
-            _ownerID = character.ID;
-            _ownerName = character.Name;
+            ownerID = character.ID;
+            ownerName = character.Name;
 
-            Send(string.Format("PL{0}", _ownerID));
+            Send(string.Concat("PL", ownerID));
         }
 
         private string PartyPattern()
         {
-            return string.Format("+{0}", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty()));
+            return string.Concat("+", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty()));
         }
     }
 }

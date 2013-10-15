@@ -7,8 +7,8 @@ namespace SunDofus.World.Game.Bank
 {
     class BankExchange
     {
-        public Bank Bank;
-        public Characters.Character Character;
+        public Bank Bank { get; set; }
+        public Characters.Character Character { get; set; }
 
         public BankExchange(Bank bank, Characters.Character character)
         {
@@ -29,7 +29,7 @@ namespace SunDofus.World.Game.Bank
                 Character.Kamas -= length;
 
                 Character.SendChararacterStats();
-                Character.NetworkClient.Send(string.Format("EsKG{0}", Bank.Kamas));
+                Character.NetworkClient.Send(string.Concat("EsKG", Bank.Kamas));
             }
             else
             {
@@ -42,7 +42,7 @@ namespace SunDofus.World.Game.Bank
                 Character.Kamas += length;
 
                 Character.SendChararacterStats();
-                Character.NetworkClient.Send(string.Format("EsKG{0}", Bank.Kamas));
+                Character.NetworkClient.Send(string.Concat("EsKG", Bank.Kamas));
             }
         }
 
@@ -57,7 +57,7 @@ namespace SunDofus.World.Game.Bank
                     var sameitem = Bank.Items.First(x => x.EffectsInfos() == item.EffectsInfos() && x.Model.ID == item.Model.ID && x.Position == item.Position);
                     sameitem.Quantity += quantity;
                     
-                    Character.NetworkClient.Send(string.Format("EsKO+{0}", sameitem.StorageString()));
+                    Character.NetworkClient.Send(string.Concat("EsKO+", sameitem.StorageString()));
                     return;
                 }
 
@@ -65,7 +65,7 @@ namespace SunDofus.World.Game.Bank
                 newitem.Quantity = quantity;
 
                 Bank.Items.Add(newitem);
-                Character.NetworkClient.Send(string.Format("EsKO+{0}", newitem.StorageString()));
+                Character.NetworkClient.Send(string.Concat("EsKO+", newitem.StorageString()));
             }
             else
             {
@@ -80,13 +80,13 @@ namespace SunDofus.World.Game.Bank
                 if (quantity == item.Quantity)
                 {
                     Bank.Items.Remove(item);
-                    Character.NetworkClient.Send(string.Format("EsKO-{0}", item.StorageString()));
+                    Character.NetworkClient.Send(string.Concat("EsKO-", item.StorageString()));
                     Character.ItemsInventary.AddItem(item, false);
                 }
                 else
                 {
                     item.Quantity -= quantity;
-                    Character.NetworkClient.Send(string.Format("EsKO+{0}", item.StorageString()));
+                    Character.NetworkClient.Send(string.Concat("EsKO+", item.StorageString()));
 
                     var newitem = item.Copy();
                     newitem.Quantity = quantity;

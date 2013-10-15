@@ -378,7 +378,7 @@ namespace SunDofus.World.Game.Characters.Items
 
         public void UseItem(string datas)
         {
-            if (Client.State.onMove == true)
+            if (Client.State.OnMove == true)
             {
                 Client.NetworkClient.Send("BN");
                 return;

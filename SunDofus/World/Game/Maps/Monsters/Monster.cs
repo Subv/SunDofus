@@ -7,22 +7,14 @@ namespace SunDofus.World.Game.Maps.Monsters
 {
     class Monster
     {
-        public SunDofus.World.Entities.Models.Monsters.MonsterModel Model;
+        public SunDofus.World.Entities.Models.Monsters.MonsterModel Model { get; set; }
 
-        private int _level;
-
-        public int Level
-        {
-            get
-            {
-                return _level;
-            }
-        }
+        public int Level { get; set; }
 
         public Monster(Entities.Models.Monsters.MonsterModel model, int grade)
         {
             Model = model;
-            _level = grade;
+            Level = grade;
         }
     }
 }

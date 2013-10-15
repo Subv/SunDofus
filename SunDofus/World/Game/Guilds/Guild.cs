@@ -7,36 +7,9 @@ namespace SunDofus.World.Game.Guilds
 {
     class Guild
     {
-        private string _name;
+        public bool IsNewGuild { get; set; }
+        public bool MustDelete { get; set; }
 
-        private int _ID;
-        private int _bgID;
-        private int _bgColor;
-        private int _embID;
-        private int _embColor;
-
-        private int _level;
-        private long _exp;
-        private int _nbCollecMax;
-        private int _collecProspection;
-        private int _collecWisdom;
-        private int _collecPods;
-        private int _boostPoints;
-
-        public bool isNewGuild = false;
-        public bool mustDelete = false;
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
         public string Emblem
         {
             get
@@ -46,139 +19,21 @@ namespace SunDofus.World.Game.Guilds
             }
         }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int BgID
-        {
-            get
-            {
-                return _bgID;
-            }
-            set
-            {
-                _bgID = value;
-            }
-        }
-        public int BgColor
-        {
-            get
-            {
-                return _bgColor;
-            }
-            set
-            {
-                _bgColor = value;
-            }
-        }
-        public int EmbID
-        {
-            get
-            {
-                return _embID;
-            }
-            set
-            {
-                _embID = value;
-            }
-        }
-        public int EmbColor
-        {
-            get
-            {
-                return _embColor;
-            }
-            set
-            {
-                _embColor = value;
-            }
-        }
+        public string Name { get; set; }
 
-        public int Level
-        {
-            get
-            {
-                return _level;
-            }
-            set
-            {
-                _level = value;
-            }
-        }
-        public long Exp
-        {
-            get
-            {
-                return _exp;
-            }
-            set
-            {
-                _exp = value;
-            }
-        }
-        public int CollectorMax
-        {
-            get
-            {
-                return _nbCollecMax;
-            }
-            set
-            {
-                _nbCollecMax = value;
-            }
-        }
-        public int CollectorWisdom
-        {
-            get
-            {
-                return _collecWisdom;
-            }
-            set
-            {
-                _collecWisdom = value;
-            }
-        }
-        public int CollectorProspection
-        {
-            get
-            {
-                return _collecProspection;
-            }
-            set
-            {
-                _collecProspection = value;
-            }
-        }
-        public int CollectorPods
-        {
-            get
-            {
-                return _collecPods;
-            }
-            set
-            {
-                _collecPods = value;
-            }
-        }
-        public int BoostPoints
-        {
-            get
-            {
-                return _boostPoints;
-            }
-            set
-            {
-                _boostPoints = value;
-            }
-        }
+        public int ID { get; set; }
+        public int BgID { get; set; }
+        public int BgColor { get; set; }
+        public int EmbID { get; set; }
+        public int EmbColor { get; set; }
+
+        public int Level { get; set; }
+        public long Exp { get; set; }
+        public int CollectorMax { get; set; }
+        public int CollectorWisdom { get; set; }
+        public int CollectorProspection { get; set; }
+        public int CollectorPods { get; set; }
+        public int BoostPoints { get; set; }
 
         public List<GuildMember> Members;
         public List<GuildCollector> Collectors;
@@ -223,14 +78,14 @@ namespace SunDofus.World.Game.Guilds
             var packet = string.Empty;
 
             foreach (var spell in Spells.Keys)
-                packet = string.Concat(packet, spell, ";", Spells[spell], "|");
+                packet = string.Format("{0}{1};{2}|", packet, spell, Spells[spell]);
 
             return (packet != "" ? packet.Substring(0, packet.Length - 1) : packet);
         }
 
         public string GetSqlStats()
         {
-            return string.Concat(CollectorMax, "~", CollectorPods, "~", CollectorProspection, "~", CollectorWisdom, "~", BoostPoints, "~", GetSpells());
+            return string.Format("{0}~{1}~{2}~{3}~{4}~{5}", CollectorMax, CollectorPods, CollectorProspection, CollectorWisdom, BoostPoints, GetSpells());
         }
 
         public string GetSqlMembers()
@@ -240,7 +95,7 @@ namespace SunDofus.World.Game.Guilds
 
         public string GetSqlEmblem()
         {
-            return string.Concat(BgID, ";", BgColor, ";", EmbID, ";", EmbColor);
+            return string.Format("{0};{1};{2};{3}", BgID, BgColor, EmbID, EmbColor);
         }
 
         public void ParseSqlStats(string datas)

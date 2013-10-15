@@ -7,41 +7,19 @@ namespace SunDofus.World.Game.Exchanges
 {
     class ExchangePlayer
     {
-        private long kamas;
+        public bool IsNpc { get; set; }
 
-        public bool isNpc;
+        public Characters.Character Character { get; set; }
+        public Characters.NPC.NPCMap Npc { get; set; }
 
-        public Characters.Character Character;
-        public Characters.NPC.NPCMap Npc;
+        public List<ExchangeItem> Items { get; set; }
 
-        public List<ExchangeItem> Items;
-
-        public int ID
-        {
-            get
-            {
-                if (isNpc)
-                    return Npc.ID;
-                else
-                    return Character.ID;
-            }
-        }
-
-        public long Kamas
-        {
-            get
-            {
-                return kamas;
-            }
-            set
-            {
-                kamas = value;
-            }
-        }
+        public int ID { get; set; }
+        public long Kamas { get; set; }
 
         public ExchangePlayer(Characters.Character _character)
         {
-            isNpc = false;
+            IsNpc = false;
             Character = _character;
 
             Items = new List<ExchangeItem>();
@@ -49,7 +27,7 @@ namespace SunDofus.World.Game.Exchanges
 
         public ExchangePlayer(Characters.NPC.NPCMap _npc)
         {
-            isNpc = true;
+            IsNpc = true;
             Npc = _npc;
 
             Items = new List<ExchangeItem>();
@@ -57,7 +35,7 @@ namespace SunDofus.World.Game.Exchanges
 
         public void Send(string message)
         {
-            if (!isNpc)
+            if (!IsNpc)
                 Character.NetworkClient.Send(message);
         }
     }

@@ -7,23 +7,15 @@ namespace SunDofus.World.Game.Maps.Fights
 {
     class Fighter
     {
-        public bool isMonster = false;
-        public Characters.Character Player;
+        public bool IsMonster { get; set; }
+        public Characters.Character Player { get; set; }
 
-        public int _team;
-
-        public int Team
-        {
-            get
-            {
-                return _team;
-            }
-        }
+        public int Team { get; set; }
 
         public Fighter(Characters.Character player, int team)
         {
             Player = player;
-            _team = team;
+            Team = team;
         }
     }
 }

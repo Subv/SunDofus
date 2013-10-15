@@ -8,105 +8,49 @@ namespace SunDofus.World.Game.Guilds
 {
     class GuildCollector
     {
-        private int _ID;
-        private int _owner;
-        private int _cell;
-        private int _dir;
+        public int ID { get; set; }
+        public int Owner { get; set; }
+        public int Cell { get; set; }
+        public int Dir { get; set; }
 
-        private int[] _name;
+        public int[] Name { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Owner
-        {
-            get
-            {
-                return _owner;
-            }
-            set
-            {
-                _owner = value;
-            }
-        }
-        public int Cell
-        {
-            get
-            {
-                return _cell;
-            }
-            set
-            {
-                _cell = value;
-            }
-        }
-        public int Dir
-        {
-            get
-            {
-                return _dir;
-            }
-            set
-            {
-                _dir = value;
-            }
-        }
+        public bool IsInFight { get; set; }
+        public bool IsNewCollector { get; set; }
+        public bool MustDelete { get; set; }
 
-        public int[] Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
+        public Guild Guild { get; set; }
+        public Maps.Map Map { get; set; }
 
-        public bool isInFight;
-        public bool isNewCollector = false;
-        public bool mustDelete = false;
-
-        public Guild Guild;
-        public Maps.Map Map;
-        private Timer _moveTimer;
+        private Timer timer;
 
         public GuildCollector(Maps.Map map, Characters.Character owner, int id)
         {
             ID = id;
-            isInFight = false;
+            IsInFight = false;
             Guild = owner.Guild;
 
             Map = map;
             Map.Collector = this;
 
-            _owner = owner.ID;
-            _cell = owner.MapCell;
-            _dir = 3;
+            Owner = owner.ID;
+            Cell = owner.MapCell;
+            Dir = 3;
 
             Name = new int[2] { Utilities.Basic.Rand(1, 39), Utilities.Basic.Rand(1, 71) };
 
-            _moveTimer = new Timer();
-            _moveTimer.Enabled = true;
-            _moveTimer.Interval = Utilities.Basic.Rand(5000, 15000);
-            _moveTimer.Elapsed += new ElapsedEventHandler(this.Move);
-            _moveTimer.Start();
+            timer = new Timer();
+            timer.Enabled = true;
+            timer.Interval = Utilities.Basic.Rand(5000, 15000);
+            timer.Elapsed += new ElapsedEventHandler(this.Move);
+            timer.Start();
 
-            Map.Send(string.Format("GM{0}",PatternMap()));
+            Map.Send(string.Concat("GM",PatternMap()));
         }
 
         private void Move(object sender, EventArgs e)
         {
-            _moveTimer.Interval = Utilities.Basic.Rand(5000, 15000);
+            timer.Interval = Utilities.Basic.Rand(5000, 15000);
 
             var path = new Game.Maps.Pathfinding("", Map, Cell, Dir);
             var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
@@ -137,14 +81,13 @@ namespace SunDofus.World.Game.Guilds
 
         public string PatternGuild()
         {
-            return string.Concat(ID, ";", Name[0], ",", Name[1], ";", Utilities.Basic.ToBase36(Map.Model.ID),
-                ",", Map.Model.PosX, ",", Map.Model.PosY, ";0;0;10000;7;?,?,1,2,3,4,5|");
+            return string.Format("{0};{1};{2};{3};{4}", ID, string.Join(",", Name), Utilities.Basic.ToBase36(Map.Model.ID),
+                Map.Model.PosX, Map.Model.PosY, ";0;0;10000;7;?,?,1,2,3,4,5|");
         }
 
         public string PatternMap()
         {
-            return string.Concat("|+", Cell, ";", Dir, ";0;", ID, ";", Name[0], ",", Name[1],
-                ";-6;6000^100;;", Guild.Name, ";", Guild.Emblem);
+            return string.Format("|+{0};{1};0;{2};{3};-6;6000^100;;{4};{5}", Cell, Dir, ID, string.Join(",", Name), Guild.Name, Guild.Emblem);
         }
     }
 }

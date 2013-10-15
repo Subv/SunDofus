@@ -8,14 +8,15 @@ namespace SunDofus.World.Game.World
 {
     class Save
     {        
-        private static Timer _timer;
+        private static Timer timer;
+
         public static void InitSaveThread()
         {
-            _timer = new Timer((e) =>
+            timer = new Timer((e) =>
             {
                 SaveWorld();
-                _timer.Change(Utilities.Config.GetIntElement("AutoSaveTime") * 60 * 1000, Timeout.Infinite);
-            }, null, Utilities.Config.GetIntElement("AutoSaveTime") * 60 * 1000, Timeout.Infinite);
+                timer.Change(Utilities.Config.GetIntElement("AUTOSAVETIME") * 60 * 1000, Timeout.Infinite);
+            }, null, Utilities.Config.GetIntElement("AUTOSAVETIME") * 60 * 1000, Timeout.Infinite);
         }
 
         public static void SaveWorld()

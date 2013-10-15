@@ -49,7 +49,7 @@ namespace SunDofus.World.Game.World
                     client.Send(string.Format("cMKT|{0}|{1}|{2}", client.Player.ID, character.Name, message));
                 }
                 else
-                    client.Send(string.Format("cMEf{0}", receiver));
+                    client.Send(string.Concat("cMEf", receiver));
             }
         }
 
@@ -63,7 +63,7 @@ namespace SunDofus.World.Game.World
                 client.Player.RefreshTrade();
             }
             else
-                client.Send(string.Format("Im0115;{0}", client.Player.TimeTrade()));
+                client.Send(string.Concat("Im0115;", client.Player.TimeTrade()));
         }
 
         public static void SendRecruitmentMessage(Network.Realm.RealmClient client, string message)
@@ -76,7 +76,7 @@ namespace SunDofus.World.Game.World
                 client.Player.RefreshRecruitment();
             }
             else
-                client.Send(string.Format("Im0115;{0}", client.Player.TimeRecruitment()));
+                client.Send(string.Concat("Im0115;", client.Player.TimeRecruitment()));
         }
 
         public static void SendFactionMessage(Network.Realm.RealmClient client, string message)

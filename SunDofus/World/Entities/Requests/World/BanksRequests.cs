@@ -25,7 +25,7 @@ namespace SunDofus.World.Entities.Requests
                     {
                         Owner = sqlResult.GetInt32("Owner"),
                         Kamas = sqlResult.GetInt64("Kamas"),
-                        isNewBank = false
+                        IsNewBank = false
                     };
 
                     bank.ParseItems(sqlResult.GetString("Items"));
@@ -41,7 +41,7 @@ namespace SunDofus.World.Entities.Requests
 
         public static void SaveBank(Game.Bank.Bank bank)
         {
-            if (bank.isNewBank)
+            if (bank.IsNewBank)
             {
                 CreateBank(bank);
                 return;
@@ -79,7 +79,7 @@ namespace SunDofus.World.Entities.Requests
 
                 sqlCommand.ExecuteNonQuery();
 
-                bank.isNewBank = false;
+                bank.IsNewBank = false;
             }
         }
     }

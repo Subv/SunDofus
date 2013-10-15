@@ -21,10 +21,10 @@ namespace SunDofus.World.Game.Maps.Zaaps
 
                 var savepos = (Entities.Requests.ZaapsRequests.ZaapsList.Any(x => x.MapID == character.SaveMap) ?
                     Entities.Requests.ZaapsRequests.ZaapsList.First(x => x.MapID == character.SaveMap).MapID.ToString() : "");
-                var packet = string.Concat("WC", savepos, "|");
+                var packet = string.Format("WC{0}|", savepos);
 
                 Entities.Requests.ZaapsRequests.ZaapsList.Where(x => character.Zaaps.Contains(x.MapID)).ToList().
-                    ForEach(x => packet = string.Concat(packet, x.MapID, ";", CalcPrice(character.GetMap(), x.Map), "|"));
+                    ForEach(x => packet = string.Format("{0}{1};{2}|", packet, x.MapID, CalcPrice(character.GetMap(), x.Map)));
 
                 character.NetworkClient.Send(packet.Substring(0, packet.Length - 1));
             }

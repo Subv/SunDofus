@@ -545,7 +545,7 @@ namespace SunDofus.World.Game.Characters
 
                 NetworkClient.Send(string.Format("GDM|{0}|{1}|{2}", map.Model.ID, map.Model.Date, map.Model.Key));
 
-                if (this.State.isFollow)
+                if (this.State.IsFollow)
                 {
                     foreach (var character in this.State.Followers)
                         character.NetworkClient.Send(string.Format("IC{0}|{1}", GetMap().Model.PosX, GetMap().Model.PosY));

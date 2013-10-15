@@ -10,11 +10,11 @@ namespace SunDofus.World.Network.Auth
 {
     class AuthClient : Master.TCPClient
     {
-        public AuthClientModel Model;
+        public AuthClientModel Model { get; set; }
 
-        private Timer _timer;
-        private bool isLogged;
-        private object _packetLocker;
+        private Timer timer { get; set; }
+        private bool isLogged { get; set; }
+        private object locker { get; set; }
 
         public AuthClient(AuthClientModel model)
             : base(new SilverSocket())
@@ -23,12 +23,12 @@ namespace SunDofus.World.Network.Auth
             this.ReceivedDatas += new ReceiveDatasHandler(this.DatasArrival);
             this.ConnectFailed += new ConnectFailedHandler(this.FailedToConnect);
 
-            _timer = new Timer();
-            _timer.Interval = 1000;
-            _timer.Enabled = true;
-            _timer.Elapsed += new ElapsedEventHandler(this.TimeElapsed);
+            timer = new Timer();
+            timer.Interval = 1000;
+            timer.Enabled = true;
+            timer.Elapsed += new ElapsedEventHandler(this.TimeElapsed);
 
-            _packetLocker = new object();
+            locker = new object();
             isLogged = false;
             Model = model;
         }
@@ -45,7 +45,7 @@ namespace SunDofus.World.Network.Auth
 
             Utilities.Loggers.Debug.Write(string.Format("Sent to {0} : {1}", IP, message));
 
-            lock(_packetLocker)
+            lock(locker)
                 this.SendDatas(message);
         }
 
@@ -54,24 +54,24 @@ namespace SunDofus.World.Network.Auth
             if (this.Connected == false)
                 Start();
             else
-                _timer.Stop();
+                timer.Stop();
         }
 
         private void FailedToConnect(Exception exception)
         {
-            Utilities.Loggers.Errors.Write(string.Format("Cannot connect to AuthServer because {0}", exception.ToString()));
+            Utilities.Loggers.Errors.Write(string.Concat("Cannot connect to AuthServer because ", exception.ToString()));
         }
 
         private void DatasArrival(string datas)
         {
-            lock (_packetLocker)
+            lock (locker)
                 ParsePacket(datas);
         }
 
         private void Disconnected()
         {
             Utilities.Loggers.Status.Write("Connection with the AuthServer closed !");
-            _timer.Start();
+            timer.Start();
         }
 
         private void ParsePacket(string datas)
@@ -104,8 +104,8 @@ namespace SunDofus.World.Network.Auth
 
         private void ReceiveHelloConnect()
         {
-            var objects = new object[] { Utilities.Config.GetIntElement("ServerId"), Utilities.Config.GetStringElement("ServerIp"),
-                            Utilities.Config.GetIntElement("ServerPort"), this.Model.PassKey };
+            var objects = new object[] { Utilities.Config.GetIntElement("SERVERID"), Utilities.Config.GetStringElement("SERVERIP"),
+                            Utilities.Config.GetIntElement("SERVERPORT"), this.Model.PassKey };
 
             Send(new Packets.AuthenticationPacket().GetPacket(objects), true);
         }
@@ -122,6 +122,10 @@ namespace SunDofus.World.Network.Auth
         private void ReceiveTranferTicket(string datas)
         {
             var infos = datas.Split('|');
+
+            if (infos.Length < 11)
+                return;
+
             var key = infos[0];
             var pseudo = infos[2];
             var question = infos[3];

@@ -8,21 +8,9 @@ namespace SunDofus.World.Game.Exchanges
 {
     class ExchangeItem
     {
-        public CharacterItem Item;
+        public CharacterItem Item { get; set; }
 
-        private int _quantity;
-
-        public int Quantity
-        {
-            get
-            {
-                return _quantity;
-            }
-            set
-            {
-                _quantity = value;
-            }
-        }
+        public int Quantity { get; set; }
 
         public ExchangeItem(CharacterItem item)
         {

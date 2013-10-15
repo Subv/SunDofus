@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace SunDofus.World.Network.Realm
 {
-    class RealmClientCommander
+    class RealmCommander
     {
-        public RealmClient Client;
+        public RealmClient Client { get; set; }
 
-        public RealmClientCommander(RealmClient client)
+        public RealmCommander(RealmClient client)
         {
             Client = client;
         }

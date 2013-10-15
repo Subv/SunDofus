@@ -7,15 +7,15 @@ namespace SunDofus.World.Game.Maps
 {
     class Map
     {
-        public List<Characters.Character> Characters;
-        public List<Entities.Models.Maps.TriggerModel> Triggers;
-        public List<Characters.NPC.NPCMap> Npcs;
-        public List<Monsters.MonstersGroup> MonstersGroups;
-        public List<Fights.Fight> Fights;
-        public List<int> RushablesCells;
-        public Guilds.GuildCollector Collector;
+        public List<Characters.Character> Characters { get; set; }
+        public List<Entities.Models.Maps.TriggerModel> Triggers { get; set; }
+        public List<Characters.NPC.NPCMap> Npcs { get; set; }
+        public List<Monsters.MonstersGroup> MonstersGroups { get; set; }
+        public List<Fights.Fight> Fights { get; set; }
+        public List<int> RushablesCells { get; set; }
+        public Guilds.GuildCollector Collector { get; set; }
 
-        public Entities.Models.Maps.MapModel Model;
+        public Entities.Models.Maps.MapModel Model { get; set; }
 
         public Map(Entities.Models.Maps.MapModel map)
         {
@@ -56,29 +56,29 @@ namespace SunDofus.World.Game.Maps
 
         public void AddPlayer(Characters.Character character)
         {
-            Send(string.Format("GM|+{0}", character.PatternDisplayChar()));
+            Send(string.Concat("GM|+", character.PatternDisplayChar()));
 
-            character.NetworkClient.Send(string.Format("fC{0}", Fights.Count)); //Fight
+            character.NetworkClient.Send(string.Concat("fC", Fights.Count)); //Fight
 
             lock (Characters)
                 Characters.Add(character);
 
             if (Characters.Count > 0)
-                character.NetworkClient.Send(string.Format("GM{0}", CharactersPattern()));
+                character.NetworkClient.Send(string.Concat("GM", CharactersPattern()));
 
             if (Npcs.Count > 0)
-                character.NetworkClient.Send(string.Format("GM{0}", NPCsPattern()));
+                character.NetworkClient.Send(string.Concat("GM", NPCsPattern()));
 
             if (MonstersGroups.Count > 0)
-                character.NetworkClient.Send(string.Format("GM{0}", MonstersGroupsPattern()));
+                character.NetworkClient.Send(string.Concat("GM", MonstersGroupsPattern()));
 
-            if (Collector != null)
-                character.NetworkClient.Send(string.Format("GM{0}", Collector.PatternMap()));
+            if (Collector != null && !Collector.IsInFight)
+                character.NetworkClient.Send(string.Concat("GM", Collector.PatternMap()));
         }
 
         public void DelPlayer(Characters.Character character)
         {
-            Send(string.Format("GM|-{0}", character.ID));
+            Send(string.Concat("GM|-", character.ID));
 
             lock(Characters)
                 Characters.Remove(character);
@@ -115,23 +115,17 @@ namespace SunDofus.World.Game.Maps
 
         private string CharactersPattern()
         {
-            var packet = "";
-            Characters.ForEach(x => packet += string.Format("|+{0}", x.PatternDisplayChar()));
-            return packet;
+            return string.Join("|+", from c in Characters select c.PatternDisplayChar());
         }
 
         private string NPCsPattern()
         {
-            var packet = "";
-            Npcs.ForEach(x => packet += string.Format("|+{0}", x.PatternOnMap()));
-            return packet;
+            return string.Join("|+", from n in Npcs select n.PatternOnMap());
         }
 
         private string MonstersGroupsPattern()
         {
-            var packet = "";
-            MonstersGroups.ForEach(x => packet += string.Format("|+{0}", x.PatternOnMap()));
-            return packet;
+            return string.Join("|+", from m in MonstersGroups select m.PatternOnMap());
         }
 
         #region mapdata

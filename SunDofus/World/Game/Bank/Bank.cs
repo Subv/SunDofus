@@ -7,35 +7,12 @@ namespace SunDofus.World.Game.Bank
 {
     class Bank
     {
-        private int _ownerID;
-        private long _kamas;
+        public int Owner { get; set; }
+        public long Kamas { get; set; }
 
-        public int Owner
-        {
-            get
-            {
-                return _ownerID;
-            }
-            set
-            {
-                _ownerID = value;
-            }
-        }
-        public long Kamas
-        {
-            get
-            {
-                return _kamas;
-            }
-            set
-            {
-                _kamas = value;
-            }
-        }
+        public bool IsNewBank { get; set; }
 
-        public bool isNewBank;
-
-        public List<Characters.Items.CharacterItem> Items;
+        public List<Characters.Items.CharacterItem> Items { get; set; }
 
         public Bank()
         {

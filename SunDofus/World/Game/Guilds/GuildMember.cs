@@ -7,66 +7,21 @@ namespace SunDofus.World.Game.Guilds
 {
     class GuildMember
     {
-        private int _rank;
-        private int _expGaved;
-        private int _expGived;
-        private int _rights;
+        public int Rank { get; set; }
+        public int ExpGaved { get; set; }
+        public int ExpGived { get; set; }
+        public int Rights { get; set; }
 
-        public int Rank
-        {
-            get
-            {
-                return _rank;
-            }
-            set
-            {
-                _rank = value;
-            }
-        }
-        public int ExpGaved
-        {
-            get
-            {
-                return _expGaved;
-            }
-            set
-            {
-                _expGaved = value;
-            }
-        }
-        public int ExpGived
-        {
-            get
-            {
-                return _expGived;
-            }
-            set
-            {
-                _expGived = value;
-            }
-        }
-        public int Rights
-        {
-            get
-            {
-                return _rights;
-            }
-            set
-            {
-                _rights = value;
-            }
-        }
+        public Characters.Character Character { get; set; }
 
-        public Characters.Character Character;
-
-        public GuildMember(Characters.Character _character)
+        public GuildMember(Characters.Character character)
         {
-            Character = _character;
+            Character = character;
         }
 
         public string SqlToString()
         {
-            return string.Concat(Character.ID, ";", Rank, ";", ExpGaved, ";", ExpGived, ";", Rights);
+            return string.Format("{0};{1};{2};{3};{4}", Character.ID, Rank, ExpGaved, ExpGived, Rights);
         }
     }
 }

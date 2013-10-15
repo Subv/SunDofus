@@ -7,18 +7,10 @@ namespace SunDofus.World.Game.Maps.Fights
 {
     class Fight
     {
-        private FightType _type;
-        private FightState _state;
+        private FightType type;
+        private FightState state;
 
-        private int _ID;
-
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-        }
+        public int ID { get; set; }
 
         //private Characters.Character _actualPlayer;
         private List<Fighter> _fighters;
@@ -30,9 +22,9 @@ namespace SunDofus.World.Game.Maps.Fights
             //_players.Add(player1);
             //_players.Add(player2);
 
-            _ID = map.NextFightID();
-            _type = type;
-            _state = FightState.Starting;
+            ID = map.NextFightID();
+            this.type = type;
+            state = FightState.Starting;
         }
 
         public void AddPlayer(Characters.Character player, int team)
@@ -44,7 +36,7 @@ namespace SunDofus.World.Game.Maps.Fights
         {
             get
             {
-                return string.Format("{0};{1}|{2};{3};{4};{5}|{6};{7};{8};{9}", _ID, (int)_state);
+                return string.Format("{0};{1}|{2};{3};{4};{5}|{6};{7};{8};{9}", ID, (int)state);
             }
         }
 

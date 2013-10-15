@@ -28,7 +28,7 @@ namespace SunDofus.World.Entities.Requests
                         Level = sqlResult.GetInt32("Level"),
                         Exp = sqlResult.GetInt64("Exp"),
 
-                        isNewGuild = false,
+                        IsNewGuild = false,
                     };
 
                     guild.ParseEmblem(sqlResult.GetString("Emblem"));
@@ -46,17 +46,17 @@ namespace SunDofus.World.Entities.Requests
 
         public static void SaveGuild(Game.Guilds.Guild guild)
         {
-            if (guild.isNewGuild && !guild.mustDelete)
+            if (guild.IsNewGuild && !guild.MustDelete)
             {
                 CreateGuild(guild);
                 return;
             }
-            else if (guild.mustDelete)
+            else if (guild.MustDelete)
             {
                 DeleteGuild(guild.ID);
                 return;
             }
-            else if (!guild.mustDelete && !guild.isNewGuild)
+            else if (!guild.MustDelete && !guild.IsNewGuild)
             {
                 lock (DatabaseProvider.Locker)
                 {
@@ -110,7 +110,7 @@ namespace SunDofus.World.Entities.Requests
                 
                 sqlCommand.ExecuteNonQuery();
 
-                guild.isNewGuild = false;
+                guild.IsNewGuild = false;
             }
         }
     }

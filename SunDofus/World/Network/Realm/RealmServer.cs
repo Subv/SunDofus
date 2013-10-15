@@ -7,13 +7,13 @@ using SunDofus.World.Network;
 
 namespace SunDofus.World.Network.Realm
 {
-    class RealmClientServer : Master.TCPServer
+    class RealmServer : Master.TCPServer
     {
-        public List<RealmClient> Clients;
-        public Dictionary<string, int> PseudoClients;
+        public List<RealmClient> Clients { get; set; }
+        public Dictionary<string, int> PseudoClients { get; set; }
 
-        public RealmClientServer()
-            : base(Utilities.Config.GetStringElement("ServerIp"), Utilities.Config.GetIntElement("ServerPort"))
+        public RealmServer()
+            : base(Utilities.Config.GetStringElement("SERVERIP"), Utilities.Config.GetIntElement("SERVERPORT"))
         {
             Clients = new List<RealmClient>();
             PseudoClients = new Dictionary<string,int>();
@@ -41,7 +41,7 @@ namespace SunDofus.World.Network.Realm
 
         public void OnListeningFailedServer(Exception exception)
         {
-            Utilities.Loggers.Errors.Write(string.Format("Cannot start the RealmServer because : {0}", exception.ToString()));
+            Utilities.Loggers.Errors.Write(string.Concat("Cannot start the RealmServer because : ", exception.ToString()));
         }
     }
 }

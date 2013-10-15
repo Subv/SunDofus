@@ -17,7 +17,7 @@ namespace SunDofus.World.Game.Bank
                 {
                     Owner = character.NetworkClient.Infos.ID,
                     Kamas = 0,
-                    isNewBank = true
+                    IsNewBank = true
                 };
 
                 Entities.Requests.BanksRequests.BanksList.Add(newBank);
@@ -39,7 +39,7 @@ namespace SunDofus.World.Game.Bank
 
             character.NetworkClient.Send("ECK5|");
             character.NetworkClient.Send(string.Format("EL{0};G{1}", bank.GetExchangeItems(), bank.Kamas));
-            character.State.onExchangeWithBank = true;
+            character.State.OnExchangeWithBank = true;
         }
 
         public static void CloseBank(Characters.Character character)

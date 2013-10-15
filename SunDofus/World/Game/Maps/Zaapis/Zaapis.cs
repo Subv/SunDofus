@@ -7,42 +7,10 @@ namespace SunDofus.World.Game.Maps.Zaapis
 {
     class Zaapis
     {
-        private int _mapID, _faction, _cellID;
+        public int MapID { get; set; }
+        public int CellID { get; set; }
+        public int Faction { get; set; }
 
-        public int MapID
-        {
-            get
-            {
-                return _mapID;
-            }
-            set
-            {
-                _mapID = value;
-            }
-        }
-        public int CellID
-        {
-            get
-            {
-                return _cellID;
-            }
-            set
-            {
-                _cellID = value;
-            }
-        }
-        public int Faction
-        {
-            get
-            {
-                return _faction;
-            }
-            set
-            {
-                _faction = value;
-            }
-        }
-
-        public Map Map;
+        public Map Map { get; set; }
     }
 }

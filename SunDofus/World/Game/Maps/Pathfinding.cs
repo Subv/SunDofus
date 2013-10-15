@@ -11,46 +11,46 @@ namespace SunDofus.World.Game.Maps
 {
     class Pathfinding
     {
-        private string _strPath;
-        private int _startCell;
-        private int _startDir;
+        private string strPath;
+        private int startCell;
+        private int startDir;
 
-        private int _destination, _direction;
-        private Map _map;
+        private int destination, direction;
+        private Map map;
 
         public int Destination
         {
             get
             {
-                return _destination;
+                return destination;
             }
         }
         public int Direction
         {
             get
             {
-                return _direction;
+                return direction;
             }
         }
 
         public Pathfinding(string path, Map map, int startCell, int startDir)
         {
-            _strPath = path;
-            _map = map;
-            _startCell = startCell;
-            _startDir = startDir;
+            this.strPath = path;
+            this.map = map;
+            this.startCell = startCell;
+            this.startDir = startDir;
         }
 
         public void UpdatePath(string path)
         {
-            _strPath = path;
+            strPath = path;
         }
 
         public string GetStartPath
         {
             get
             {
-                return GetDirChar(_startDir) + GetCellChars(_startCell);
+                return GetDirChar(startDir) + GetCellChars(startCell);
             }
         }
 
@@ -61,19 +61,19 @@ namespace SunDofus.World.Game.Maps
                 case 'a':
                     return fight ? -1 : caseID + 1;
                 case 'b':
-                    return caseID + _map.Model.Width;
+                    return caseID + map.Model.Width;
                 case 'c':
-                    return fight ? -1 : caseID + (_map.Model.Width * 2 - 1);
+                    return fight ? -1 : caseID + (map.Model.Width * 2 - 1);
                 case 'd':
-                    return caseID + (_map.Model.Width - 1);
+                    return caseID + (map.Model.Width - 1);
                 case 'e':
                     return fight ? -1 : caseID - 1;
                 case 'f':
-                    return caseID - _map.Model.Width;
+                    return caseID - map.Model.Width;
                 case 'g':
-                    return fight ? -1 : caseID - (_map.Model.Width * 2 - 1);
+                    return fight ? -1 : caseID - (map.Model.Width * 2 - 1);
                 case 'h':
-                    return caseID - _map.Model.Width + 1;
+                    return caseID - map.Model.Width + 1;
             }
 
             return -1; 
@@ -131,25 +131,25 @@ namespace SunDofus.World.Game.Maps
                     return cell + 1;
 
                 case 1:
-                    return cell + _map.Model.Width;
+                    return cell + map.Model.Width;
 
                 case 2:
-                    return cell + (_map.Model.Width * 2) - 1;
+                    return cell + (map.Model.Width * 2) - 1;
 
                 case 3:
-                    return cell + _map.Model.Width - 1;
+                    return cell + map.Model.Width - 1;
 
                 case 4:
                     return cell - 1;
 
                 case 5:
-                    return cell - _map.Model.Width;
+                    return cell - map.Model.Width;
 
                 case 6:
-                    return cell - (_map.Model.Width * 2) + 1;
+                    return cell - (map.Model.Width * 2) + 1;
 
                 case 7:
-                    return cell - _map.Model.Width + 1;
+                    return cell - map.Model.Width + 1;
 
             }
 
@@ -182,12 +182,12 @@ namespace SunDofus.World.Game.Maps
         public string RemakePath()
         {
             var newPath = "";
-            var newCell = GetCellNum(_strPath.Substring(_strPath.Length - 2, 2));
-            var lastCell = _startCell;
+            var newCell = GetCellNum(strPath.Substring(strPath.Length - 2, 2));
+            var lastCell = startCell;
 
-            for (var i = 0; i <= _strPath.Length - 1; i += 3)
+            for (var i = 0; i <= strPath.Length - 1; i += 3)
             {
-                var actualCell = _strPath.Substring(i, 3);
+                var actualCell = strPath.Substring(i, 3);
                 var lineData = RemakeLine(lastCell, actualCell, newCell).Split(',');
                 newPath += lineData[0];
 
@@ -197,15 +197,15 @@ namespace SunDofus.World.Game.Maps
                 lastCell = GetCellNum(actualCell.Substring(1));
             }
 
-            _destination = GetCellNum(_strPath.Substring(_strPath.Length - 2, 2));
-            _direction = GetDirNum(_strPath.Substring(_strPath.Length - 3, 1));
+            destination = GetCellNum(strPath.Substring(strPath.Length - 2, 2));
+            direction = GetDirNum(strPath.Substring(strPath.Length - 3, 1));
  
             return newPath;
         }
 
         public int GetDistanceBetween(int id1, int id2)
         {
-            if (id1 == id2 || _map == null) 
+            if (id1 == id2 || map == null) 
                 return 0;
             
             var diffX = Math.Abs(GetCellXCoord(id1) - GetCellXCoord(id2));
@@ -216,7 +216,7 @@ namespace SunDofus.World.Game.Maps
 
         public int GetEstimateDistanceBetween(int id1, int id2)
         {
-            if (id1 == id2 || _map == null)
+            if (id1 == id2 || map == null)
                 return 0;
 
             var diffX = Math.Abs(GetCellXCoord(id1) - GetCellXCoord(id2));
@@ -227,13 +227,13 @@ namespace SunDofus.World.Game.Maps
 
         public int GetCellXCoord(int cellid)
         {
-            var width = _map.Model.Width;
+            var width = map.Model.Width;
             return ((cellid - (width - 1) * GetCellYCoord(cellid)) / width);
         }
 
         public int GetCellYCoord(int cellid)
         {
-            var width = _map.Model.Width;
+            var width = map.Model.Width;
             var loc5 = (int)(cellid / ((width * 2) - 1));
             var loc6 = cellid - loc5 * ((width * 2) - 1);
             var loc7 = loc6 % width;

@@ -27,7 +27,7 @@ namespace SunDofus.World.Entities.Requests
 
                     var collector = new Game.Guilds.GuildCollector(map, character, sqlResult.GetInt32("ID"))
                     {
-                        isNewCollector = false
+                        IsNewCollector = false
                     };
 
                     collector.Name[0] = int.Parse(sqlResult.GetString("Name").Split(';')[0]);
@@ -52,17 +52,17 @@ namespace SunDofus.World.Entities.Requests
 
         public static void SaveCollector(Game.Guilds.GuildCollector collector)
         {
-            if (collector.isNewCollector && !collector.mustDelete)
+            if (collector.IsNewCollector && !collector.MustDelete)
             {
                 CreateCollector(collector);
                 return;
             }
-            else if (collector.mustDelete)
+            else if (collector.MustDelete)
             {
                 DeleteCollector(collector.ID);
                 return;
             }
-            else if (!collector.mustDelete && !collector.isNewCollector)
+            else if (!collector.MustDelete && !collector.IsNewCollector)
             {
                 lock (DatabaseProvider.Locker)
                 {
@@ -112,7 +112,7 @@ namespace SunDofus.World.Entities.Requests
 
                 sqlCommand.ExecuteNonQuery();
 
-                collector.isNewCollector = false;
+                collector.IsNewCollector = false;
             }
         }
     }

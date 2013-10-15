@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SunDofus.World.Entities.Models.Clients;
 
 namespace SunDofus.World.Network.Auth
 {
@@ -11,22 +12,15 @@ namespace SunDofus.World.Network.Auth
 
         public class AuthKey
         {
-            private string _key;
+            public string Key { get; set; }
 
-            public string Key
-            {
-                get
-                {
-                    return _key;
-                }
-            }
-            public Entities.Models.Clients.AccountModel Infos;
+            public AccountModel Infos { get; set; }
 
             public AuthKey(string key, int id, string pseudo, string question, string answer, int level, string charac, long time, string gifts, string friends, string enemies)
             {
-                _key = key;
+                Key = key;
 
-                Infos = new Entities.Models.Clients.AccountModel()
+                Infos = new AccountModel()
                 {
                     ID = id,
                     Pseudo = pseudo,

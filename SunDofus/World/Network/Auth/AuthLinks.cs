@@ -4,30 +4,32 @@ using System.Linq;
 using System.Text;
 using SilverSock;
 using System.Timers;
+using SunDofus.World.Entities.Models.Clients;
 
 namespace SunDofus.World.Network.Auth
 {
     class AuthLinks
     {
-        private List<AuthClient> _clients;
+        private List<AuthClient> clients { get; set; }
 
         public AuthLinks()
         {
-            _clients = new List<AuthClient>();
+            clients = new List<AuthClient>();
         }
 
         public void Send(string message)
         {
-            foreach (var client in _clients)
+            foreach (var client in clients)
                 client.Send(message);
         }
 
-        public void AddAuthClient(Entities.Models.Clients.AuthClientModel model)
+        public void AddAuthClient(AuthClientModel model)
         {
             var client = new AuthClient(model);
 
-            lock (_clients)
-                _clients.Add(client);
+            lock (clients)
+                clients.Add(client);
+
             client.Start();
         }
     }

@@ -7,31 +7,9 @@ namespace SunDofus.World.Game.Maps.Zaaps
 {
     class Zaap
     {
-        private int _mapID, _cellID;
+        public int MapID { get; set; }
+        public int CellID { get; set; }
 
-        public int MapID
-        {
-            get
-            {
-                return _mapID;
-            }
-            set
-            {
-                _mapID = value;
-            }
-        }
-        public int CellID
-        {
-            get
-            {
-                return _cellID;
-            }
-            set
-            {
-                _cellID = value;
-            }
-        }
-
-        public Map Map;
+        public Map Map { get; set; }
     }
 }

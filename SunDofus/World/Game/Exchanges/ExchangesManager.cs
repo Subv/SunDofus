@@ -14,11 +14,11 @@ namespace SunDofus.World.Game.Exchanges
             lock(Exchanges)
                 Exchanges.Add(new Exchange(new ExchangePlayer(traider), new ExchangePlayer(traided)));
 
-            traider.State.onExchangePanel = true;
-            traided.State.onExchangePanel = true;
+            traider.State.OnExchangePanel = true;
+            traided.State.OnExchangePanel = true;
 
-            traider.State.actualPlayerExchange = traided.ID;
-            traided.State.actualPlayerExchange = traider.ID;
+            traider.State.ActualPlayerExchange = traided.ID;
+            traided.State.ActualPlayerExchange = traider.ID;
 
             traider.NetworkClient.Send("ECK1");
             traided.NetworkClient.Send("ECK1");
@@ -26,32 +26,32 @@ namespace SunDofus.World.Game.Exchanges
 
         public static void LeaveExchange(Characters.Character canceler, bool must = true)
         {
-            if (canceler.State.actualNPC != -1)
+            if (canceler.State.ActualNPC != -1)
             {
-                canceler.State.actualNPC = -1;
-                canceler.State.onExchange = false;
+                canceler.State.ActualNPC = -1;
+                canceler.State.OnExchange = false;
             }
 
-            if (canceler.State.actualTraided != -1)
+            if (canceler.State.ActualTraided != -1)
             {
-                if (SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == canceler.State.actualTraided))
+                if (SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == canceler.State.ActualTraided))
                 {
-                    var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.actualTraided);
+                    var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.ActualTraided);
 
                     if (character.isConnected == true && must)
                         character.NetworkClient.Send("EV");
 
-                    canceler.State.actualTraided = -1;
-                    canceler.State.actualPlayerExchange = -1;
-                    canceler.State.onExchange = false;
-                    canceler.State.onExchangePanel = false;
-                    canceler.State.onExchangeAccepted = false;
+                    canceler.State.ActualTraided = -1;
+                    canceler.State.ActualPlayerExchange = -1;
+                    canceler.State.OnExchange = false;
+                    canceler.State.OnExchangePanel = false;
+                    canceler.State.OnExchangeAccepted = false;
 
-                    character.State.actualTraider = -1;
-                    character.State.actualPlayerExchange = -1;
-                    character.State.onExchange = false;
-                    character.State.onExchangePanel = false;
-                    character.State.onExchangeAccepted = false;
+                    character.State.ActualTraider = -1;
+                    character.State.ActualPlayerExchange = -1;
+                    character.State.OnExchange = false;
+                    character.State.OnExchangePanel = false;
+                    character.State.OnExchangeAccepted = false;
 
                     lock (Exchanges)
                     {
@@ -61,26 +61,26 @@ namespace SunDofus.World.Game.Exchanges
                 }
             }
 
-            if (canceler.State.actualTraider != -1)
+            if (canceler.State.ActualTraider != -1)
             {
-                if (SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == canceler.State.actualTraider))
+                if (SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == canceler.State.ActualTraider))
                 {
-                    var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.actualTraider);
+                    var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.ActualTraider);
 
                     if (character.isConnected == true && must)
                         character.NetworkClient.Send("EV");
 
-                    canceler.State.actualTraider = -1;
-                    canceler.State.actualPlayerExchange = -1;
-                    canceler.State.onExchange = false;
-                    canceler.State.onExchangePanel = false;
-                    canceler.State.onExchangeAccepted = false;
+                    canceler.State.ActualTraider = -1;
+                    canceler.State.ActualPlayerExchange = -1;
+                    canceler.State.OnExchange = false;
+                    canceler.State.OnExchangePanel = false;
+                    canceler.State.OnExchangeAccepted = false;
 
-                    character.State.actualTraided = -1;
-                    character.State.actualPlayerExchange = -1;
-                    character.State.onExchange = false;
-                    character.State.onExchangePanel = false;
-                    character.State.onExchangeAccepted = false;
+                    character.State.ActualTraided = -1;
+                    character.State.ActualPlayerExchange = -1;
+                    character.State.OnExchange = false;
+                    character.State.OnExchangePanel = false;
+                    character.State.OnExchangeAccepted = false;
 
                     lock (Exchanges)
                     {

@@ -12,7 +12,7 @@ namespace SunDofus.World.Game.Maps.Zaapis
             if (Entities.Requests.ZaapisRequests.ZaapisList.Any(x => x.MapID == character.MapID))
             {
                 var zaapis = Entities.Requests.ZaapisRequests.ZaapisList.First(x => x.MapID == character.MapID);
-                var packet = string.Concat("Wc", character.MapID, "|");
+                var packet = string.Format("Wc{0}|", character.MapID);
 
                 if ((zaapis.Faction == 1 && character.Faction.ID == 2) || (zaapis.Faction == 2 && character.Faction.ID == 1))
                 {

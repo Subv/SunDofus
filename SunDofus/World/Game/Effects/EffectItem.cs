@@ -7,104 +7,51 @@ namespace SunDofus.World.Game.Effects
 {
     class EffectItem
     {
-        private int _ID, _value, _value2, _value3;
-        private string _effect;
+        public int ID { get; set; }
+        public int Value { get; set; }
+        public int Value2 { get; set; }
+        public int Value3 { get; set; }
+        public string Effect { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = value;
-            }
-        }
-        public int Value2
-        {
-            get
-            {
-                return _value2;
-            }
-            set
-            {
-                _value2 = value;
-            }
-        }
-        public int Value3
-        {
-            get
-            {
-                return _value3;
-            }
-            set
-            {
-                _value3 = value;
-            }
-        }
-        public string Effect
-        {
-            get
-            {
-                return _effect;
-            }
-            set
-            {
-                _effect = value;
-            }
-        }
-
-        public Characters.Character Client;
+        public Characters.Character Client { get; set; }
 
         public EffectItem()
         {
-            _value = 0;
-            _value2 = 0;
-            _value3 = 0;
+            Value = 0;
+            Value2 = 0;
+            Value3 = 0;
 
-            _effect = "0d0+0";
+            Effect = "0d0+0";
         }
 
         public EffectItem(EffectItem x)
         {
-            _ID = x.ID;
+            ID = x.ID;
 
-            _value = x.Value;
-            _value2 = x.Value2;
-            _value3 = x.Value3;
+            Value = x.Value;
+            Value2 = x.Value2;
+            Value3 = x.Value3;
 
-            _effect = x.Effect;
+            Effect = x.Effect;
         }
 
         public override string ToString()
         {
-            return string.Format("{0}#{1}#{2}#{3}#{4}", Utilities.Basic.DeciToHex(_ID), (_value <= 0 ? "" : Utilities.Basic.DeciToHex(_value)),
-                (_value2 <= 0 ? "" : Utilities.Basic.DeciToHex(_value2)), (_value3 <= 0 ? "0" : Utilities.Basic.DeciToHex(_value3)), _effect);
+            return string.Format("{0}#{1}#{2}#{3}#{4}", Utilities.Basic.DeciToHex(ID), (Value <= 0 ? "" : Utilities.Basic.DeciToHex(Value)),
+                (Value2 <= 0 ? "" : Utilities.Basic.DeciToHex(Value2)), (Value3 <= 0 ? "0" : Utilities.Basic.DeciToHex(Value3)), Effect);
         }
 
         public string SetString()
         {
-            return string.Format("{0}#{1}#{2}", Utilities.Basic.DeciToHex(_ID), (_value <= 0 ? "" : Utilities.Basic.DeciToHex(_value)),
-                (_value2 <= 0 ? "" : Utilities.Basic.DeciToHex(_value2)));
+            return string.Format("{0}#{1}#{2}", Utilities.Basic.DeciToHex(ID), (Value <= 0 ? "" : Utilities.Basic.DeciToHex(Value)),
+                (Value2 <= 0 ? "" : Utilities.Basic.DeciToHex(Value2)));
         }
 
         public void ParseEffect(Characters.Character client)
         {
             Client = client;
 
-            switch (_ID)
+            switch (ID)
             {
                 case 110: // + Vie
                     AddLife();

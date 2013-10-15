@@ -7,195 +7,59 @@ namespace SunDofus.World.Game.Characters
 {
     class CharacterState
     {
-        private int _moveToCell = -1, _actNPC = -1, _actTraided = -1, _actTraider = -1, _actPlayEx = -1;
-        private int _senderInvPar = -1, _recInvPar = -1, _senderInvGuild = -1, _recInvGuild = -1;
-        private int _followingID = -1;
-        private int _onDiaWith = -1;
-        private int _challAsked = -1, _challAsker = -1;
-
-        Character Character;
+        Character Character { get; set; }
 
         public CharacterState(Character character)
         {
             Character = character;
-            created = false;
+            Created = false;
 
             Party = null;
             Followers = new List<Character>();
         }
 
-        public bool created = false;
+        public bool Created { get; set; }
 
-        public bool onMove = false;
-        public bool onExchange = false;
-        public bool onExchangePanel = false;
-        public bool onExchangeAccepted = false;
-        public bool onExchangeWithBank = false;
+        public bool OnMove { get; set; }
+        public bool OnExchange { get; set; }
+        public bool OnExchangePanel { get; set; }
+        public bool OnExchangeAccepted { get; set; }
+        public bool OnExchangeWithBank { get; set; }
 
-        public int moveToCell
-        {
-            get
-            {
-                return _moveToCell;
-            }
-            set
-            {
-                _moveToCell = value;
-            }
-        }
-        public int actualNPC
-        {
-            get
-            {
-                return _actNPC;
-            }
-            set
-            {
-                _actNPC = value;
-            }
-        }
-        public int actualTraided
-        {
-            get
-            {
-                return _actTraided;
-            }
-            set
-            {
-                _actTraided = value;
-            }
-        }
-        public int actualTraider
-        {
-            get
-            {
-                return _actTraider;
-            }
-            set
-            {
-                _actTraider = value;
-            }
-        }
-        public int actualPlayerExchange
-        {
-            get
-            {
-                return _actPlayEx;
-            }
-            set
-            {
-                _actPlayEx = value;
-            }
-        }
+        public int MoveToCell { get; set; }
+        public int ActualNPC { get; set; }
+        public int ActualTraided { get; set; }
+        public int ActualTraider { get; set; }
+        public int ActualPlayerExchange { get; set; }
 
-        public bool onWaitingParty = false;
-        public int senderInviteParty
-        {
-            get
-            {
-                return _senderInvPar;
-            }
-            set
-            {
-                _senderInvPar = value;
-            }
-        }
-        public int receiverInviteParty
-        {
-            get
-            {
-                return _recInvPar;
-            }
-            set
-            {
-                _recInvPar = value;
-            }
-        }
+        public bool OnWaitingParty { get; set; }
+        public int SenderInviteParty { get; set; }
+        public int ReceiverInviteParty{ get; set; }
 
-        public bool onWaitingGuild = false;
-        public int senderInviteGuild
-        {
-            get
-            {
-                return _senderInvGuild;
-            }
-            set
-            {
-                _senderInvGuild = value;
-            }
-        }
-        public int receiverInviteGuild
-        {
-            get
-            {
-                return _recInvGuild;
-            }
-            set
-            {
-                _recInvGuild = value;
-            }
-        }
+        public bool OnWaitingGuild { get; set; }
+        public int SenderInviteGuild { get; set; }
+        public int ReceiverInviteGuild { get; set; }
 
-        public bool isFollow = false;
-        public bool isFollowing = false;
-        public int followingID
-        {
-            get
-            {
-                return _followingID;
-            }
-            set
-            {
-                _followingID = value;
-            }
-        }
+        public bool IsFollow { get; set; }
+        public bool IsFollowing { get; set; }
+        public int FollowingID { get; set; }
 
-        public bool onDialoging = false;
-        public int onDialogingWith
-        {
-            get
-            {
-                return _onDiaWith;
-            }
-            set
-            {
-                _onDiaWith = value;
-            }
-        }
+        public bool OnDialoging { get; set; }
+        public int OnDialogingWith { get; set; }
 
-        public bool isChallengeAsked = false;
-        public bool isChallengeAsker = false;
-        public int ChallengeAsked
-        {
-            get
-            {
-                return _challAsked;
-            }
-            set
-            {
-                _challAsked = value;
-            }
-        }
-        public int ChallengeAsker
-        {
-            get
-            {
-                return _challAsker;
-            }
-            set
-            {
-                _challAsker = value;
-            }
-        }
+        public bool IsChallengeAsked { get; set; }
+        public bool IsChallengeAsker { get; set; }
+        public int ChallengeAsked { get; set; }
+        public int ChallengeAsker { get; set; }
 
-        public CharacterParty Party;
-        public List<Character> Followers;
+        public CharacterParty Party { get; set; }
+        public List<Character> Followers { get; set; }
 
         public bool Busy
         {
             get
             {
-                return (onMove || onExchange || onWaitingParty || onDialoging || isChallengeAsked || isChallengeAsker || onExchangeWithBank);
+                return (OnMove || OnExchange || OnWaitingParty || OnDialoging || IsChallengeAsked || IsChallengeAsker || OnExchangeWithBank);
             }
         }
     }

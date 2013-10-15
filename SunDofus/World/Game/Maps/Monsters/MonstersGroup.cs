@@ -8,83 +8,69 @@ namespace SunDofus.World.Game.Maps.Monsters
 {
     class MonstersGroup
     {
-        public List<Monster> Monsters;
+        public List<Monster> Monsters { get; set; }
 
-        private int _id, _maxSize;
+        public int ID { get; set; }
+        public int MaxSize { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _id;
-            }
-        }
-        public int MaxSize
-        {
-            get
-            {
-                return _maxSize;
-            }
-        }
+        private Map map;
+        private int cell;
+        private int dir;
 
-        private Map _map;
-        private int _cell;
-        private int _dir;
-
-        private Timer _movements;
-        private Dictionary<int, List<int>> _base;
+        private Timer timer;
+        private Dictionary<int, List<int>> mbase;
 
         public MonstersGroup(Dictionary<int, List<int>> monsters, Map map)
         {
 
             Monsters = new List<Monster>();
-            _base = monsters;
+            mbase = monsters;
 
-            _map = map;
-            _maxSize = map.Model.MaxGroupSize;
+            this.map = map;
+            MaxSize = map.Model.MaxGroupSize;
 
-            _id = map.NextNpcID();
+            ID = map.NextNpcID();
 
             RefreshMappos();
             RefreshMonsters();
 
-            if (Utilities.Config.GetBoolElement("MustMonstersMove"))
+            if (Utilities.Config.GetBoolElement("MUSTMONSTERSMOVE"))
             {
-                _movements = new Timer();
-                _movements.Enabled = true;
-                _movements.Interval = Utilities.Basic.Rand(10000, 15000);
-                _movements.Elapsed += new ElapsedEventHandler(this.Move);
+                timer = new Timer();
+                timer.Enabled = true;
+                timer.Interval = Utilities.Basic.Rand(10000, 15000);
+                timer.Elapsed += new ElapsedEventHandler(this.Move);
             }
         }
 
         private void Move(object e, EventArgs e2)
         {
-            _movements.Interval = Utilities.Basic.Rand(10000, 15000);
+            timer.Interval = Utilities.Basic.Rand(10000, 15000);
 
-            var path = new Game.Maps.Pathfinding("", _map, _cell, _dir);
+            var path = new Game.Maps.Pathfinding("", map, cell, dir);
             var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
-            var newCell = path.NextCell(_cell, newDir);
+            var newCell = path.NextCell(cell, newDir);
 
             if (newCell <= 0)
                 return;
 
-            path.UpdatePath(Game.Maps.Pathfinding.GetDirChar(_dir) + Game.Maps.Pathfinding.GetCellChars(_cell) + Game.Maps.Pathfinding.GetDirChar(newDir) +
+            path.UpdatePath(Game.Maps.Pathfinding.GetDirChar(dir) + Game.Maps.Pathfinding.GetCellChars(cell) + Game.Maps.Pathfinding.GetDirChar(newDir) +
                 Game.Maps.Pathfinding.GetCellChars(newCell));
 
             var startpath = path.GetStartPath;
             var cellpath = path.RemakePath();
 
-            if (!_map.RushablesCells.Contains(newCell))
+            if (!map.RushablesCells.Contains(newCell))
                 return;
 
             if (cellpath != "")
             {
-                _cell = path.Destination;
-                _dir = path.Direction;
+                cell = path.Destination;
+                dir = path.Direction;
 
                 var packet = string.Format("GA0;1;{0};{1}", ID, startpath + cellpath);
 
-                _map.Send(packet);
+                map.Send(packet);
             }
         }
 
@@ -105,8 +91,8 @@ namespace SunDofus.World.Game.Maps.Monsters
 
         private Monster ReturnNewMonster()
         {
-            var key = _base.Keys.ToList()[Utilities.Basic.Rand(0, _base.Count - 1)];
-            var value = _base[key][Utilities.Basic.Rand(0, _base[key].Count - 1)];
+            var key = mbase.Keys.ToList()[Utilities.Basic.Rand(0, mbase.Count - 1)];
+            var value = mbase[key][Utilities.Basic.Rand(0, mbase[key].Count - 1)];
 
             if (!Entities.Requests.MonstersRequests.MonstersList.Any(x => x.ID == key))
                 return null;
@@ -116,13 +102,13 @@ namespace SunDofus.World.Game.Maps.Monsters
 
         private void RefreshMappos()
         {
-            _dir = Utilities.Basic.Rand(0, 3) * 2 + 1;
-            _cell = _map.RushablesCells[Utilities.Basic.Rand(0, _map.RushablesCells.Count - 1)];
+            dir = Utilities.Basic.Rand(0, 3) * 2 + 1;
+            cell = map.RushablesCells[Utilities.Basic.Rand(0, map.RushablesCells.Count - 1)];
         }
 
         public string PatternOnMap()
         {
-            var packet = string.Format("|+{0};{1};0;{2};", _cell, _dir, ID);
+            var packet = string.Format("|+{0};{1};0;{2};", cell, dir, ID);
 
             var ids = "";
             var skins = "";
