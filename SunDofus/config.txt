@@ -17,7 +17,7 @@ $Realm_Database_Pass ;
 $Realm_Database_Name sunrealm;
 
 $Max_Clients_inQueue 50;
-$Time_PerClient 500;
+$Time_PerClient 5000;
 
 $Subscription_Time true;
 

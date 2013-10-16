@@ -93,7 +93,7 @@ namespace SunDofus.Auth.Network.Auth
 
         private void SendQueuePacket()
         {
-            Send(string.Format("Af{0}|{1}|0|2", (AuthQueue.Clients.IndexOf(this) + 1),
+            Send(string.Format("Af{0}|{1}|0|2", (AuthQueue.Clients.IndexOf(this) + 2),
                 (AuthQueue.Clients.Count > 2 ? AuthQueue.Clients.Count : 3)));
         }
 
@@ -122,10 +122,14 @@ namespace SunDofus.Auth.Network.Auth
                 else if ((Environment.TickCount - AuthQueue.LastAction) < 5000)
                 {
                     State = AccountState.OnCheckingQueue;
-                    AuthQueue.AddinQueue(this);
+                    AuthQueue.AddInQueue(this);
+                    SendQueuePacket();
                 }
                 else
+                {
                     SendInformations();
+                    State = AccountState.OnServersList;
+                }
 
                 AuthQueue.LastAction = Environment.TickCount;
             }

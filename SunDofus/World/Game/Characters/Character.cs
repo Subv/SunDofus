@@ -316,11 +316,7 @@ namespace SunDofus.World.Game.Characters
                 var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == this.MapID);
 
                 if (Utilities.Config.GetBoolElement("DEBUG") & map.Triggers.Count == 0)
-                {
-                    SunDofus.World.Entities.DatabaseProvider.InitializeConnection();
                     SunDofus.World.Entities.Requests.TriggersRequests.LoadTriggers(MapID);
-                    SunDofus.World.Entities.DatabaseProvider.Close();
-                }
 
                 NClient.Send(string.Format("GDM|{0}|{1}|{2}", map.Model.ID, map.Model.Date, map.Model.Key));
 
@@ -332,13 +328,15 @@ namespace SunDofus.World.Game.Characters
             }
         }
 
-        public bool isInIncarnam
+        public bool IsInIncarnam
         {
             get
             {
-                return GetMap().Model.SubArea == 440 || GetMap().Model.SubArea == 442 || GetMap().Model.SubArea == 443 ||
-                    GetMap().Model.SubArea == 444 || GetMap().Model.SubArea == 445 || GetMap().Model.SubArea == 446 ||
-                    GetMap().Model.SubArea == 449 || GetMap().Model.SubArea == 450;
+                var map = GetMap();
+
+                return map.Model.SubArea == 440 || map.Model.SubArea == 442 || map.Model.SubArea == 443 ||
+                    map.Model.SubArea == 444 || map.Model.SubArea == 445 || map.Model.SubArea == 446 ||
+                    map.Model.SubArea == 449 || map.Model.SubArea == 450;
             }
         }
 

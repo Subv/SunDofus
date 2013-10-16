@@ -21,6 +21,8 @@ namespace SunDofus.World.Network.Realm
             this.SocketClientAccepted += new AcceptSocketHandler(this.OnAcceptedClient);
             this.ListeningServer += new ListeningServerHandler(this.OnListeningServer);
             this.ListeningServerFailed += new ListeningServerFailedHandler(this.OnListeningFailedServer);
+
+            RealmQueue.Start();
         }
 
         public void OnAcceptedClient(SilverSocket socket)

@@ -115,17 +115,17 @@ namespace SunDofus.World.Game.Maps
 
         private string CharactersPattern()
         {
-            return string.Join("|+", from c in Characters select c.PatternDisplayChar());
+            return string.Concat("|+", string.Join("|+", from c in Characters select c.PatternDisplayChar()));
         }
 
         private string NPCsPattern()
         {
-            return string.Join("|+", from n in Npcs select n.PatternOnMap());
+            return string.Concat("|+", string.Join("|+", from n in Npcs select n.PatternOnMap()));
         }
 
         private string MonstersGroupsPattern()
         {
-            return string.Join("|+", from m in MonstersGroups select m.PatternOnMap());
+            return string.Concat("|+", string.Join("|+", from m in MonstersGroups select m.PatternOnMap()));
         }
 
         #region mapdata

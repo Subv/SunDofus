@@ -160,7 +160,11 @@ SunDofus v0.3.2.188 :
 -> [17.08.2013] Ajout des guildes (invitations, expulsions, rang, exp, affichage, ... Il manque la gestion complète des droits envers une action, les enclos et les maisons)
 -> [17.08.2013] Ajout des percepteurs (pose, déplacement, affichage, parler)
 -> [18.08.2013] Ajout total des banques
+
+SunDofus v0.3.2.195
 -> [16.10.2013] Revu presque total du code (normalisation, string.Concat ou string.Format, ...)
 -> [16.10.2013] Correction des paths avec la prise en compte des Triggers (Pathfinding, Merci Persi2)
 -> [16.10.2013] Rectification de l'affichage extérieur des guildes et suivant le nombre de membre (personnalisable en configuration)
 -> [16.10.2013] Téléportation avec un double clic sur la géoposition (GMLevel en configuration, Merci Persi2)
+-> [16.10.2013] Durant le mode débug, l'émulateur ne charge plus les triggers (permettant un lancement beaucoup plus rapide)
+-> [16.10.2013] Rectification de la file d'attente du serveur d'authentification et mise en place d'une autre file d'attente sur le serveur de jeu !

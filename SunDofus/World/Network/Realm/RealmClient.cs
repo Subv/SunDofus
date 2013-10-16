@@ -11,6 +11,7 @@ namespace SunDofus.World.Network.Realm
     class RealmClient : Master.TCPClient
     {
         public bool Authentified { get; set; }
+        public bool IsInQueue { get; set; }
 
         public Character Player { get; set; }
         public List<Character> Characters { get; set; }
@@ -50,6 +51,12 @@ namespace SunDofus.World.Network.Realm
                 this.SendDatas(message);
 
             Utilities.Loggers.Debug.Write(string.Format("Sent to <{0}> : {1}", IP, message));
+        }
+
+        public void OutOfQueue()
+        {
+            IsInQueue = false;
+            parser.SendCharacterList("");
         }
 
         public void ParseCharacters()

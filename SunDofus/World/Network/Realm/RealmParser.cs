@@ -32,6 +32,7 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["AA"] = CreateCharacter;
             RegisteredPackets["AB"] = StatsBoosts;
             RegisteredPackets["AD"] = DeleteCharacter;
+
             RegisteredPackets["Ag"] = SendGifts;
             RegisteredPackets["AG"] = AcceptGift;
             RegisteredPackets["AL"] = SendCharacterList;
@@ -115,7 +116,7 @@ namespace SunDofus.World.Network.Realm
 
         #endregion
 
-        #region Ticket
+        #region Ticket & Queue
 
         private void ParseTicket(string datas)
         {
@@ -157,9 +158,26 @@ namespace SunDofus.World.Network.Realm
                     }
 
                     Client.Send("ATK0");
+
+                    if ((Environment.TickCount - RealmQueue.LastAction) < 10000)
+                    {
+                        RealmQueue.AddInQueue(Client);
+                        RefreshQueue("");
+                    }
+
+                    RealmQueue.LastAction = Environment.TickCount;
                 }
                 else
                     Client.Send("ATE");
+            }
+        }
+
+        private void RefreshQueue(string datas)
+        {
+            if (Client.IsInQueue)
+            {
+                Client.Send(string.Format("Af{0}|{1}|0|2", (RealmQueue.Clients.IndexOf(Client) + 2),
+                    (RealmQueue.Clients.Count > 2 ? RealmQueue.Clients.Count : 3)));
             }
         }
 
@@ -177,17 +195,20 @@ namespace SunDofus.World.Network.Realm
             Client.Send(string.Concat("AV", Utilities.Config.GetIntElement("SERVERCOM")));
         }
 
-        private void SendCharacterList(string datas)
+        public void SendCharacterList(string datas)
         {
-            string packet = string.Format("ALK{0}|{1}", Client.Infos.Subscription, Client.Characters.Count);
-
-            if (Client.Characters.Count != 0)
+            if (!Client.IsInQueue)
             {
-                foreach (SunDofus.World.Game.Characters.Character m_C in Client.Characters)
-                    packet += string.Concat("|", m_C.PatternList());
-            }
+                string packet = string.Format("ALK{0}|{1}", Client.Infos.Subscription, Client.Characters.Count);
 
-            Client.Send(packet);
+                if (Client.Characters.Count != 0)
+                {
+                    foreach (SunDofus.World.Game.Characters.Character m_C in Client.Characters)
+                        packet += string.Concat("|", m_C.PatternList());
+                }
+
+                Client.Send(packet);
+            }
         }
 
         private void CreateCharacter(string datas)

@@ -24,14 +24,14 @@ namespace SunDofus.World.Game.World
 
         public static void SendIncarnamMessage(Network.Realm.RealmClient client, string message)
         {
-            if (!client.Player.isInIncarnam || client.Player.Level > 30)
+            if (!client.Player.IsInIncarnam || client.Player.Level > 30)
             {
                 client.Send("Im0139");
                 return;
             }
 
             foreach (var character in Network.ServersHandler.RealmServer.Clients.Where
-                (x => x.Authentified == true && x.Player.isInIncarnam))
+                (x => x.Authentified == true && x.Player.IsInIncarnam))
             {
                 character.Send(string.Format("cMK^|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
             }

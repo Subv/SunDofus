@@ -149,6 +149,7 @@
     <Compile Include="World\Network\Realm\RealmClient.cs" />
     <Compile Include="World\Network\Realm\RealmCommander.cs" />
     <Compile Include="World\Network\Realm\RealmParser.cs" />
+    <Compile Include="World\Network\Realm\RealmQueue.cs" />
     <Compile Include="World\Network\Realm\RealmServer.cs" />
     <Compile Include="World\Network\ServersHandler.cs" />
     <Compile Include="World\Game\Characters\Character.cs" />
