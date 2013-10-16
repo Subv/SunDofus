@@ -159,7 +159,7 @@ namespace SunDofus.World.Network.Realm
 
                     Client.Send("ATK0");
 
-                    if ((Environment.TickCount - RealmQueue.LastAction) < 10000)
+                    if ((Environment.TickCount - RealmQueue.LastAction) < Utilities.Config.GetIntElement("TIME_BETWEEN_TWOCONNECTIONS"))
                     {
                         RealmQueue.AddInQueue(Client);
                         RefreshQueue("");
