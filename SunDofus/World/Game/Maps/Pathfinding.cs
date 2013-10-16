@@ -174,6 +174,9 @@ namespace SunDofus.World.Game.Maps
             {
                 actuelCell = NextCell(actuelCell, direction);
                 backCell = actuelCell;
+
+                if (map.Triggers.Any(x => x.CellID == backCell))
+                    return GetDirChar(direction) + GetCellChars(backCell) + ",0";
             }
 
             return cell + ",1";

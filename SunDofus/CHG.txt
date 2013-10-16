@@ -160,3 +160,6 @@ SunDofus v0.3.2.188 :
 -> [17.08.2013] Ajout des guildes (invitations, expulsions, rang, exp, affichage, ... Il manque la gestion complète des droits envers une action, les enclos et les maisons)
 -> [17.08.2013] Ajout des percepteurs (pose, déplacement, affichage, parler)
 -> [18.08.2013] Ajout total des banques
+-> [16.10.2013] Revu presque total du code (normalisation, string.Concat ou string.Format, ...)
+-> [16.10.2013] Correction des paths avec la prise en compte des Triggers (Pathfinding, Merci Persi2)
+-> [16.10.2013] Rectification de l'affichage extérieur des guildes et suivant le nombre de membre (personnalisable en configuration)

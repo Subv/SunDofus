@@ -65,7 +65,7 @@ namespace SunDofus.World.Game.Characters
         {
             Zaaps = new List<int>();
 
-            Stats = new Stats.Stats();
+            Stats = new Stats.Stats(this);
             ItemsInventary = new InventaryItems(this);
             SpellsInventary = new InventarySpells(this);
             Faction = new CharacterFaction(this);
@@ -292,7 +292,12 @@ namespace SunDofus.World.Game.Characters
                 builder.Append(GetItemsPos()).Append(";"); // Items
                 builder.Append("0;"); //Aura
                 builder.Append(";;");
-                builder.Append(";"); // Guild
+
+                if (Guild != null && Guild.Members.Count >= Utilities.Config.GetIntElement("MINMEMBERS_TOWATCHOUT_GUILDS"))
+                    builder.Append(Guild.Name).Append(";").Append(Guild.Emblem);
+                else
+                    builder.Append(";");
+
                 builder.Append(";0;");
                 builder.Append(";"); // Mount
             }
