@@ -119,11 +119,15 @@ namespace SunDofus.Auth.Network.Auth
                     Send("M00\0");
                     this.Disconnect();
                 }
-                else
+                else if ((Environment.TickCount - AuthQueue.LastAction) < 5000)
                 {
                     State = AccountState.OnCheckingQueue;
                     AuthQueue.AddinQueue(this);
                 }
+                else
+                    SendInformations();
+
+                AuthQueue.LastAction = Environment.TickCount;
             }
             else
             {

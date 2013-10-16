@@ -21,7 +21,7 @@ namespace SunDofus
             Config.LoadConfiguration();
             Loggers.InitializeLoggers();
 
-            if (Config.GetBoolElement("Realm"))
+            if (Config.GetBoolElement("REALM"))
             {
                 var realmthread = new Thread(new ThreadStart(new Action(delegate()
                     {
@@ -41,7 +41,7 @@ namespace SunDofus
                 realmthread.Start();
             }
 
-            if (Config.GetBoolElement("World"))
+            if (Config.GetBoolElement("WORLD"))
             {
                 var gamethread = new Thread(new ThreadStart(new Action(delegate()
                     {
@@ -64,7 +64,10 @@ namespace SunDofus
                             World.Entities.Requests.MonstersRequests.LoadMonstersLevels();
 
                             World.Entities.Requests.MapsRequests.LoadMaps();
-                            World.Entities.Requests.TriggersRequests.LoadTriggers();
+
+                            if(!Utilities.Config.GetBoolElement("DEBUG"))
+                                World.Entities.Requests.TriggersRequests.LoadTriggers();
+
                             World.Entities.Requests.ZaapsRequests.LoadZaaps();
                             World.Entities.Requests.ZaapisRequests.LoadZaapis();
 
@@ -83,7 +86,8 @@ namespace SunDofus
 
                             World.Game.World.Save.InitSaveThread();
 
-                            World.Entities.DatabaseProvider.Close();
+                            if(!Utilities.Config.GetBoolElement("DEBUG"))
+                                World.Entities.DatabaseProvider.Close();
 
                             Loggers.Debug.Write(string.Format("World started in '{0}'s !", Basic.GetUpTime()[2]));
                         }

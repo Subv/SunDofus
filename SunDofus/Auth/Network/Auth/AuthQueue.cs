@@ -9,6 +9,7 @@ namespace SunDofus.Auth.Network.Auth
     class AuthQueue
     {
         public static List<AuthClient> Clients { get; set; }
+        public static long LastAction { get; set; }
 
         private static Timer timer;
         private static bool isRunning;

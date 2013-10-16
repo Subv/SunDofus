@@ -315,6 +315,13 @@ namespace SunDofus.World.Game.Characters
             {
                 var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == this.MapID);
 
+                if (Utilities.Config.GetBoolElement("DEBUG") & map.Triggers.Count == 0)
+                {
+                    SunDofus.World.Entities.DatabaseProvider.InitializeConnection();
+                    SunDofus.World.Entities.Requests.TriggersRequests.LoadTriggers(MapID);
+                    SunDofus.World.Entities.DatabaseProvider.Close();
+                }
+
                 NClient.Send(string.Format("GDM|{0}|{1}|{2}", map.Model.ID, map.Model.Date, map.Model.Key));
 
                 if (this.State.IsFollow)

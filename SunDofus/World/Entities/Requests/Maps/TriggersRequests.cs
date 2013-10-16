@@ -43,6 +43,39 @@ namespace SunDofus.World.Entities.Requests
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' triggers from the database !", TriggersList.Count));
         }
 
+        public static void LoadTriggers(int map)
+        {
+            lock (DatabaseProvider.Locker)
+            {
+                var sqlText = "SELECT * FROM triggers WHERE MapID=@mapid";
+
+                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                sqlCommand.Parameters.Add(new MySqlParameter("@mapid", map));
+
+                var sqlReader = sqlCommand.ExecuteReader();
+
+                while (sqlReader.Read())
+                {
+                    var trigger = new Entities.Models.Maps.TriggerModel()
+                    {
+                        MapID = sqlReader.GetInt32("MapID"),
+                        CellID = sqlReader.GetInt32("CellID"),
+                        ActionID = sqlReader.GetInt16("ActionID"),
+                        Args = sqlReader.GetString("Args"),
+                        Conditions = sqlReader.GetString("Conditions"),
+                    };
+
+                    lock (TriggersList)
+                    {
+                        if (ParseTrigger(trigger))
+                            TriggersList.Add(trigger);
+                    }
+                }
+
+                sqlReader.Close();
+            }
+        }
+
         public static void InsertTrigger(Models.Maps.TriggerModel trigger)
         {
             lock (DatabaseProvider.Locker)
