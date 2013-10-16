@@ -8,11 +8,11 @@ namespace SunDofus.World.Game.Characters.Items
 {
     class ItemsHandler
     {
-        private static int _lastID = 0;
+        private static int lastID = 0;
 
         public static int GetNewID()
         {
-            return ++_lastID;
+            return ++lastID;
         }
 
         public static bool PositionAvaliable(int itemType, bool usable, int position)

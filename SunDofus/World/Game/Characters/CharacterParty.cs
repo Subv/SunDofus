@@ -38,12 +38,12 @@ namespace SunDofus.World.Game.Characters
             }
             else
             {
-                member.NetworkClient.Send(string.Concat("PCK", ownerName));
-                member.NetworkClient.Send(string.Concat("PL", ownerID));
-                member.NetworkClient.Send(string.Concat("PM", PartyPattern()));
+                member.NClient.Send(string.Concat("PCK", ownerName));
+                member.NClient.Send(string.Concat("PL", ownerID));
+                member.NClient.Send(string.Concat("PM", PartyPattern()));
 
                 foreach (var character in Members.Keys.ToList().Where(x => x != member))
-                    character.NetworkClient.Send(string.Concat("PM", character.PatternOnParty()));
+                    character.NClient.Send(string.Concat("PM", character.PatternOnParty()));
             }
 
             UpdateMembers();
@@ -73,8 +73,8 @@ namespace SunDofus.World.Game.Characters
                 character.State.IsFollow = false;
             }
 
-            if (character.isConnected)
-                character.NetworkClient.Send(string.Concat("PV", kicker));
+            if (character.IsConnected)
+                character.NClient.Send(string.Concat("PV", kicker));
 
             if (Members.Count == 1)
             {
@@ -83,8 +83,8 @@ namespace SunDofus.World.Game.Characters
 
                 Members.Remove(last);
 
-                if (last.isConnected)
-                    last.NetworkClient.Send(string.Concat("PV", kicker));
+                if (last.IsConnected)
+                    last.NClient.Send(string.Concat("PV", kicker));
             }
             else if (ownerID == character.ID)
                 GetNewLeader();
@@ -96,7 +96,7 @@ namespace SunDofus.World.Game.Characters
         private void Send(string text)
         {
             foreach (var character in Members.Keys)
-                character.NetworkClient.Send(text);
+                character.NClient.Send(text);
         }
 
         private void GetNewLeader()

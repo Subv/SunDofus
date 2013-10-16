@@ -7,73 +7,31 @@ namespace SunDofus.World.Game.Characters
 {
     class CharacterFaction
     {
-        private int _ID, _honor, _deshonor, _level;
-
         private Character character;
 
-        public CharacterFaction(Character _character)
+        public CharacterFaction(Character character)
         {
-            character = _character;
+            this.character = character;
         }
 
-        public bool isEnabled = false;
+        public bool IsEnabled { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Honor
-        {
-            get
-            {
-                return _honor;
-            }
-            set
-            {
-                _honor = value;
-            }
-        }
-        public int Deshonor
-        {
-            get
-            {
-                return _deshonor;
-            }
-            set
-            {
-                _deshonor = value;
-            }
-        }
-        public int Level
-        {
-            get
-            {
-                return _level;
-            }
-            set
-            {
-                _level = value;
-            }
-        }
+        public int ID { get; set; }
+        public int Honor { get; set; }
+        public int Deshonor { get; set; }
+        public int Level { get; set; }
 
         public string AlignementInfos
         {
             get
             {
-                return string.Concat(_ID, ",", _ID, ",", (isEnabled ? _level.ToString() : "0"), ",", (character.Level + character.ID));
+                return string.Format("{0},{1},{2},{3}", ID, ID, (IsEnabled ? Level.ToString() : "0"), (character.Level + character.ID));
             }
         }
 
         public override string ToString()
         {
-            return string.Concat(_ID, "~2,", _level, ",", _level, ",", _honor, ",", _deshonor, ",", (isEnabled ? "1" : "0"));
+            return string.Format("{0}~2,{1},{2},{3},{4},{5}", ID, Level, Level, Honor, Deshonor, (IsEnabled ? "1" : "0"));
         }
     }
 }

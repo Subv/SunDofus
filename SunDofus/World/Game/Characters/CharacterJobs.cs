@@ -36,14 +36,14 @@ namespace SunDofus.World.Game.Characters
             var data = string.Empty;
 
             foreach (var job in Jobs)
-                data += string.Format("{0}|{1};{2};{3};{4}", data, job.Id, job.Level, job.Experience, job.SaveSkills());
+                data += string.Format("{0}|{1};{2};{3};{4}", data, job.ID, job.Level, job.Experience, job.SaveSkills());
 
             return data.Length > 0 ? data.Substring(1) : "";
         }
 
         public void AddNewJob(int id)
         {
-            if (Jobs.Any(x => x.Id == id))
+            if (Jobs.Any(x => x.ID == id))
                 return;
 
             Jobs.Add(new Jobs.Job(id, 1, 0));
@@ -55,7 +55,7 @@ namespace SunDofus.World.Game.Characters
 
         public void SendJobOptions()
         {
-            Client.NetworkClient.Send(string.Concat("JO", Options.ToString()));
+            Client.NClient.Send(string.Concat("JO", Options.ToString()));
         }
 
         public void SendJobsXP()
@@ -63,9 +63,9 @@ namespace SunDofus.World.Game.Characters
             var data = string.Empty;
 
             foreach (var job in Jobs)
-                data = string.Format("{0}|{1};{2};{3};{4};{5}",data, job.Id, job.Level, job.GetMinExperience(), job.Experience, job.GetMaxExperience());
+                data = string.Format("{0}|{1};{2};{3};{4};{5}",data, job.ID, job.Level, job.GetMinExperience(), job.Experience, job.GetMaxExperience());
             
-            Client.NetworkClient.Send(string.Concat("JX", data));
+            Client.NClient.Send(string.Concat("JX", data));
         }
 
         public void SendJobs()
@@ -73,14 +73,14 @@ namespace SunDofus.World.Game.Characters
             var data = string.Empty;
 
             foreach (var job in Jobs)
-                data = string.Format("{0}|{1};{2}",data, job.Id, job.GetSkills());
+                data = string.Format("{0}|{1};{2}",data, job.ID, job.GetSkills());
 
-            Client.NetworkClient.Send(string.Concat("JS", data));
+            Client.NClient.Send(string.Concat("JS", data));
         }
 
         public bool HasJob(int id)
         {
-            return Jobs.Any(x => x.Id == id);
+            return Jobs.Any(x => x.ID == id);
         }
     }
 

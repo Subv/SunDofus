@@ -7,8 +7,8 @@ namespace SunDofus.World.Game.Characters
 {
     class CharacterChannels
     {
-        public List<Channel> Channels;
-        public Character Client;
+        public List<Channel> Channels { get; set; }
+        public Character Client { get; set; }
 
         public CharacterChannels(Character client)
         {
@@ -35,7 +35,7 @@ namespace SunDofus.World.Game.Characters
 
         public void SendChannels()
         {
-            Client.NetworkClient.Send(string.Format("cC+{0}", string.Join("", from c in Channels select c.Head.ToString())));
+            Client.NClient.Send(string.Concat("cC+", string.Join("", from c in Channels select c.Head.ToString())));
         }
 
         public void ChangeChannelState(char head, bool state)
@@ -43,38 +43,19 @@ namespace SunDofus.World.Game.Characters
             if (Channels.Any(x => x.Head == head))
             {
                 Channels.First(x => x.Head == head).On = state;
-                Client.NetworkClient.Send(string.Format("cC{0}{1}", (state ? "+" : "-"), head.ToString()));
+                Client.NClient.Send(string.Format("cC{0}{1}", (state ? "+" : "-"), head.ToString()));
             }
         }
 
         public class Channel
         {
-            private char _head;
-            private bool _on;
-
-            public char Head
-            {
-                get
-                {
-                    return _head;
-                }
-            }
-            public bool On
-            {
-                get
-                {
-                    return _on;
-                }
-                set
-                {
-                    _on = value;
-                }
-            }
+            public char Head { get; set; }
+            public bool On { get; set; }
 
             public Channel(char head, bool on)
             {
-                _head = head;
-                _on = on;
+                Head = head;
+                On = on;
             }
         }
     }

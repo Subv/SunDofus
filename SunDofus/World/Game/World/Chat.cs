@@ -43,9 +43,9 @@ namespace SunDofus.World.Game.World
             {
                 var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.Name == receiver);
 
-                if (character.isConnected == true && !character.NetworkClient.Enemies.Contains(client.Infos.Pseudo))
+                if (character.IsConnected == true && !character.NClient.Enemies.Contains(client.Infos.Pseudo))
                 {
-                    character.NetworkClient.Send(string.Format("cMKF|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
+                    character.NClient.Send(string.Format("cMKF|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
                     client.Send(string.Format("cMKT|{0}|{1}|{2}", client.Player.ID, character.Name, message));
                 }
                 else
@@ -95,7 +95,7 @@ namespace SunDofus.World.Game.World
             if (client.Player.State.Party != null)
             {
                 foreach (var character in client.Player.State.Party.Members.Keys)
-                    character.NetworkClient.Send(string.Format("cMK$|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
+                    character.NClient.Send(string.Format("cMK$|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
             }
             else
                 client.Send("BN");
@@ -105,8 +105,8 @@ namespace SunDofus.World.Game.World
         {
             if (client.Player.Guild != null)
             {
-                foreach (var character in client.Player.Guild.Members.Where(x => x.Character.isConnected))
-                    character.Character.NetworkClient.Send(string.Format("cMK%|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
+                foreach (var character in client.Player.Guild.Members.Where(x => x.Character.IsConnected))
+                    character.Character.NClient.Send(string.Format("cMK%|{0}|{1}|{2}", client.Player.ID, client.Player.Name, message));
             }
             else
                 client.Send("BN");

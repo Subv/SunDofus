@@ -7,52 +7,10 @@ namespace SunDofus.World.Game.Characters.Stats
 {
     class AbstractStats
     {
-        public int _bases, _items, _dons, _boosts;
-
-        public int Bases
-        {
-            get
-            {
-                return _bases;
-            }
-            set                
-            {
-                _bases = value;
-            }
-        }
-        public int Items
-        {
-            get
-            {
-                return _items;
-            }
-            set
-            {
-                _items = value;
-            }
-        }
-        public int Dons
-        {
-            get
-            {
-                return _dons;
-            }
-            set
-            {
-                _dons = value;
-            }
-        }
-        public int Boosts
-        {
-            get
-            {
-                return _boosts;
-            }
-            set
-            {
-                _boosts = value;
-            }
-        }
+        public int Bases { get; set; }
+        public int Items { get; set; }
+        public int Dons { get; set; }
+        public int Boosts { get; set; }
 
         public AbstractStats()
         {

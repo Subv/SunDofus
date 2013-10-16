@@ -20,8 +20,8 @@ namespace SunDofus.World.Game.Exchanges
             traider.State.ActualPlayerExchange = traided.ID;
             traided.State.ActualPlayerExchange = traider.ID;
 
-            traider.NetworkClient.Send("ECK1");
-            traided.NetworkClient.Send("ECK1");
+            traider.NClient.Send("ECK1");
+            traided.NClient.Send("ECK1");
         }
 
         public static void LeaveExchange(Characters.Character canceler, bool must = true)
@@ -38,8 +38,8 @@ namespace SunDofus.World.Game.Exchanges
                 {
                     var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.ActualTraided);
 
-                    if (character.isConnected == true && must)
-                        character.NetworkClient.Send("EV");
+                    if (character.IsConnected == true && must)
+                        character.NClient.Send("EV");
 
                     canceler.State.ActualTraided = -1;
                     canceler.State.ActualPlayerExchange = -1;
@@ -67,8 +67,8 @@ namespace SunDofus.World.Game.Exchanges
                 {
                     var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == canceler.State.ActualTraider);
 
-                    if (character.isConnected == true && must)
-                        character.NetworkClient.Send("EV");
+                    if (character.IsConnected == true && must)
+                        character.NClient.Send("EV");
 
                     canceler.State.ActualTraider = -1;
                     canceler.State.ActualPlayerExchange = -1;

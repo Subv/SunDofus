@@ -116,7 +116,7 @@ namespace SunDofus.World.Network.Realm
                 if (Player != null)
                 {
                     Player.GetMap().DelPlayer(Player);
-                    Player.isConnected = false;
+                    Player.IsConnected = false;
 
                     if (Player.State.OnExchange)
                         SunDofus.World.Game.Exchanges.ExchangesManager.LeaveExchange(Player);
@@ -131,12 +131,12 @@ namespace SunDofus.World.Network.Realm
 
                                 var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First
                                     (x => x.ID == (Player.State.ReceiverInviteGuild != -1 ? Player.State.ReceiverInviteGuild : Player.State.SenderInviteGuild));
-                                if (character.isConnected)
+                                if (character.IsConnected)
                                 {
                                     character.State.SenderInviteGuild = -1;
                                     character.State.ReceiverInviteGuild = -1;
                                     character.State.OnWaitingGuild = false;
-                                    character.NetworkClient.Send("gJEc");
+                                    character.NClient.Send("gJEc");
                                 }
 
                                 Player.State.ReceiverInviteGuild = -1;
@@ -156,12 +156,12 @@ namespace SunDofus.World.Network.Realm
 
                                 var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First
                                     (x => x.ID == (Player.State.ReceiverInviteParty != -1 ? Player.State.ReceiverInviteParty : Player.State.SenderInviteParty));
-                                if (character.isConnected)
+                                if (character.IsConnected)
                                 {
                                     character.State.SenderInviteParty = -1;
                                     character.State.ReceiverInviteParty = -1;
                                     character.State.OnWaitingParty = false;
-                                    character.NetworkClient.Send("PR");
+                                    character.NClient.Send("PR");
                                 }
 
                                 Player.State.ReceiverInviteParty = -1;
@@ -198,7 +198,7 @@ namespace SunDofus.World.Network.Realm
                             character.State.ChallengeAsked = -1;
                             character.State.IsChallengeAsker = false;
 
-                            character.NetworkClient.Send(string.Format("GA;902;{0};{1}", character.ID, Player.ID));
+                            character.NClient.Send(string.Format("GA;902;{0};{1}", character.ID, Player.ID));
                         }
                     }
 
@@ -214,7 +214,7 @@ namespace SunDofus.World.Network.Realm
                             character.State.ChallengeAsker = -1;
                             character.State.IsChallengeAsked = false;
 
-                            character.NetworkClient.Send(string.Format("GA;902;{0};{1}", character.ID, Player.ID));
+                            character.NClient.Send(string.Format("GA;902;{0};{1}", character.ID, Player.ID));
                         }
                     }
                 }

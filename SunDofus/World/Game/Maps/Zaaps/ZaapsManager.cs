@@ -16,7 +16,7 @@ namespace SunDofus.World.Game.Maps.Zaaps
                 if (!character.Zaaps.Contains(zaap.MapID))
                 {
                     character.Zaaps.Add(zaap.MapID);
-                    character.NetworkClient.Send("Im024");
+                    character.NClient.Send("Im024");
                 }
 
                 var savepos = (Entities.Requests.ZaapsRequests.ZaapsList.Any(x => x.MapID == character.SaveMap) ?
@@ -26,10 +26,10 @@ namespace SunDofus.World.Game.Maps.Zaaps
                 Entities.Requests.ZaapsRequests.ZaapsList.Where(x => character.Zaaps.Contains(x.MapID)).ToList().
                     ForEach(x => packet = string.Format("{0}{1};{2}|", packet, x.MapID, CalcPrice(character.GetMap(), x.Map)));
 
-                character.NetworkClient.Send(packet.Substring(0, packet.Length - 1));
+                character.NClient.Send(packet.Substring(0, packet.Length - 1));
             }
             else
-                character.NetworkClient.Send("BN");
+                character.NClient.Send("BN");
         }
 
         public static void SaveZaap(Characters.Character character)
@@ -41,10 +41,10 @@ namespace SunDofus.World.Game.Maps.Zaaps
                 character.SaveMap = zaap.MapID;
                 character.SaveCell = zaap.CellID;
 
-                character.NetworkClient.Send("Im06");
+                character.NClient.Send("Im06");
             }
             else
-                character.NetworkClient.Send("BN");
+                character.NClient.Send("BN");
         }
 
         public static void OnMove(Characters.Character character, int nextZaap)
@@ -56,15 +56,15 @@ namespace SunDofus.World.Game.Maps.Zaaps
                 var price = CalcPrice(character.GetMap(), zaap.Map);
 
                 character.Kamas -= price;
-                character.NetworkClient.Send(string.Concat("Im046;", price));
+                character.NClient.Send(string.Concat("Im046;", price));
                 character.TeleportNewMap(zaap.MapID, zaap.CellID);
 
-                character.NetworkClient.Send("WV");
+                character.NClient.Send("WV");
 
                 character.SendChararacterStats();
             }
             else
-                character.NetworkClient.Send("BN");
+                character.NClient.Send("BN");
         }
 
         private static int CalcPrice(Map startMap, Map nextMap)

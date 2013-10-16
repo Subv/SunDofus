@@ -39,7 +39,7 @@ namespace SunDofus.World.Entities.Requests
 
                         Exp = sqlResult.GetInt64("experience"),
 
-                        isNewCharacter = false,
+                        IsNewCharacter = false,
 
                     };
 
@@ -113,23 +113,23 @@ namespace SunDofus.World.Entities.Requests
 
                 sqlCommand.ExecuteNonQuery();
 
-                character.isNewCharacter = false;
+                character.IsNewCharacter = false;
             }
         }
 
         public static void SaveCharacter(Game.Characters.Character character)
         {
-            if (character.isNewCharacter && !character.isDeletedCharacter)
+            if (character.IsNewCharacter && !character.IsDeletedCharacter)
             {
                 CreateCharacter(character);
                 return;
             }
-            else if (character.isDeletedCharacter)
+            else if (character.IsDeletedCharacter)
             {
                 DeleteCharacter(character.Name);
                 return;
             }
-            else if(!character.isDeletedCharacter && !character.isNewCharacter)
+            else if(!character.IsDeletedCharacter && !character.IsNewCharacter)
             {
                 lock (DatabaseProvider.Locker)
                 {

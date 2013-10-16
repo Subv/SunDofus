@@ -7,9 +7,9 @@ namespace SunDofus.World.Game.Characters.Items
 {
     class InventaryItems
     {
-        public Character Client;
-        public List<CharacterItem> ItemsList;
-        public Dictionary<int, CharacterSet> SetsList;
+        public Character Client { get; set; }
+        public List<CharacterItem> ItemsList { get; set; }
+        public Dictionary<int, CharacterSet> SetsList { get; set; }
 
         public InventaryItems(Character character)
         {
@@ -70,7 +70,7 @@ namespace SunDofus.World.Game.Characters.Items
                         Client.Pods += (item.Model.Pods * item.Quantity);
 
                         RefreshBonus();
-                        Client.NetworkClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
+                        Client.NClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
 
                         return;
                     }
@@ -83,7 +83,7 @@ namespace SunDofus.World.Game.Characters.Items
                 Client.Pods += (item.Model.Pods * item.Quantity);
                 RefreshBonus();
 
-                Client.NetworkClient.Send(string.Format("OAKO{0}", item.ToString()));
+                Client.NClient.Send(string.Concat("OAKO", item.ToString()));
             }
         }
 
@@ -118,7 +118,7 @@ namespace SunDofus.World.Game.Characters.Items
                         Client.Pods += (item.Model.Pods * item.Quantity);
 
                         RefreshBonus();
-                        Client.NetworkClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
+                        Client.NClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
 
                         return;
                     }
@@ -129,7 +129,7 @@ namespace SunDofus.World.Game.Characters.Items
                     Client.Pods += (item.Model.Pods * item.Quantity);
                     RefreshBonus();
 
-                    Client.NetworkClient.Send(string.Format("OAKO{0}", item.ToString()));
+                    Client.NClient.Send(string.Concat("OAKO", item.ToString()));
                 }
             }
         }
@@ -147,7 +147,7 @@ namespace SunDofus.World.Game.Characters.Items
                         Client.Pods -= (item.Quantity * item.Model.Pods);
 
                         ItemsList.Remove(item);
-                        Client.NetworkClient.Send(string.Format("OR{0}", item.ID));
+                        Client.NClient.Send(string.Concat("OR", item.ID));
 
                         RefreshBonus();
                     }
@@ -156,13 +156,13 @@ namespace SunDofus.World.Game.Characters.Items
                         Client.Pods -= (quantity * item.Model.Pods);
 
                         item.Quantity -= quantity;
-                        Client.NetworkClient.Send(string.Format("OQ{0}|{1}", item.ID, item.Quantity));
+                        Client.NClient.Send(string.Format("OQ{0}|{1}", item.ID, item.Quantity));
 
                         RefreshBonus();
                     }
                 }
                 else
-                    Client.NetworkClient.Send("BN");
+                    Client.NClient.Send("BN");
             }
         }
 
@@ -176,13 +176,13 @@ namespace SunDofus.World.Game.Characters.Items
             if (ItemsHandler.PositionAvaliable(item.Model.Type, item.Model.isUsable, pos) == false
                 || pos == 1 && item.Model.isTwoHands == true && isOccuptedPos(15) || pos == 15 && isOccuptedPos(1))
             {
-                Client.NetworkClient.Send("BN");
+                Client.NClient.Send("BN");
                 return;
             }
 
             if (!ItemsHandler.ConditionsAvaliable(item.Model, Client))
             {
-                Client.NetworkClient.Send("Im119|44");
+                Client.NClient.Send("Im119|44");
                 return;
             }
 
@@ -190,14 +190,14 @@ namespace SunDofus.World.Game.Characters.Items
             {
                 if (!ItemsList.Any(x => x.Model.ID == item.Model.ID && x.Position != -1 && x.Model.Type == 23))
                 {
-                    Client.NetworkClient.Send("OAEA");
+                    Client.NClient.Send("OAEA");
                     return;
                 }
             }
 
             if (item.Model.Level > Client.Level)
             {
-                Client.NetworkClient.Send("OAEL");
+                Client.NClient.Send("OAEL");
                 return;
             }
 
@@ -215,7 +215,7 @@ namespace SunDofus.World.Game.Characters.Items
                     Client.Pods += (item.Model.Pods * item.Quantity);
                     RefreshBonus();
 
-                    Client.NetworkClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
+                    Client.NClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
                     DeleteItem(item.ID, item.Quantity);
 
                     if (Client.State.Party != null)
@@ -257,14 +257,14 @@ namespace SunDofus.World.Game.Characters.Items
                         AddItem(Copy, false);
                     }
 
-                    Client.NetworkClient.Send(string.Format("OQ{0}|{1}", item.ID, item.Quantity));
+                    Client.NClient.Send(string.Format("OQ{0}|{1}", item.ID, item.Quantity));
                 }
             }
 
             if (Client.State.Party != null)
                 Client.State.Party.UpdateMembers();
 
-            Client.NetworkClient.Send(string.Format("OM{0}|{1}", item.ID, (item.Position != -1 ? item.Position.ToString() : "")));
+            Client.NClient.Send(string.Format("OM{0}|{1}", item.ID, (item.Position != -1 ? item.Position.ToString() : "")));
             Client.GetMap().Send(string.Format("Oa{0}|{1}", Client.ID, Client.GetItemsPos()));
 
             RefreshBonus();
@@ -364,11 +364,11 @@ namespace SunDofus.World.Game.Characters.Items
 
                 foreach (var effect in set.BonusList[numberItems])
                 {
-                    strEffects += string.Format("{0},", effect.SetString());
+                    strEffects += string.Concat(effect.SetString(), ",");
                     effect.ParseEffect(Client);
                 }
 
-                Client.NetworkClient.Send(string.Format("OS+{0}|{1}|{2}", set.ID, strItems,
+                Client.NClient.Send(string.Format("OS+{0}|{1}|{2}", set.ID, strItems,
                     (strEffects == "" ? "" : strEffects.Substring(0, strEffects.Length - 1))));
             }
 
@@ -380,7 +380,7 @@ namespace SunDofus.World.Game.Characters.Items
         {
             if (Client.State.OnMove == true)
             {
-                Client.NetworkClient.Send("BN");
+                Client.NClient.Send("BN");
                 return;
             }
 
@@ -398,7 +398,7 @@ namespace SunDofus.World.Game.Characters.Items
 
             if (!ItemsList.Any(x => x.ID == itemID))
             {
-                Client.NetworkClient.Send("OUE");
+                Client.NClient.Send("OUE");
                 return;
             }
 
@@ -406,7 +406,7 @@ namespace SunDofus.World.Game.Characters.Items
 
             if (item.Model.isUsable == false)
             {
-                Client.NetworkClient.Send("BN");
+                Client.NClient.Send("BN");
                 return;
             }
 
@@ -416,7 +416,7 @@ namespace SunDofus.World.Game.Characters.Items
 
             if (!ItemsHandler.ConditionsAvaliable(item.Model, Client))
             {
-                Client.NetworkClient.Send("Im119|44");
+                Client.NClient.Send("Im119|44");
                 return;
             }
 

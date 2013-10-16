@@ -36,7 +36,7 @@ namespace SunDofus.World.Game.Exchanges
         public void Send(string message)
         {
             if (!IsNpc)
-                Character.NetworkClient.Send(message);
+                Character.NClient.Send(message);
         }
     }
 }

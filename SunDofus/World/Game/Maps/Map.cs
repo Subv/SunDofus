@@ -51,29 +51,29 @@ namespace SunDofus.World.Game.Maps
         public void Send(string message)
         {
             foreach (var character in Characters)
-                character.NetworkClient.Send(message);
+                character.NClient.Send(message);
         }
 
         public void AddPlayer(Characters.Character character)
         {
             Send(string.Concat("GM|+", character.PatternDisplayChar()));
 
-            character.NetworkClient.Send(string.Concat("fC", Fights.Count)); //Fight
+            character.NClient.Send(string.Concat("fC", Fights.Count)); //Fight
 
             lock (Characters)
                 Characters.Add(character);
 
             if (Characters.Count > 0)
-                character.NetworkClient.Send(string.Concat("GM", CharactersPattern()));
+                character.NClient.Send(string.Concat("GM", CharactersPattern()));
 
             if (Npcs.Count > 0)
-                character.NetworkClient.Send(string.Concat("GM", NPCsPattern()));
+                character.NClient.Send(string.Concat("GM", NPCsPattern()));
 
             if (MonstersGroups.Count > 0)
-                character.NetworkClient.Send(string.Concat("GM", MonstersGroupsPattern()));
+                character.NClient.Send(string.Concat("GM", MonstersGroupsPattern()));
 
             if (Collector != null && !Collector.IsInFight)
-                character.NetworkClient.Send(string.Concat("GM", Collector.PatternMap()));
+                character.NClient.Send(string.Concat("GM", Collector.PatternMap()));
         }
 
         public void DelPlayer(Characters.Character character)

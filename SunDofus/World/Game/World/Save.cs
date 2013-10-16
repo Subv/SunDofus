@@ -23,14 +23,14 @@ namespace SunDofus.World.Game.World
         {
             Entities.DatabaseProvider.Open();
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StartMaintenancePacket().GetPacket());
-            SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1164"));
+            SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.IsConnected).ToList().ForEach(x => x.NClient.Send("Im1164"));
 
             SaveChararacters();
             SaveGuilds();
             SaveCollectors();
             SaveBanks();
 
-            SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.isConnected).ToList().ForEach(x => x.NetworkClient.Send("Im1165"));
+            SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.IsConnected).ToList().ForEach(x => x.NClient.Send("Im1165"));
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StopMaintenancePacket().GetPacket());
             Entities.DatabaseProvider.Close();
 

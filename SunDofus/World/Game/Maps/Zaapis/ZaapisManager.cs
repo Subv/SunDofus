@@ -16,17 +16,17 @@ namespace SunDofus.World.Game.Maps.Zaapis
 
                 if ((zaapis.Faction == 1 && character.Faction.ID == 2) || (zaapis.Faction == 2 && character.Faction.ID == 1))
                 {
-                    character.NetworkClient.Send("Im1196");
+                    character.NClient.Send("Im1196");
                     return;
                 }
 
                 Entities.Requests.ZaapisRequests.ZaapisList.Where(x => x.Faction == zaapis.Faction).ToList().
                     ForEach(x => packet = string.Concat(packet, x.MapID, (character.Faction.ID == x.Faction ? ";10|" : ";20|")));
 
-                character.NetworkClient.Send(packet);
+                character.NClient.Send(packet);
             }
             else
-                character.NetworkClient.Send("BN");
+                character.NClient.Send("BN");
         }
 
         public static void OnMove(Characters.Character character, int nextZaapis)
@@ -37,22 +37,22 @@ namespace SunDofus.World.Game.Maps.Zaapis
 
                 if ((zaapis.Faction == 1 && character.Faction.ID == 2) || (zaapis.Faction == 2 && character.Faction.ID == 1))
                 {
-                    character.NetworkClient.Send("Im1196");
+                    character.NClient.Send("Im1196");
                     return;
                 }
 
                 var price = (character.Faction.ID == zaapis.Faction ? 10 : 20);
 
                 character.Kamas -= price;
-                character.NetworkClient.Send(string.Concat("Im046;", price));
+                character.NClient.Send(string.Concat("Im046;", price));
                 character.TeleportNewMap(zaapis.MapID, zaapis.CellID);
 
-                character.NetworkClient.Send("Wv");
+                character.NClient.Send("Wv");
 
                 character.SendChararacterStats();
             }
             else
-                character.NetworkClient.Send("BN");
+                character.NClient.Send("BN");
         }
     }
 }

@@ -290,7 +290,7 @@ namespace SunDofus.World.Network.Realm
                     }
 
                     character.SpellsInventary.LearnSpells();
-                    character.isNewCharacter = true;
+                    character.IsNewCharacter = true;
 
                     lock (World.Entities.Requests.CharactersRequests.CharactersList)
                         World.Entities.Requests.CharactersRequests.CharactersList.Add(character);
@@ -339,7 +339,7 @@ namespace SunDofus.World.Network.Realm
                     Client.Characters.Remove(character);
 
                 Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
-                character.isDeletedCharacter = true;
+                character.IsDeletedCharacter = true;
 
                 SendCharacterList("");
             }
@@ -365,11 +365,11 @@ namespace SunDofus.World.Network.Realm
                     {
                         Client.Player = character;
                         Client.Player.State = new CharacterState(Client.Player);
-                        Client.Player.NetworkClient = Client;
+                        Client.Player.NClient = Client;
 
-                        Client.Player.isConnected = true;
+                        Client.Player.IsConnected = true;
 
-                        foreach (var client in Network.ServersHandler.RealmServer.Clients.Where(x => x.Characters.Any(c => c.isConnected == true) && x.Friends.Contains(Client.Infos.Pseudo) && x.Player.Friends.WillNotifyWhenConnected))
+                        foreach (var client in Network.ServersHandler.RealmServer.Clients.Where(x => x.Characters.Any(c => c.IsConnected == true) && x.Friends.Contains(Client.Infos.Pseudo) && x.Player.Friends.WillNotifyWhenConnected))
                             client.Send(string.Concat("Im0143;", Client.Player.Name));
 
                         Client.Send(string.Concat("ASK", Client.Player.PatternSelect()));
@@ -458,7 +458,7 @@ namespace SunDofus.World.Network.Realm
             if (enable == "+")
             {
                 if (Client.Player.Faction.ID != 0)
-                    Client.Player.Faction.isEnabled = true;
+                    Client.Player.Faction.IsEnabled = true;
             }
             else if (enable == "*")
             {
@@ -473,7 +473,7 @@ namespace SunDofus.World.Network.Realm
 
                 if (Client.Player.Faction.ID != 0)
                 {
-                    Client.Player.Faction.isEnabled = false;
+                    Client.Player.Faction.IsEnabled = false;
                     Client.Player.Faction.Honor -= hloose;
                 }
             }
@@ -639,7 +639,7 @@ namespace SunDofus.World.Network.Realm
 
             if (Client.Player.Guild != null)
             {
-                Client.Player.NetworkClient.Send("Ea");
+                Client.Player.NClient.Send("Ea");
                 return;
             }
 
@@ -674,7 +674,7 @@ namespace SunDofus.World.Network.Realm
 
             if (infos[4].Length > 15 || Entities.Requests.GuildsRequest.GuildsList.Any(x => x.Name == infos[4]))
             {
-                Client.Player.NetworkClient.Send("Ean");
+                Client.Player.NClient.Send("Ean");
                 return;
             }
 
@@ -742,7 +742,7 @@ namespace SunDofus.World.Network.Realm
 
                 if (guild.Members.Count < 2)
                 {
-                    Client.Player.NetworkClient.Send("Im1101");
+                    Client.Player.NClient.Send("Im1101");
                     return;
                 }
 
@@ -750,7 +750,7 @@ namespace SunDofus.World.Network.Realm
 
                 if (member.Rank == 1)
                 {
-                    Client.Player.NetworkClient.Send("Im1101");
+                    Client.Player.NClient.Send("Im1101");
                     return;
                 }
 
@@ -763,7 +763,7 @@ namespace SunDofus.World.Network.Realm
 
                 guild.Members.Remove(member);
                 Client.Player.Guild = null;
-                Client.Player.NetworkClient.Send("Im0176");
+                Client.Player.NClient.Send("Im0176");
             }
             else
             {
@@ -781,19 +781,19 @@ namespace SunDofus.World.Network.Realm
 
                 if (member.Rank == 1)
                 {
-                    Client.Player.NetworkClient.Send("Im1101");
+                    Client.Player.NClient.Send("Im1101");
                     return;
                 }
                 
-                if(character.isConnected)
-                    character.NetworkClient.Send(string.Format("gKK{0}|{1}", Client.Player.Name, Client.Player.Name));
+                if(character.IsConnected)
+                    character.NClient.Send(string.Format("gKK{0}|{1}", Client.Player.Name, Client.Player.Name));
 
                 member.Rank = 0;
                 member.Rights = 0;
                 member.ExpGived = 0;
                 member.ExpGaved = 0;
 
-                Client.Player.NetworkClient.Send(string.Concat("Im0177;", character.Name));
+                Client.Player.NClient.Send(string.Concat("Im0177;", character.Name));
 
                 guild.Members.Remove(member);
                 character.Guild = null;
@@ -839,7 +839,7 @@ namespace SunDofus.World.Network.Realm
 
             if (member.Rank == 1 && (member.Rights != rights || member.Rank != rank))
             {
-                Client.Player.NetworkClient.Send("Im1101");
+                Client.Player.NClient.Send("Im1101");
                 return;
             }
 
@@ -860,8 +860,8 @@ namespace SunDofus.World.Network.Realm
                 member.Rights = 29695;
                 member.ExpGived = expgived;
 
-                if (member.Character.isConnected)
-                    member.Character.NetworkClient.Send(string.Format("gS{0}|{1}|{2}", guild.Name, guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(member.Rights)));
+                if (member.Character.IsConnected)
+                    member.Character.NClient.Send(string.Format("gS{0}|{1}|{2}", guild.Name, guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(member.Rights)));
 
                 return;
             }
@@ -870,8 +870,8 @@ namespace SunDofus.World.Network.Realm
             member.Rights = rights;
             member.Rank = rank;
 
-            if (member.Character.isConnected)
-                member.Character.NetworkClient.Send(string.Format("gS{0}|{1}|{2}", guild.Name, guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(member.Rights)));
+            if (member.Character.IsConnected)
+                member.Character.NClient.Send(string.Format("gS{0}|{1}|{2}", guild.Name, guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(member.Rights)));
         }
 
         private void UpgradeStatsGuild(string datas)
@@ -972,13 +972,13 @@ namespace SunDofus.World.Network.Realm
 
             if (guild.CollectorMax <= guild.Collectors.Count)
             {
-                Client.Player.NetworkClient.SendMessage("Vous avez trop de percepteurs !");
+                Client.Player.NClient.SendMessage("Vous avez trop de percepteurs !");
                 return;
             }
 
             if (map.Collector != null)
             {
-                Client.Player.NetworkClient.SendMessage("Un percepteur est déjà présent sur la map !");
+                Client.Player.NClient.SendMessage("Un percepteur est déjà présent sur la map !");
                 return;
             }
 
@@ -1054,11 +1054,11 @@ namespace SunDofus.World.Network.Realm
 
                     var receiverCharacter = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.Name == datas.Substring(1));
 
-                    if (receiverCharacter.Guild != null || Client.Player.Guild == null || !receiverCharacter.isConnected)
+                    if (receiverCharacter.Guild != null || Client.Player.Guild == null || !receiverCharacter.IsConnected)
                     {
                         if (receiverCharacter.Guild != null)
                         {
-                            Client.Player.NetworkClient.Send("Le joueur est déjà membre d'une guilde !");
+                            Client.Player.NClient.Send("Le joueur est déjà membre d'une guilde !");
                             return;
                         }
 
@@ -1073,7 +1073,7 @@ namespace SunDofus.World.Network.Realm
                     receiverCharacter.State.OnWaitingGuild = true;
 
                     Client.Send(string.Concat("gJR", receiverCharacter.Name));
-                    receiverCharacter.NetworkClient.Send(string.Format("gJr{0}|{1}|{2}", Client.Player.ID, Client.Player.Name, Client.Player.Guild.Name));
+                    receiverCharacter.NClient.Send(string.Format("gJr{0}|{1}|{2}", Client.Player.ID, Client.Player.Name, Client.Player.Guild.Name));
 
                     break;
 
@@ -1089,7 +1089,7 @@ namespace SunDofus.World.Network.Realm
 
                     var accepttoCharacter = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == ID);
 
-                    if (!accepttoCharacter.isConnected || accepttoCharacter.State.ReceiverInviteGuild != Client.Player.ID)
+                    if (!accepttoCharacter.IsConnected || accepttoCharacter.State.ReceiverInviteGuild != Client.Player.ID)
                     {
                         Client.Send("BN");
                         return;
@@ -1108,7 +1108,7 @@ namespace SunDofus.World.Network.Realm
                     accepttoCharacter.Guild.Members.Add(member);
 
                     Client.Send(string.Format("gS{0}|{1}|{2}", guild.Name, guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(member.Rights)));
-                    accepttoCharacter.NetworkClient.Send(string.Concat("gJKa", Client.Player.Name));
+                    accepttoCharacter.NClient.Send(string.Concat("gJKa", Client.Player.Name));
 
                     break;
 
@@ -1122,13 +1122,13 @@ namespace SunDofus.World.Network.Realm
 
                     var refusetoCharacter = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.Name == datas.Substring(1));
 
-                    if (!refusetoCharacter.isConnected || refusetoCharacter.State.ReceiverInviteGuild == Client.Player.ID)
+                    if (!refusetoCharacter.IsConnected || refusetoCharacter.State.ReceiverInviteGuild == Client.Player.ID)
                     {
                         Client.Send("BN");
                         return;
                     }
 
-                    refusetoCharacter.NetworkClient.Send("gJEc");
+                    refusetoCharacter.NClient.Send("gJEc");
 
                     break;
             }
@@ -1352,7 +1352,7 @@ namespace SunDofus.World.Network.Realm
                 character.State.IsChallengeAsked = false;
 
                 Client.Send(string.Format("GA;901;{0};{1}", Client.Player.ID, character.ID));
-                character.NetworkClient.Send(string.Format("GA;901;{0};{1}", character.ID, Client.Player.ID));
+                character.NClient.Send(string.Format("GA;901;{0};{1}", character.ID, Client.Player.ID));
 
                 Client.Player.GetMap().AddFight(new SunDofus.World.Game.Maps.Fights.Fight
                     (Client.Player, character, SunDofus.World.Game.Maps.Fights.Fight.FightType.Challenge, Client.Player.GetMap()));
@@ -1377,7 +1377,7 @@ namespace SunDofus.World.Network.Realm
                 character.State.IsChallengeAsked = false;
 
                 Client.Send(string.Format("GA;902;{0};{1}", Client.Player.ID, character.ID));
-                character.NetworkClient.Send(string.Format("GA;902;{0};{1}", character.ID, Client.Player.ID));
+                character.NClient.Send(string.Format("GA;902;{0};{1}", character.ID, Client.Player.ID));
             }
         }
 
@@ -1807,13 +1807,13 @@ namespace SunDofus.World.Network.Realm
                     {
                         var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == receiverID);
 
-                        if (!character.isConnected == true && !character.State.Busy)
+                        if (!character.IsConnected == true && !character.State.Busy)
                         {
                             Client.Send("BN");
                             return;
                         }
 
-                        character.NetworkClient.Send(string.Format("ERK{0}|{1}|1", Client.Player.ID, character.ID));
+                        character.NClient.Send(string.Format("ERK{0}|{1}|1", Client.Player.ID, character.ID));
                         Client.Send(string.Format("ERK{0}|{1}|1", Client.Player.ID, character.ID));
 
                         character.State.ActualTraider = Client.Player.ID;
@@ -2083,7 +2083,7 @@ namespace SunDofus.World.Network.Realm
                 x.memberTwo.Character.ID == character.ID) || (x.memberTwo.Character.ID == Client.Player.ID && x.memberOne.Character.ID == character.ID));
 
             Client.Send(string.Concat("EK1", Client.Player.ID));
-            character.NetworkClient.Send(string.Concat("EK1", Client.Player.ID));
+            character.NClient.Send(string.Concat("EK1", Client.Player.ID));
 
             if (character.State.OnExchangeAccepted)
                 actualExchange.ValideExchange();
@@ -2095,7 +2095,7 @@ namespace SunDofus.World.Network.Realm
 
         private void PartyInvite(string datas)
         {
-            if (World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.Name == datas && x.isConnected))
+            if (World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.Name == datas && x.IsConnected))
             {
                 var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.Name == datas);
                 if (character.State.Party != null || character.State.Busy)
@@ -2114,7 +2114,7 @@ namespace SunDofus.World.Network.Realm
                         Client.Player.State.OnWaitingParty = true;
 
                         Client.Send(string.Format("PIK{0}|{1}", Client.Player.Name, character.Name));
-                        character.NetworkClient.Send(string.Format("PIK{0}|{1}", Client.Player.Name, character.Name));
+                        character.NClient.Send(string.Format("PIK{0}|{1}", Client.Player.Name, character.Name));
                     }
                     else
                     {
@@ -2130,7 +2130,7 @@ namespace SunDofus.World.Network.Realm
                     Client.Player.State.OnWaitingParty = true;
 
                     Client.Send(string.Format("PIK{0}|{1}", Client.Player.Name, character.Name));
-                    character.NetworkClient.Send(string.Format("PIK{0}|{1}", Client.Player.Name, character.Name));
+                    character.NClient.Send(string.Format("PIK{0}|{1}", Client.Player.Name, character.Name));
                 }
             }
             else
@@ -2148,7 +2148,7 @@ namespace SunDofus.World.Network.Realm
             var character = World.Entities.Requests.CharactersRequests.CharactersList.First
                 (x => x.ID == Client.Player.State.SenderInviteParty);
 
-            if (character.isConnected == false || character.State.ReceiverInviteParty != Client.Player.ID)
+            if (character.IsConnected == false || character.State.ReceiverInviteParty != Client.Player.ID)
             {
                 Client.Send("BN");
                 return;
@@ -2160,7 +2160,7 @@ namespace SunDofus.World.Network.Realm
             Client.Player.State.SenderInviteParty = -1;
             Client.Player.State.OnWaitingParty = false;
 
-            character.NetworkClient.Send("PR");
+            character.NClient.Send("PR");
         }
 
         private void PartyAccept(string datas)
@@ -2169,7 +2169,7 @@ namespace SunDofus.World.Network.Realm
             {
                 var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.SenderInviteParty);
 
-                if (character.isConnected == false || character.State.ReceiverInviteParty != Client.Player.ID)
+                if (character.IsConnected == false || character.State.ReceiverInviteParty != Client.Player.ID)
                 {
                     Client.Player.State.SenderInviteParty = -1;
                     Client.Player.State.OnWaitingParty = false;
@@ -2193,13 +2193,13 @@ namespace SunDofus.World.Network.Realm
                     if (character.State.Party.Members.Count > 7)
                     {
                         Client.Send("BN");
-                        character.NetworkClient.Send("PR");
+                        character.NClient.Send("PR");
                         return;
                     }
                     character.State.Party.AddMember(Client.Player);
                 }
 
-                character.NetworkClient.Send("PR");
+                character.NClient.Send("PR");
             }
             else
             {
@@ -2238,7 +2238,7 @@ namespace SunDofus.World.Network.Realm
 
             if (add)
             {
-                if (!character.isConnected || Client.Player.State.IsFollowing)
+                if (!character.IsConnected || Client.Player.State.IsFollowing)
                 {
                     Client.Send("BN");
                     return;
@@ -2255,7 +2255,7 @@ namespace SunDofus.World.Network.Realm
                     character.State.Followers.Add(Client.Player);
 
                 character.State.IsFollow = true;
-                character.NetworkClient.Send(string.Concat("Im052;", Client.Player.Name));
+                character.NClient.Send(string.Concat("Im052;", Client.Player.Name));
 
                 Client.Player.State.FollowingID = character.ID;
                 Client.Player.State.IsFollowing = true;
@@ -2276,7 +2276,7 @@ namespace SunDofus.World.Network.Realm
                     character.State.Followers.Remove(Client.Player);
 
                 character.State.IsFollow = false;
-                character.NetworkClient.Send(string.Concat("Im053;", Client.Player.Name));
+                character.NClient.Send(string.Concat("Im053;", Client.Player.Name));
 
                 Client.Player.State.FollowingID = -1;
                 Client.Player.State.IsFollowing = false;
@@ -2298,7 +2298,7 @@ namespace SunDofus.World.Network.Realm
 
             if (add)
             {
-                if (!character.isConnected || character.State.Party == null || !character.State.Party.Members.ContainsKey(Client.Player))
+                if (!character.IsConnected || character.State.Party == null || !character.State.Party.Members.ContainsKey(Client.Player))
                 {
                     Client.Send("BN");
                     return;
@@ -2307,18 +2307,18 @@ namespace SunDofus.World.Network.Realm
                 foreach (var charinparty in character.State.Party.Members.Keys.Where(x => x != character))
                 {
                     if (charinparty.State.IsFollowing)
-                        charinparty.NetworkClient.Send("PF-");
+                        charinparty.NClient.Send("PF-");
 
                     lock (character.State.Followers)
                         character.State.Followers.Add(Client.Player);
 
-                    character.NetworkClient.Send(string.Concat("Im052;", Client.Player.Name));
+                    character.NClient.Send(string.Concat("Im052;", Client.Player.Name));
 
                     charinparty.State.FollowingID = character.ID;
                     charinparty.State.IsFollowing = true;
 
-                    charinparty.NetworkClient.Send(string.Format("IC{0}|{1}", character.GetMap().Model.PosX, character.GetMap().Model.PosY));
-                    charinparty.NetworkClient.Send(string.Concat("PF+", character.ID));
+                    charinparty.NClient.Send(string.Format("IC{0}|{1}", character.GetMap().Model.PosX, character.GetMap().Model.PosY));
+                    charinparty.NClient.Send(string.Concat("PF+", character.ID));
                 }
 
                 character.State.IsFollow = true;
@@ -2336,13 +2336,13 @@ namespace SunDofus.World.Network.Realm
                     lock (character.State.Followers)
                         character.State.Followers.Remove(Client.Player);
 
-                    character.NetworkClient.Send(string.Concat("Im053;", Client.Player.Name));
+                    character.NClient.Send(string.Concat("Im053;", Client.Player.Name));
 
                     charinparty.State.FollowingID = -1;
                     charinparty.State.IsFollowing = false;
 
-                    charinparty.NetworkClient.Send("IC|");
-                    charinparty.NetworkClient.Send("PF-");
+                    charinparty.NClient.Send("IC|");
+                    charinparty.NClient.Send("PF-");
                 }
 
                 character.State.IsFollow = false;

@@ -111,7 +111,7 @@ namespace SunDofus.World.Network.Realm
                 {
                     case "enabled":
                         
-                        Client.Player.Faction.isEnabled = bool.Parse(datas[2].Trim());
+                        Client.Player.Faction.IsEnabled = bool.Parse(datas[2].Trim());
                         Client.Player.SendChararacterStats();
                         Client.Player.TeleportNewMap(Client.Player.MapID, Client.Player.MapCell);
                         break;
@@ -122,7 +122,7 @@ namespace SunDofus.World.Network.Realm
                         Client.Player.Faction.Level = 1;
                         Client.Player.Faction.Honor = 0;
                         Client.Player.Faction.Deshonor = 0;
-                        Client.Player.Faction.isEnabled = false;
+                        Client.Player.Faction.IsEnabled = false;
                         Client.Player.SendChararacterStats();
                         break;
 

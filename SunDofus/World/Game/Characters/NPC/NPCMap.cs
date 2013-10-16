@@ -9,57 +9,15 @@ namespace SunDofus.World.Game.Characters.NPC
 {
     class NPCMap
     {
-        private int _ID, _mapID, _mapCell, _dir;
+        public int ID { get; set; }
+        public int MapID { get; set; }
+        public int MapCell { get; set; }
+        public int Dir { get; set; }
 
-        public int ID 
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int MapID
-        {
-            get
-            {
-                return _mapID;
-            }
-            set
-            {
-                _mapID = value;
-            }
-        }
-        public int MapCell
-        {
-            get
-            {
-                return _mapCell;
-            }
-            set
-            {
-                _mapCell = value;
-            }
-        }
-        public int Dir
-        {
-            get
-            {
-                return _dir;
-            }
-            set
-            {
-                _dir = value;
-            }
-        }
+        public bool MustMove { get; set; }
 
-        public bool mustMove;
-
-        public NoPlayerCharacterModel Model;
-        private Timer _movements;
+        public NoPlayerCharacterModel Model { get; set; }
+        private Timer timer;
 
         public NPCMap(NoPlayerCharacterModel model)
         {
@@ -68,13 +26,13 @@ namespace SunDofus.World.Game.Characters.NPC
 
         public void StartMove()
         {
-            if (mustMove == false || !Utilities.Config.GetBoolElement("MustNPCsMove"))
+            if (MustMove == false || !Utilities.Config.GetBoolElement("MUSTNPCSMOVE"))
                 return;
 
-            _movements = new Timer();
-            _movements.Enabled = true;
-            _movements.Interval = Utilities.Basic.Rand(5000, 15000);
-            _movements.Elapsed += new ElapsedEventHandler(this.Move);
+            timer = new Timer();
+            timer.Enabled = true;
+            timer.Interval = Utilities.Basic.Rand(5000, 15000);
+            timer.Elapsed += new ElapsedEventHandler(this.Move);
         }
 
         public string PatternOnMap()
@@ -95,7 +53,7 @@ namespace SunDofus.World.Game.Characters.NPC
 
         private void Move(object e, EventArgs e2)
         {
-            _movements.Interval = Utilities.Basic.Rand(5000, 15000);
+            timer.Interval = Utilities.Basic.Rand(5000, 15000);
 
             var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == MapID);
 

@@ -57,7 +57,7 @@ namespace SunDofus.World.Entities.Requests
                         MapID = int.Parse(infosMap[0]),
                         MapCell = int.Parse(infosMap[1]),
                         Dir = int.Parse(infosMap[2]),
-                        mustMove = bool.Parse(infosMap[3]),
+                        MustMove = bool.Parse(infosMap[3]),
                     };
 
                     if (MapsRequests.MapsList.Any(x => x.Model.ID == npc.MapID))

@@ -65,12 +65,12 @@ namespace SunDofus.World.Game.Guilds
 
         public void Send(string message)
         {
-            Members.Where(x => x.Character.isConnected).ToList().ForEach(x => x.Character.NetworkClient.Send(message));
+            Members.Where(x => x.Character.IsConnected).ToList().ForEach(x => x.Character.NClient.Send(message));
         }
 
         public void SendMessage(string message)
         {
-            Members.Where(x => x.Character.isConnected).ToList().ForEach(x => x.Character.NetworkClient.Send(string.Concat("cs<font color=\"663399\">", message, "</font>")));
+            Members.Where(x => x.Character.IsConnected).ToList().ForEach(x => x.Character.NClient.Send(string.Concat("cs<font color=\"663399\">", message, "</font>")));
         }
 
         public string GetSpells()

@@ -6,14 +6,14 @@ namespace SunDofus.World.Game.Characters.Jobs
 {
     internal class Job
     {
-        public long Experience;
-        public int Id;
-        public int Level;
-        public List<JobSkill> Skills;
+        public long Experience { get; set; }
+        public int ID { get; set; }
+        public int Level { get; set; }
+        public List<JobSkill> Skills { get; set; }
 
         public Job(int id, int level, long experience)
         {
-            Id = id;
+            ID = id;
             Level = level;
             Experience = experience;
             Skills = new List<JobSkill>();

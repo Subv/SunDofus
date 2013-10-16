@@ -12,289 +12,54 @@ namespace SunDofus.World.Game.Characters
 {
     class Character
     {
-        private string _name;
-        private int _ID, _color, _color2, _color3, _class, _sex, _skin, _size, _level, _mapID, _mapCell, _dir, _charactPoint, _spellPoint, _energy;
-        private int _maximumLife, _life, _pods, _savemap, _savecell;
-        private long _exp, _kamas;
+        public string Name { get; set; }
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
+        public int ID { get; set; }
+        public int Color { get; set; }
+        public int Color2 { get; set; }
+        public int Color3 { get; set; }
+        public int Class { get; set; }
+        public int Sex { get; set; }
+        public int Skin { get; set; }
+        public int Size { get; set; }
+        public int Level { get; set; }
+        public int MapID { get; set; }
+        public int MapCell { get; set; }
+        public int Dir { get; set; }
+        public int CharactPoint { get; set; }
+        public int SpellPoint { get; set; }
+        public int Energy { get; set; }
+        public int MaximumLife { get; set; }
+        public int Life { get; set; }
+        public int Pods { get; set; }
+        public int SaveMap { get; set; }
+        public int SaveCell { get; set; }
 
-        public int ID
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Color
-        {
-            get
-            {
-                return _color;
-            }
-            set
-            {
-                _color = value;
-            }
-        }
-        public int Color2
-        {
-            get
-            {
-                return _color2;
-            }
-            set
-            {
-                _color2 = value;
-            }
-        }
-        public int Color3
-        {
-            get
-            {
-                return _color3;
-            }
-            set
-            {
-                _color3 = value;
-            }
-        }
-        public int Class
-        {
-            get
-            {
-                return _class;
-            }
-            set
-            {
-                _class = value;
-            }
-        }
-        public int Sex
-        {
-            get
-            {
-                return _sex;
-            }
-            set
-            {
-                _sex = value;
-            }
-        }
-        public int Skin
-        {
-            get
-            {
-                return _skin;
-            }
-            set
-            {
-                _skin = value;
-            }
-        }
-        public int Size
-        {
-            get
-            {
-                return _size;
-            }
-            set
-            {
-                _size = value;
-            }
-        }
-        public int Level
-        {
-            get
-            {
-                return _level;
-            }
-            set
-            {
-                _level = value;
-            }
-        }
-        public int MapID
-        {
-            get
-            {
-                return _mapID;
-            }
-            set
-            {
-                _mapID = value;
-            }
-        }
-        public int MapCell
-        {
-            get
-            {
-                return _mapCell;
-            }
-            set
-            {
-                _mapCell = value;
-            }
-        }
-        public int Dir
-        {
-            get
-            {
-                return _dir;
-            }
-            set
-            {
-                _dir = value;
-            }
-        }
-        public int CharactPoint
-        {
-            get
-            {
-                return _charactPoint;
-            }
-            set
-            {
-                _charactPoint = value;
-            }
-        }
-        public int SpellPoint
-        {
-            get
-            {
-                return _spellPoint;
-            }
-            set
-            {
-                _spellPoint = value;
-            }
-        }
-        public int Energy
-        {
-            get
-            {
-                return _energy;
-            }
-            set
-            {
-                _energy = value;
-            }
-        }
-        public int MaximumLife
-        {
-            get
-            {
-                return _maximumLife;
-            }
-            set
-            {
-                _maximumLife = value;
-            }
-        }
-        public int Life
-        {
-            get
-            {
-                return _life;
-            }
-            set
-            {
-                _life = value;
-            }
-        }
-        public int Pods
-        {
-            get
-            {
-                return _pods;
-            }
-            set
-            {
-                _pods = value;
-            }
-        }
-        public int SaveMap
-        {
-            get
-            {
-                return _savemap;
-            }
-            set
-            {
-                _savemap = value;
-            }
-        }
-        public int SaveCell
-        {
-            get
-            {
-                return _savecell;
-            }
-            set
-            {
-                _savecell = value;
-            }
-        }
+        public long Exp { get; set; }
+        public long Kamas { get; set; }
 
-        public long Exp
-        {
-            get
-            {
-                return _exp;
-            }
-            set
-            {
-                _exp = value;
-            }
-        }
-        public long Kamas
-        {
-            get
-            {
-                return _kamas;
-            }
-            set
-            {
-                _kamas = value;
-            }
-        }
+        public bool IsNewCharacter { get; set; }
+        public bool IsDeletedCharacter { get; set; }
+        public bool IsConnected { get; set; }
 
-        public bool isNewCharacter;
-        public bool isDeletedCharacter;
-        public bool isConnected;
+        private long quotaRecruitment;
+        private long quotaTrade;
 
-        private long QuotaRecruitment;
-        private long QuotaTrade;
+        public List<int> Zaaps { get; set; }
 
-        public List<int> Zaaps;
+        public Stats.Stats Stats { get; set; }
+        public Guilds.Guild Guild { get; set; }
+        public InventaryItems ItemsInventary { get; set; }
+        public InventarySpells SpellsInventary { get; set; }
+        public RealmClient NClient { get; set; }
 
-        public Stats.Stats Stats;
-        public Guilds.Guild Guild;
-        public InventaryItems ItemsInventary;
-        public InventarySpells SpellsInventary;
-        public RealmClient NetworkClient;
+        public CharacterState State { get; set; }
+        public CharacterFaction Faction { get; set; }
+        public CharacterChannels Channels { get; set; }
+        public CharacterJobs Jobs { get; set; }
 
-        public CharacterState State;
-        public CharacterFaction Faction;
-        public CharacterChannels Channels;
-        public CharacterJobs Jobs;
-
-        public CharacterFriends Friends;
-        public CharacterEnemies Enemies;
+        public CharacterFriends Friends { get; set; }
+        public CharacterEnemies Enemies { get; set; }
 
         public Character()
         {
@@ -311,11 +76,11 @@ namespace SunDofus.World.Game.Characters
             Enemies = new CharacterEnemies(this);
 
             Energy = 10000;
-            isConnected = false;
-            isDeletedCharacter = false;
+            IsConnected = false;
+            IsDeletedCharacter = false;
 
-            QuotaRecruitment = 0;
-            QuotaTrade = 0;
+            quotaRecruitment = 0;
+            quotaTrade = 0;
         }
 
         #region Exp
@@ -343,7 +108,9 @@ namespace SunDofus.World.Game.Characters
                     CharactPoint += 5;
                 }
 
-                NetworkClient.Send(string.Format("AN{0}", Level));
+                if(IsConnected)
+                    NClient.Send(string.Concat("AN", Level));
+
                 SpellsInventary.LearnSpells();
                 SendChararacterStats();
             }
@@ -355,12 +122,12 @@ namespace SunDofus.World.Game.Characters
 
         public long TimeTrade()
         {
-            return (long)Math.Ceiling((double)((QuotaTrade - Environment.TickCount) / 1000));
+            return (long)Math.Ceiling((double)((quotaTrade - Environment.TickCount) / 1000));
         }
 
         public long TimeRecruitment()
         {
-            return (long)Math.Ceiling((double)((QuotaRecruitment - Environment.TickCount) / 1000));
+            return (long)Math.Ceiling((double)((quotaRecruitment - Environment.TickCount) / 1000));
         }
 
         public bool CanSendinTrade()
@@ -375,12 +142,12 @@ namespace SunDofus.World.Game.Characters
 
         public void RefreshTrade()
         {
-            QuotaTrade = Environment.TickCount + Utilities.Config.GetLongElement("AntiSpamTrade");
+            quotaTrade = Environment.TickCount + Utilities.Config.GetLongElement("ANTISPAMTRADE");
         }
 
         public void RefreshRecruitment()
         {
-            QuotaRecruitment = Environment.TickCount + Utilities.Config.GetLongElement("AntiSpamRecruitment");
+            quotaRecruitment = Environment.TickCount + Utilities.Config.GetLongElement("ANTISPAMRECRUITMENT");
         }
 
         #endregion
@@ -443,7 +210,7 @@ namespace SunDofus.World.Game.Characters
                 builder.Append(Utilities.Basic.DeciToHex(Color2)).Append(";");
                 builder.Append(Utilities.Basic.DeciToHex(Color3)).Append(";");
                 builder.Append(GetItemsPos()).Append(";");
-                builder.Append("0;").Append(Utilities.Config.GetIntElement("ServerId")).Append(";;;");
+                builder.Append("0;").Append(Utilities.Config.GetIntElement("SERVERID")).Append(";;;");
             }
 
             return builder.ToString();
@@ -501,7 +268,7 @@ namespace SunDofus.World.Game.Characters
                 builder.Append(member.ExpGaved).Append(";");
                 builder.Append(member.ExpGived).Append(";");
                 builder.Append(member.Rights).Append(";");
-                builder.Append((isConnected ? "1" : "0")).Append(";");
+                builder.Append((IsConnected ? "1" : "0")).Append(";");
                 builder.Append(Faction.ID).Append(";0");
             }
 
@@ -543,12 +310,12 @@ namespace SunDofus.World.Game.Characters
             {
                 var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == this.MapID);
 
-                NetworkClient.Send(string.Format("GDM|{0}|{1}|{2}", map.Model.ID, map.Model.Date, map.Model.Key));
+                NClient.Send(string.Format("GDM|{0}|{1}|{2}", map.Model.ID, map.Model.Date, map.Model.Key));
 
                 if (this.State.IsFollow)
                 {
                     foreach (var character in this.State.Followers)
-                        character.NetworkClient.Send(string.Format("IC{0}|{1}", GetMap().Model.PosX, GetMap().Model.PosY));
+                        character.NClient.Send(string.Format("IC{0}|{1}", GetMap().Model.PosX, GetMap().Model.PosY));
                 }
             }
         }
@@ -565,7 +332,7 @@ namespace SunDofus.World.Game.Characters
 
         public void TeleportNewMap(int _mapID, int _cell)
         {
-            NetworkClient.Send(string.Format("GA;2;{0};", ID));
+            NClient.Send(string.Format("GA;2;{0};", ID));
 
             GetMap().DelPlayer(this);
             var map = Entities.Requests.MapsRequests.MapsList.First(x => x.Model.ID == _mapID);
@@ -588,12 +355,12 @@ namespace SunDofus.World.Game.Characters
         public void SendChararacterStats()
         {
             UpdateStats();
-            NetworkClient.Send(string.Format("As{0}", this.ToString()));
+            NClient.Send(string.Concat("As", this.ToString()));
         }
 
         public void SendPods()
         {
-            NetworkClient.Send(string.Format("Ow{0}|{1}", Pods, Stats.maxPods.Total()));
+            NClient.Send(string.Format("Ow{0}|{1}", Pods, Stats.maxPods.Total()));
         }
 
         public void ResetBonus()
@@ -818,16 +585,16 @@ namespace SunDofus.World.Game.Characters
         public void AddLife(int _life)
         {
             if (Life == MaximumLife)
-                NetworkClient.SendMessage("Im119");
+                NClient.SendMessage("Im119");
 
             else if ((Life + _life) > MaximumLife)
             {
-                NetworkClient.SendMessage(string.Format("Im01;{0}", (MaximumLife - Life)));
+                NClient.SendMessage(string.Concat("Im01;", (MaximumLife - Life)));
                 Life = MaximumLife;
             }
             else
             {
-                NetworkClient.SendMessage(string.Format("Im01;{0}", _life));
+                NClient.SendMessage(string.Concat("Im01;", _life));
                 Life += _life;
             }
         }
@@ -839,7 +606,7 @@ namespace SunDofus.World.Game.Characters
             if (Life < MaximumLife)
                 dif = MaximumLife - Life;
 
-            MaximumLife = Stats.life.Total() + (NetworkClient.Player.Level * 5) + 55;
+            MaximumLife = Stats.life.Total() + (NClient.Player.Level * 5) + 55;
 
             if (dif <= 0)
                 Life = MaximumLife;

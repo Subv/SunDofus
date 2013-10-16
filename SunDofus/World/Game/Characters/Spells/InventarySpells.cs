@@ -7,8 +7,8 @@ namespace SunDofus.World.Game.Characters.Spells
 {
     class InventarySpells
     {
-        public List<CharacterSpell> Spells;
-        public Character Client;
+        public List<CharacterSpell> Spells { get; set; }
+        public Character Client { get; set; }
 
         public InventarySpells(Character client)
         {
@@ -60,7 +60,7 @@ namespace SunDofus.World.Game.Characters.Spells
             foreach (var spell in Spells)
                 packet += string.Format("{0}~{1}~{2};", spell.ID, spell.Level, Maps.Pathfinding.GetDirChar(spell.Position));
 
-            Client.NetworkClient.Send(string.Format("SL{0}", packet));
+            Client.NClient.Send(string.Concat("SL", packet));
         }
 
         public string SaveSpells()

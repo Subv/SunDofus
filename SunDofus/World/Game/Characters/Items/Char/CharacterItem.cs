@@ -8,44 +8,12 @@ namespace SunDofus.World.Game.Characters.Items
 {
     class CharacterItem
     {
-        private int _ID, _position, _quantity;
+        public int ID { get; set; }
+        public int Position { get; set; }
+        public int Quantity { get; set; }
 
-        public int ID 
-        {
-            get
-            {
-                return _ID;
-            }
-            set
-            {
-                _ID = value;
-            }
-        }
-        public int Position
-        {
-            get
-            {
-                return _position;
-            }
-            set
-            {
-                _position = value;
-            }
-        }
-        public int Quantity
-        {
-            get
-            {
-                return _quantity;
-            }
-            set
-            {
-                _quantity = value;
-            }
-        }
-
-        public ItemModel Model;
-        public List<Effects.EffectItem> EffectsList;
+        public ItemModel Model { get; set; }
+        public List<Effects.EffectItem> EffectsList { get; set; }
 
         public CharacterItem(ItemModel model)
         {
@@ -56,7 +24,7 @@ namespace SunDofus.World.Game.Characters.Items
             lock(EffectsList)
                 Model.EffectsList.ForEach(x => EffectsList.Add(new Effects.EffectItem(x)));
 
-            _position = -1;
+            Position = -1;
         }
 
         public string EffectsInfos()
@@ -103,19 +71,19 @@ namespace SunDofus.World.Game.Characters.Items
 
         public string StorageString()
         {
-            return string.Format("{0}|{1}|{2}|{3}", ID, Utilities.Basic.DeciToHex(_quantity), Model.ID, EffectsInfos());
+            return string.Format("{0}|{1}|{2}|{3}", ID, Utilities.Basic.DeciToHex(Quantity), Model.ID, EffectsInfos());
         }
 
         public string SaveString()
         {
-            return string.Format("{0}~{1}~{2}~{3}", Utilities.Basic.DeciToHex(Model.ID), Utilities.Basic.DeciToHex(_quantity),
-                (_position == -1 ? "" : Utilities.Basic.DeciToHex(_position)), EffectsInfos());
+            return string.Format("{0}~{1}~{2}~{3}", Utilities.Basic.DeciToHex(Model.ID), Utilities.Basic.DeciToHex(Quantity),
+                (Position == -1 ? "" : Utilities.Basic.DeciToHex(Position)), EffectsInfos());
         }
 
         public override string ToString()
         {
-            return string.Format("{0}~{1}~{2}~{3}~{4}",Utilities.Basic.DeciToHex(_ID), Utilities.Basic.DeciToHex(Model.ID),
-                Utilities.Basic.DeciToHex(_quantity), (_position == -1 ? "" : Utilities.Basic.DeciToHex(_position)), EffectsInfos());
+            return string.Format("{0}~{1}~{2}~{3}~{4}",Utilities.Basic.DeciToHex(ID), Utilities.Basic.DeciToHex(Model.ID),
+                Utilities.Basic.DeciToHex(Quantity), (Position == -1 ? "" : Utilities.Basic.DeciToHex(Position)), EffectsInfos());
         }
     }
 }
