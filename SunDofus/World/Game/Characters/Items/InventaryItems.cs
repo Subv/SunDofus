@@ -186,6 +186,12 @@ namespace SunDofus.World.Game.Characters.Items
                 return;
             }
 
+            if (IsEquippablePos(pos) & HasTemplateEquipped(item.Model.ID))
+            {
+                Client.NClient.Send("OAEA");
+                return;
+            }
+
             if (item.Model.Type == 23 && pos != -1)
             {
                 if (!ItemsList.Any(x => x.Model.ID == item.Model.ID && x.Position != -1 && x.Model.Type == 23))
@@ -326,6 +332,32 @@ namespace SunDofus.World.Game.Characters.Items
                 lock(ItemsList)
                     ItemsList.Add(item);
             }
+        }
+
+        public bool IsEquippablePos(int pos)
+        {
+            return (pos > -1 & pos < 16);
+        }
+
+        public bool HasTemplateEquipped(int id)
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                var item = GetItemByPos(i);
+
+                if (item != null && item.Model.ID == id)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public CharacterItem GetItemByPos(int pos)
+        {
+            if (!ItemsList.Any(x => x.Position == pos))
+                return null;
+
+            return ItemsList.First(x => x.Position == pos);
         }
 
         public void RefreshBonus()

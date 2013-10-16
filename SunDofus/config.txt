@@ -34,6 +34,7 @@ $ServerPort 5555;
 $ServerCom 0;
 
 $MinMembers_ToWatchOut_Guilds 10;
+$MinGMLevel_ToTeleportWith_Geoposition 4;
 
 $AntiSpamTrade 60000;
 $AntiSpamRecruitment 60000;

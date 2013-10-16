@@ -163,3 +163,4 @@ SunDofus v0.3.2.188 :
 -> [16.10.2013] Revu presque total du code (normalisation, string.Concat ou string.Format, ...)
 -> [16.10.2013] Correction des paths avec la prise en compte des Triggers (Pathfinding, Merci Persi2)
 -> [16.10.2013] Rectification de l'affichage extérieur des guildes et suivant le nombre de membre (personnalisable en configuration)
+-> [16.10.2013] Téléportation avec un double clic sur la géoposition (GMLevel en configuration, Merci Persi2)

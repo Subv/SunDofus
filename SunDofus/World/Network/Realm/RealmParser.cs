@@ -40,6 +40,7 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["AT"] = ParseTicket;
             RegisteredPackets["AV"] = SendCommunauty;
             RegisteredPackets["BA"] = ParseConsoleMessage;
+            RegisteredPackets["Ba"] = TeleportByPos;
             RegisteredPackets["BD"] = SendDate;
             RegisteredPackets["BM"] = ParseChatMessage;
             RegisteredPackets["cC"] = ChangeChannel;
@@ -561,7 +562,7 @@ namespace SunDofus.World.Network.Realm
 
         #endregion
 
-        #region Messages
+        #region Chat
 
         private void ParseChatMessage(string datas)
         {
@@ -585,7 +586,7 @@ namespace SunDofus.World.Network.Realm
                     return;
 
                 case "%":
-                    //GuildMessage
+                    Chat.SendGuildMessage(Client, message);
                     return;
 
                 case "#":
@@ -1174,6 +1175,24 @@ namespace SunDofus.World.Network.Realm
             {
                 var guild = Client.Player.Guild;
                 Client.Send(string.Format("gS{0}|{1}|{2}", guild.Name, guild.Emblem.Replace(",", "|"), Utilities.Basic.ToBase36(guild.Members.First(x => x.Character == Client.Player).Rights)));
+            }
+        }
+
+        private void TeleportByPos(string packet)
+        {
+            if (packet[0] != 'M') return;
+            if (!packet.Contains(',')) return;
+
+            if (Client.Infos.Level <= Utilities.Config.GetIntElement("MINGMLEVEL_TOTELEPORTWITH_GEOPOSITION"))
+                return;
+
+            var pos = packet.Substring(1).Split(',');
+            var maps = Entities.Requests.MapsRequests.MapsList.Where(x => x.Model.PosX == int.Parse(pos[0]) && x.Model.PosY == int.Parse(pos[1])).ToArray();
+
+            if (maps.Length > 0)
+            {
+                Client.Player.TeleportNewMap(maps[0].Model.ID, Client.Player.MapCell);
+                Client.SendConsoleMessage("Character Teleported !", 0);
             }
         }
 

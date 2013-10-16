@@ -14,6 +14,7 @@ namespace SunDofus.World.Game.Maps
         private string strPath;
         private int startCell;
         private int startDir;
+        private bool isTrigger;
 
         private int destination, direction;
         private Map map;
@@ -33,12 +34,13 @@ namespace SunDofus.World.Game.Maps
             }
         }
 
-        public Pathfinding(string path, Map map, int startCell, int startDir)
+        public Pathfinding(string path, Map map, int startCell, int startDir, bool trigger = false)
         {
             this.strPath = path;
             this.map = map;
             this.startCell = startCell;
             this.startDir = startDir;
+            this.isTrigger = trigger;
         }
 
         public void UpdatePath(string path)
@@ -175,7 +177,7 @@ namespace SunDofus.World.Game.Maps
                 actuelCell = NextCell(actuelCell, direction);
                 backCell = actuelCell;
 
-                if (map.Triggers.Any(x => x.CellID == backCell))
+                if (isTrigger && map.Triggers.Any(x => x.CellID == backCell))
                     return GetDirChar(direction) + GetCellChars(backCell) + ",0";
             }
 
