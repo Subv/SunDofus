@@ -750,8 +750,6 @@ namespace SunDofus.World.Network.Realm
                 return;
             }            
 
-            //TODO, VERIF DROITS
-
             if (datas == Client.Player.Name)
             {
                 if (Client.Player.Guild == null)
@@ -796,8 +794,14 @@ namespace SunDofus.World.Network.Realm
                     Client.Send("BN");
                     return;
                 }
-
+                
                 var guild = Client.Player.Guild;
+
+                if (!guild.Members.First(x => x.Character == Client.Player).CanBann)
+                {
+                    Client.Send("Im1101");
+                    return;
+                }
 
                 var member = guild.Members.First(x => x.Character == character);
 
@@ -830,9 +834,14 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
-            //TODO VERIF DROITS
-
             var guild = Client.Player.Guild;
+
+            if (!guild.Members.First(x => x.Character == Client.Player).CanManageRights)
+            {
+                Client.Send("Im1101");
+                return;
+            }
+
             var memember = guild.Members.First(x => x.Character == Client.Player);
             var infos = datas.Split('|');
 
@@ -904,9 +913,13 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
-            //TODO, VERIF DROITS
-
             var guild = Client.Player.Guild;
+
+            if (!guild.Members.First(x => x.Character == Client.Player).CanManageBoost)
+            {
+                Client.Send("Im1101");
+                return;
+            }
 
             switch (datas[0])
             {
@@ -964,7 +977,11 @@ namespace SunDofus.World.Network.Realm
 
             var guild = Client.Player.Guild;
 
-            //TODO VERIF DROITS
+            if (!guild.Members.First(x => x.Character == Client.Player).CanManageBoost)
+            {
+                Client.Send("Im1101");
+                return;
+            }
 
             var spellID = 0;
 
@@ -991,6 +1008,12 @@ namespace SunDofus.World.Network.Realm
             }
 
             var guild = Client.Player.Guild;
+
+            if (!guild.Members.First(x => x.Character == Client.Player).CanHireTaxCollector)
+            {
+                Client.Send("Im1101");
+                return;
+            }
 
             if (guild.CollectorMax <= guild.Collectors.Count)
             {
@@ -1080,11 +1103,17 @@ namespace SunDofus.World.Network.Realm
                     {
                         if (receiverCharacter.Guild != null)
                         {
-                            Client.Player.NClient.Send("Le joueur est déjà membre d'une guilde !");
+                            Client.Player.NClient.Send("Im134");
                             return;
                         }
 
                         Client.Send("BN");
+                        return;
+                    }
+
+                    if (!Client.Player.Guild.Members.First(x => x.Character == Client.Player).CanInvite)
+                    {
+                        Client.Send("Im1101");
                         return;
                     }
 
@@ -1201,14 +1230,20 @@ namespace SunDofus.World.Network.Realm
 
         private void TeleportByPos(string packet)
         {
-            if (packet[0] != 'M') return;
-            if (!packet.Contains(',')) return;
+            if (packet[0] != 'M' || !packet.Contains(','))
+                return;
 
             if (Client.Infos.Level <= Utilities.Config.GetIntElement("MINGMLEVEL_TOTELEPORTWITH_GEOPOSITION"))
                 return;
 
             var pos = packet.Substring(1).Split(',');
-            var maps = Entities.Requests.MapsRequests.MapsList.Where(x => x.Model.PosX == int.Parse(pos[0]) && x.Model.PosY == int.Parse(pos[1])).ToArray();
+            var posx = 0;
+            var posy = 0;
+
+            if (!int.TryParse(pos[0], out posx) || !int.TryParse(pos[1], out posy))
+                return;
+
+            var maps = Entities.Requests.MapsRequests.MapsList.Where(x => x.Model.PosX == posx && x.Model.PosY == posy).ToArray();
 
             if (maps.Length > 0)
             {
@@ -1232,23 +1267,23 @@ namespace SunDofus.World.Network.Realm
 
             switch (packet)
             {
-                case 1://GameMove
+                case 1:
                     GameMove(datas.Substring(3));
                     return;
 
-                case 500://ParseGameAction
+                case 500:
                     ParseGameAction(datas.Substring(3));
                     return;
 
-                case 900://AskChallenge
+                case 900:
                     //AskChallenge(datas);
                     return;
 
-                case 901://AcceptChallenge
+                case 901:
                     //AcceptChallenge(datas);
                     return;
 
-                case 902://RefuseChallenge
+                case 902:
                     //RefuseChallenge(datas);
                     return;
             }
@@ -1323,7 +1358,7 @@ namespace SunDofus.World.Network.Realm
                             if (SunDofus.World.Game.World.Conditions.TriggerCondition.HasConditions(Client.Player, trigger.Conditions))
                                 SunDofus.World.Game.Effects.EffectAction.ParseEffect(Client.Player, trigger.ActionID, trigger.Args);
                             else
-                                Client.SendMessage("Vous ne possédez pas les conditions nécessaires pour cette action !");
+                                Client.Send("Im11");
                         }
                     }
 

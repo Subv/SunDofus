@@ -207,6 +207,7 @@ namespace SunDofus.World.Game.Characters.Items
                 return;
             }
 
+            var lastpos = item.Position;
             item.Position = pos;
 
             if (item.Position == -1)
@@ -224,7 +225,7 @@ namespace SunDofus.World.Game.Characters.Items
                     Client.NClient.Send(string.Format("OQ{0}|{1}", item2.ID, item2.Quantity));
                     DeleteItem(item.ID, item.Quantity);
 
-                    if (Client.State.Party != null)
+                    if (Client.State.Party != null && IsEquippablePos(lastpos))
                         Client.State.Party.UpdateMembers();
 
                     return;
@@ -267,7 +268,7 @@ namespace SunDofus.World.Game.Characters.Items
                 }
             }
 
-            if (Client.State.Party != null)
+            if (Client.State.Party != null && IsEquippablePos(pos))
                 Client.State.Party.UpdateMembers();
 
             Client.NClient.Send(string.Format("OM{0}|{1}", item.ID, (item.Position != -1 ? item.Position.ToString() : "")));

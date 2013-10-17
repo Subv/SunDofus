@@ -168,3 +168,7 @@ SunDofus v0.3.2.195
 -> [16.10.2013] Téléportation avec un double clic sur la géoposition (GMLevel en configuration, Merci Persi2)
 -> [16.10.2013] Durant le mode débug, l'émulateur ne charge plus les triggers (permettant un lancement beaucoup plus rapide)
 -> [16.10.2013] Rectification de la file d'attente du serveur d'authentification et mise en place d'une autre file d'attente sur le serveur de jeu !
+
+SunDofus v0.3.3.X
+-> [17.10.2013] Gestion complète des droits de guilde (impossible d'effectuer ce qui n'est pas possible avec WPEPro par exemple)
+-> [17.10.2013] Rectification de l'update des groupes lors d'un changement d'items (ne se lance que lorsque l'item est sur le personnage et non plus simplement "bougé")

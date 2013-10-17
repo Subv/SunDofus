@@ -53,7 +53,7 @@ namespace SunDofus.World.Game.Guilds
 
             if (Members.Count < 2)
             {
-                member.Rights = 29695;
+                member.Rights = 1;
                 member.Rank = 1;
             }
             else
