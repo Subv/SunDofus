@@ -71,7 +71,7 @@ namespace SunDofus.World.Game.Bank
             {
                 var pods = item.Model.Pods * quantity;
 
-                if (pods + Character.Pods > Character.Stats.maxPods.Total())
+                if (pods + Character.Pods > Character.Stats.GetStat(Characters.Stats.StatEnum.MaxPods).Total)
                 {
                     Character.NClient.SendMessage("Vous êtes trop lourd pour éxecuter cette action !");
                     return;

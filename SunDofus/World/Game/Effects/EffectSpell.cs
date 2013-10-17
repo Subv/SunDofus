@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SunDofus.World.Game.Characters.Spells;
+
 namespace SunDofus.World.Game.Effects
 {
     class EffectSpell
@@ -15,7 +16,7 @@ namespace SunDofus.World.Game.Effects
         public int Chance { get; set; }
         public string Effect { get; set; }
 
-        public Target Target { get; set; }
+        public EffectSpellTarget Target { get; set; }
 
         public EffectSpell()
         {

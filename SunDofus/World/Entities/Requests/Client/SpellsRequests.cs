@@ -30,7 +30,7 @@ namespace SunDofus.World.Entities.Requests
                     };
 
                     for (int i = 1; i <= 6; i++)
-                        spell.ParseLevel(sqlReader.GetString("lvl" + i));
+                        spell.ParseLevel(sqlReader.GetString("lvl" + i), i);
 
                     lock(SpellsList)
                         SpellsList.Add(spell);

@@ -363,7 +363,7 @@ namespace SunDofus.World.Game.Characters.Items
 
         public void RefreshBonus()
         {
-            Client.ResetItemsStats();
+            Client.Stats.ResetStatEquipped();
             SetsList.Clear();
 
             foreach (var item in ItemsList)

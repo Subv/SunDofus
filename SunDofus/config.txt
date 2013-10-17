@@ -35,8 +35,8 @@ $ServerIp 127.0.0.1;
 $ServerPort 5555;
 $ServerCom 0;
 
-$MinMembers_ToWatchOut_Guilds 10;
-$MinGMLevel_ToTeleportWith_Geoposition 4;
+$MinMembers_ToWatchOut_Guilds 1;
+$MinGMLevel_ToTeleportWith_Geoposition 1;
 
 $AntiSpamTrade 60000;
 $AntiSpamRecruitment 60000;

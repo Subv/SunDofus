@@ -51,7 +51,7 @@ namespace SunDofus.World.Game.Characters
 
         public void UpdateMembers()
         {
-            Send(string.Concat("PM~", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty())));
+            Send(string.Concat("PM~", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.GetStat(Stats.StatEnum.Initiative).Total) select x.PatternOnParty())));
         }
 
         public void LeaveParty(string name, string kicker = "")
@@ -112,7 +112,7 @@ namespace SunDofus.World.Game.Characters
 
         private string PartyPattern()
         {
-            return string.Concat("+", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.initiative.Total()) select x.PatternOnParty()));
+            return string.Concat("+", string.Join("|", from x in Members.Keys.ToList().OrderByDescending(x => x.Stats.GetStat(Stats.StatEnum.Initiative).Total) select x.PatternOnParty()));
         }
     }
 }

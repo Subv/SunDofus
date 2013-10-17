@@ -14,33 +14,18 @@ namespace SunDofus.World.Game.Maps
         private string strPath;
         private int startCell;
         private int startDir;
-        private bool isTrigger;
+        private bool trigger;
 
-        private int destination, direction;
+        public int destination, direction;
         private Map map;
-
-        public int Destination
-        {
-            get
-            {
-                return destination;
-            }
-        }
-        public int Direction
-        {
-            get
-            {
-                return direction;
-            }
-        }
 
         public Pathfinding(string path, Map map, int startCell, int startDir, bool trigger = false)
         {
-            this.strPath = path;
+            strPath = path;
             this.map = map;
             this.startCell = startCell;
             this.startDir = startDir;
-            this.isTrigger = trigger;
+            this.trigger = trigger;
         }
 
         public void UpdatePath(string path)
@@ -78,7 +63,7 @@ namespace SunDofus.World.Game.Maps
                     return caseID - map.Model.Width + 1;
             }
 
-            return -1; 
+            return -1;
         }
 
         public static int GetCellNum(string cellChars)
@@ -117,15 +102,70 @@ namespace SunDofus.World.Game.Maps
             return hash.IndexOf(dirChar);
         }
 
-        public bool InLine(int cell1, int cell2)
+        public static int GetDistanceBetween(Map map, int id1, int id2)
         {
-            var isX = GetCellXCoord(cell1) == GetCellXCoord(cell2);
-            var isY = GetCellYCoord(cell1) == GetCellYCoord(cell2);
+            if (id1 == id2 || map == null)
+                return 0;
+
+            int diffX = Math.Abs(GetCellXCoord(map, id1) - GetCellXCoord(map, id2));
+            int diffY = Math.Abs(GetCellYCoord(map, id1) - GetCellYCoord(map, id2));
+
+            return (diffX + diffY);
+        }
+
+        public static int GetCellXCoord(Map map, int cellID)
+        {
+            int width = map.Model.Width;
+            return ((cellID - (width - 1) * GetCellYCoord(map, cellID)) / width);
+        }
+
+        public static int GetCellYCoord(Map map, int cellID)
+        {
+            int width = map.Model.Width;
+            int loc5 = (int)(cellID / ((width * 2) - 1));
+            int loc6 = cellID - loc5 * ((width * 2) - 1);
+            int loc7 = loc6 % width;
+
+            return (loc5 - loc7);
+        }
+
+        public static int GetDirection(Map map, int cell1, int cell2)
+        {
+            int[] ListChange = new int[] { 1, map.Model.Width, map.Model.Width * 2 - 1, map.Model.Width - 1, -1, -map.Model.Width, -map.Model.Width * 2 + 1, -(map.Model.Width - 1) };
+            int Result = cell2 - cell1;
+
+            for (int i = 7; i > -1; i--)
+                if (Result == ListChange[i])
+                    return i;
+
+            int ResultX = GetCellXCoord(map, cell2) - GetCellXCoord(map, cell1);
+            int ResultY = GetCellYCoord(map, cell2) - GetCellYCoord(map, cell1);
+
+            if (ResultX == 0)
+                if (ResultY > 0)
+                    return 3;
+                else
+                    return 7;
+            else if (ResultX > 0)
+                return 1;
+            else
+                return 5;
+        }
+
+        public static int OppositeDirection(int direction)
+        {
+            return (direction >= 4 ? direction - 4 : direction + 4);
+        }
+
+        public static bool InLine(Map map, int cell1, int cell2)
+        {
+            bool isX = GetCellXCoord(map, cell1) == GetCellXCoord(map, cell2);
+            bool isY = GetCellYCoord(map, cell1) == GetCellYCoord(map, cell2);
 
             return isX || isY;
         }
 
-        public int NextCell(int cell, int dir)
+        public static int NextCell(Map map, int cell, int dir)
         {
             switch (dir)
             {
@@ -164,7 +204,7 @@ namespace SunDofus.World.Game.Maps
             var toCell = GetCellNum(cell.Substring(1));
             var lenght = 0;
 
-            if (InLine(lastCell, toCell))
+            if (InLine(map, lastCell, toCell))
                 lenght = GetEstimateDistanceBetween(lastCell, toCell);
             else
                 lenght = int.Parse(Math.Truncate((GetEstimateDistanceBetween(lastCell, toCell) / 1.4)).ToString());
@@ -174,10 +214,10 @@ namespace SunDofus.World.Game.Maps
 
             for (var i = 1; i <= lenght; i++)
             {
-                actuelCell = NextCell(actuelCell, direction);
+                actuelCell = NextCell(map, actuelCell, direction);
                 backCell = actuelCell;
 
-                if (isTrigger && map.Triggers.Any(x => x.CellID == backCell))
+                if (trigger & map.Triggers.Any(x => x.CellID == backCell))
                     return GetDirChar(direction) + GetCellChars(backCell) + ",0";
             }
 
@@ -202,21 +242,11 @@ namespace SunDofus.World.Game.Maps
                 lastCell = GetCellNum(actualCell.Substring(1));
             }
 
-            destination = GetCellNum(strPath.Substring(strPath.Length - 2, 2));
-            direction = GetDirNum(strPath.Substring(strPath.Length - 3, 1));
- 
-            return newPath;
-        }
+            destination = GetCellNum(newPath.Substring(newPath.Length - 2, 2));
+            direction = GetDirNum(newPath.Substring(newPath.Length - 3, 1));
+            strPath = newPath;
 
-        public int GetDistanceBetween(int id1, int id2)
-        {
-            if (id1 == id2 || map == null) 
-                return 0;
-            
-            var diffX = Math.Abs(GetCellXCoord(id1) - GetCellXCoord(id2));
-            var diffY = Math.Abs(GetCellYCoord(id1) - GetCellYCoord(id2));
-
-            return (diffX + diffY);
+            return GetStartPath + newPath;
         }
 
         public int GetEstimateDistanceBetween(int id1, int id2)
@@ -224,26 +254,26 @@ namespace SunDofus.World.Game.Maps
             if (id1 == id2 || map == null)
                 return 0;
 
-            var diffX = Math.Abs(GetCellXCoord(id1) - GetCellXCoord(id2));
-            var diffY = Math.Abs(GetCellYCoord(id1) - GetCellYCoord(id2));
+            var diffX = Math.Abs(GetCellXCoord(map, id1) - GetCellXCoord(map, id2));
+            var diffY = Math.Abs(GetCellYCoord(map, id1) - GetCellYCoord(map, id2));
 
             return int.Parse(Math.Truncate(Math.Sqrt(Math.Pow(diffX, 2) + Math.Pow(diffY, 2))).ToString());
         }
 
-        public int GetCellXCoord(int cellid)
+        public int GetLength()
         {
-            var width = map.Model.Width;
-            return ((cellid - (width - 1) * GetCellYCoord(cellid)) / width);
-        }
+            int length = 0;
+            int lastCell = startCell;
+            int actualCell;
 
-        public int GetCellYCoord(int cellid)
-        {
-            var width = map.Model.Width;
-            var loc5 = (int)(cellid / ((width * 2) - 1));
-            var loc6 = cellid - loc5 * ((width * 2) - 1);
-            var loc7 = loc6 % width;
+            for (int i = 0; i <= strPath.Length - 1; i += 3)
+            {
+                actualCell = GetCellNum(strPath.Substring(i, 3).Substring(1));
+                length += GetDistanceBetween(map, lastCell, actualCell);
+                lastCell = actualCell;
+            }
 
-            return (loc5 - loc7);
+            return length;
         }
     }
 }

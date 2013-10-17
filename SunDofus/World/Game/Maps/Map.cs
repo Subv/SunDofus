@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SunDofus.World.Game.Maps.Fights;
 
 namespace SunDofus.World.Game.Maps
 {
@@ -48,10 +49,23 @@ namespace SunDofus.World.Game.Maps
                 MonstersGroups.Add(new Monsters.MonstersGroup(Model.Monsters, this));
         }
 
+        public string FormatFightCount()
+        {
+            return string.Concat("fC", Fights.Count);
+        }
+
+        public bool IsRushableCell(int cell)
+        {
+            return RushablesCells.Contains(cell);
+        }
+
         public void Send(string message)
         {
-            foreach (var character in Characters)
-                character.NClient.Send(message);
+            lock (Characters)
+            {
+                foreach (var character in Characters)
+                    character.NClient.Send(message);
+            }
         }
 
         public void AddPlayer(Characters.Character character)
@@ -74,6 +88,51 @@ namespace SunDofus.World.Game.Maps
 
             if (Collector != null && !Collector.IsInFight)
                 character.NClient.Send(string.Concat("GM", Collector.PatternMap()));
+
+            if (Fights.Count > 0)
+            {
+                character.NClient.Send(FormatFightCount());
+
+                foreach (Fight fight in Fights)
+                {
+                    if (fight.State == FightState.STARTING)
+                    {
+                        character.NClient.Send(fight.FormatFlagShow());
+                        character.NClient.Send(fight.FormatFlagFighter(fight.Team1.GetFighters()));
+                        character.NClient.Send(fight.FormatFlagFighter(fight.Team2.GetFighters()));
+
+                        if (fight.Team1.IsToggle(ToggleType.LOCK))
+                            character.NClient.Send("Go+A" + fight.Team1.ID);
+                        if (fight.Team1.IsToggle(ToggleType.HELP))
+                            character.NClient.Send("Go+H" + fight.Team1.ID);
+                        if (fight.Team1.IsToggle(ToggleType.PARTY))
+                            character.NClient.Send("Go+P" + fight.Team1.ID);
+                        if (fight.Team1.IsToggle(ToggleType.SPECTATOR))
+                            character.NClient.Send("Go+S" + fight.Team1.ID);
+
+                        if (fight.Team2.IsToggle(ToggleType.LOCK))
+                            character.NClient.Send("Go+A" + fight.Team2.ID);
+                        if (fight.Team2.IsToggle(ToggleType.HELP))
+                            character.NClient.Send("Go+H" + fight.Team2.ID);
+                        if (fight.Team2.IsToggle(ToggleType.PARTY))
+                            character.NClient.Send("Go+P" + fight.Team2.ID);
+                        if (fight.Team2.IsToggle(ToggleType.SPECTATOR))
+                            character.NClient.Send("Go+S" + fight.Team2.ID);
+                    }
+                }
+            }
+        }
+
+        public void AddFight(Fights.Fight fight)
+        {
+            lock (Fights)
+                Fights.Add(fight);
+        }
+
+        public void RemoveFight(Fight fight)
+        {
+            lock (Fights)
+                Fights.Remove(fight);
         }
 
         public void DelPlayer(Characters.Character character)
@@ -84,31 +143,22 @@ namespace SunDofus.World.Game.Maps
                 Characters.Remove(character);
         }
 
-        public void AddFight(Fights.Fight fight)
-        {
-            /*
-             *  Client.Send("Gc+" & Fight.BladesPattern)
-                Client.Send("Gt" & Fight.TeamPattern(0))
-                Client.Send("Gt" & Fight.TeamPattern(1))
-             * */
-        }
-
-        public int NextFightID()
-        {
-            var i = 1;
-
-            while(Fights.Any(x => x.ID == i))
-                i++;
-
-            return i;
-        }
-
         public int NextNpcID()
         {
             var i = -1;
 
             while (Npcs.Any(x => x.ID == i) || MonstersGroups.Any(x => x.ID == i))
                 i -= 1;
+
+            return i;
+        }
+
+        public int NextFightID()
+        {
+            var i = 1;
+
+            while (Fights.Any(x => x.ID == i))
+                i++;
 
             return i;
         }

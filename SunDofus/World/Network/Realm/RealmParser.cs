@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SunDofus.World.Game.Characters;
+using SunDofus.World.Game.Maps.Fights;
 using SunDofus.World.Game.Maps;
 using SunDofus.World.Game.Characters.Stats;
+using SunDofus.World.Game.Characters.Spells;
 using SunDofus.World.Game;
 using SunDofus.World.Game.World;
 
@@ -32,7 +34,7 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["AA"] = CreateCharacter;
             RegisteredPackets["AB"] = StatsBoosts;
             RegisteredPackets["AD"] = DeleteCharacter;
-
+            RegisteredPackets["Af"] = RefreshQueue;
             RegisteredPackets["Ag"] = SendGifts;
             RegisteredPackets["AG"] = AcceptGift;
             RegisteredPackets["AL"] = SendCharacterList;
@@ -44,10 +46,13 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["Ba"] = TeleportByPos;
             RegisteredPackets["BD"] = SendDate;
             RegisteredPackets["BM"] = ParseChatMessage;
+            RegisteredPackets["BS"] = UseSmiley;
             RegisteredPackets["cC"] = ChangeChannel;
             RegisteredPackets["DC"] = DialogCreate;
             RegisteredPackets["DR"] = DialogReply;
             RegisteredPackets["DV"] = DialogExit;
+            RegisteredPackets["eD"] = ChangeDirection;
+            RegisteredPackets["eU"] = UseEmote;
             RegisteredPackets["EA"] = ExchangeAccept;
             RegisteredPackets["EB"] = ExchangeBuy;
             RegisteredPackets["EK"] = ExchangeValidate;
@@ -59,11 +64,22 @@ namespace SunDofus.World.Network.Realm
             RegisteredPackets["FD"] = FriendDelete;
             RegisteredPackets["FL"] = FriendsList;
             RegisteredPackets["FO"] = FriendsFollow;
+            RegisteredPackets["fD"] = FightDetails;
+            RegisteredPackets["fL"] = FightList;
+            RegisteredPackets["fN"] = ToggleFightLock;
+            RegisteredPackets["fH"] = ToggleFightHelp;
+            RegisteredPackets["fP"] = ToggleFightParty;
+            RegisteredPackets["fS"] = ToggleFightSpectator;
             RegisteredPackets["GA"] = GameAction;
             RegisteredPackets["GC"] = CreateGame;
             RegisteredPackets["GI"] = GameInformations;
             RegisteredPackets["GK"] = EndAction;
             RegisteredPackets["GP"] = ChangeAlignmentEnable;
+            RegisteredPackets["GR"] = FightReady;
+            RegisteredPackets["GT"] = FightTurnReady;
+            RegisteredPackets["Gt"] = FightTurnPass;
+            RegisteredPackets["GQ"] = FightLeave;
+            RegisteredPackets["Gp"] = FightPlacement;
             RegisteredPackets["gB"] = UpgradeStatsGuild;
             RegisteredPackets["gb"] = UpgradeSpellsGuild;
             RegisteredPackets["gC"] = CreateGuild;
@@ -1208,10 +1224,7 @@ namespace SunDofus.World.Network.Realm
             Client.Send(string.Concat("BT", Utilities.Basic.GetActuelTime()));
 
             if (Client.Player.Life == 0)
-            {
-                Client.Player.UpdateStats();
-                Client.Player.Life = Client.Player.MaximumLife;
-            }
+                Client.Player.Life = Client.Player.Stats.GetStat(StatEnum.MaxLife).Total;
 
             Client.Player.ItemsInventary.RefreshBonus();
             Client.Player.SendPods();
@@ -1233,7 +1246,7 @@ namespace SunDofus.World.Network.Realm
             if (packet[0] != 'M' || !packet.Contains(','))
                 return;
 
-            if (Client.Infos.Level <= Utilities.Config.GetIntElement("MINGMLEVEL_TOTELEPORTWITH_GEOPOSITION"))
+            if (Client.Infos.Level < Utilities.Config.GetIntElement("MINGMLEVEL_TOTELEPORTWITH_GEOPOSITION"))
                 return;
 
             var pos = packet.Substring(1).Split(',');
@@ -1275,16 +1288,24 @@ namespace SunDofus.World.Network.Realm
                     ParseGameAction(datas.Substring(3));
                     return;
 
+                case 300:
+                    FightLaunchSpell(datas.Substring(3));
+                    return;
+
                 case 900:
-                    //AskChallenge(datas);
+                    AskChallenge(datas.Substring(3));
                     return;
 
                 case 901:
-                    //AcceptChallenge(datas);
+                    AcceptChallenge(datas.Substring(3));
                     return;
 
                 case 902:
-                    //RefuseChallenge(datas);
+                    RefuseChallenge(datas.Substring(3));
+                    return;
+
+                case 903:
+                    FightJoin(datas.Substring(3));
                     return;
             }
         }
@@ -1320,22 +1341,23 @@ namespace SunDofus.World.Network.Realm
 
         private void GameMove(string packet)
         {
-            var path = new Pathfinding(packet, Client.Player.GetMap(), Client.Player.MapCell, Client.Player.Dir);
+            if (!Client.Player.State.InFight & Client.Player.State.Busy)
+                return;
+
+            var path = new Pathfinding(packet, Client.Player.GetMap(), (Client.Player.State.InFight ? Client.Player.Fighter.Cell : Client.Player.MapCell), Client.Player.Dir, true);
             var newPath = path.RemakePath();
 
-            newPath = path.GetStartPath + newPath;
-
-            if (!Client.Player.GetMap().RushablesCells.Contains(path.Destination))
-            {
-                Client.Send("GA;0");
+            if (Client.Player.State.InFight && !Client.Player.Fight.TryMove(Client.Player.Fighter, path))
                 return;
-            }
 
-            Client.Player.Dir = path.Direction;
-            Client.Player.State.MoveToCell = path.Destination;
+            Client.Player.Dir = path.direction;
+            Client.Player.State.MoveToCell = path.destination;
             Client.Player.State.OnMove = true;
 
-            Client.Player.GetMap().Send(string.Format("GA0;1;{0};{1}", Client.Player.ID, newPath));
+            if (Client.Player.State.InFight)
+                Client.Player.Fighter.Fight.Send(string.Format("GA0;1;{0};{1}", Client.Player.ID, newPath));
+            else
+                Client.Player.GetMap().Send(string.Format("GA0;1;{0};{1}", Client.Player.ID, newPath));
         }
 
         private void EndAction(string datas)
@@ -1346,9 +1368,14 @@ namespace SunDofus.World.Network.Realm
 
                     if (Client.Player.State.OnMove == true)
                     {
+                        if (Client.Player.State.InFight)
+                            Client.Player.Fighter.Cell = Client.Player.State.MoveToCell;
+                        else
+                            Client.Player.MapCell = Client.Player.State.MoveToCell;
+
                         Client.Player.State.OnMove = false;
-                        Client.Player.MapCell = Client.Player.State.MoveToCell;
                         Client.Player.State.MoveToCell = -1;
+
                         Client.Send("BN");
 
                         if (Client.Player.GetMap().Triggers.Any(x => x.CellID == Client.Player.MapCell))
@@ -1358,7 +1385,7 @@ namespace SunDofus.World.Network.Realm
                             if (SunDofus.World.Game.World.Conditions.TriggerCondition.HasConditions(Client.Player, trigger.Conditions))
                                 SunDofus.World.Game.Effects.EffectAction.ParseEffect(Client.Player, trigger.ActionID, trigger.Args);
                             else
-                                Client.Send("Im11");
+                                Client.SendMessage("Im11");
                         }
                     }
 
@@ -1378,6 +1405,54 @@ namespace SunDofus.World.Network.Realm
             }
         }
 
+        private void UseSmiley(string packet)
+        {
+            int smiley;
+
+            if (!int.TryParse(packet, out smiley))
+                return;
+
+            if (smiley < 1 | smiley > 15)
+                return;
+
+            if (!Client.Player.CanSendinSmiley())
+                return;
+
+            Client.Player.RefreshSmiley();
+
+            if (Client.Player.State.InFight)
+                Client.Player.Fight.Send("cS" + Client.Player.ID + '|' + smiley);
+            else
+                Client.Player.GetMap().Send("cS" + Client.Player.ID + '|' + smiley);
+        }
+
+        private void ChangeDirection(string packet)
+        {
+            int direction;
+
+            if (!int.TryParse(packet, out direction))
+                return;
+
+            if (direction < 0 | direction > 7)
+                return;
+
+            Client.Player.GetMap().Send("eD" + Client.Player.ID + "|" + direction);
+        }
+
+        private void UseEmote(string packet)
+        {
+            int emote;
+
+            if (!int.TryParse(packet, out emote))
+                return;
+
+            if (emote == 1)
+            {
+                Client.Player.Sit();
+                Client.Player.GetMap().Send("eUK" + Client.Player.ID + '|' + (Client.Player.State.IsSitted ? 1 : 0));
+            }
+        }
+
         #endregion
 
         #region Challenge
@@ -1386,7 +1461,10 @@ namespace SunDofus.World.Network.Realm
         {
             var charid = 0;
 
-            if(!int.TryParse(datas.Substring(3), out charid))
+            if (!int.TryParse(datas, out charid))
+                return;
+
+            if (Client.Player.State.Busy)
                 return;
 
             if (World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == charid))
@@ -1400,9 +1478,11 @@ namespace SunDofus.World.Network.Realm
                 }
 
                 Client.Player.State.ChallengeAsked = character.ID;
+                Client.Player.State.ChallengeAsker = Client.Player.ID;
                 Client.Player.State.IsChallengeAsker = true;
 
                 character.State.ChallengeAsker = Client.Player.ID;
+                character.State.ChallengeAsked = character.ID;
                 character.State.IsChallengeAsked = true;
 
                 Client.Player.GetMap().Send(string.Format("GA;900;{0};{1}", Client.Player.ID, character.ID));
@@ -1413,24 +1493,26 @@ namespace SunDofus.World.Network.Realm
         {
             var charid = 0;
 
-            if (!int.TryParse(datas.Substring(3), out charid))
+            if (!int.TryParse(datas, out charid))
                 return;
 
             if (World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == charid) && Client.Player.State.ChallengeAsker == charid)
             {
                 var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == charid);
 
+                Client.Player.State.ChallengeAsker = -1;
                 Client.Player.State.ChallengeAsked = -1;
-                Client.Player.State.IsChallengeAsker = false;
+                Client.Player.State.IsChallengeAsked = false;
 
+                character.State.ChallengeAsked = -1;
                 character.State.ChallengeAsker = -1;
-                character.State.IsChallengeAsked = false;
+                character.State.IsChallengeAsker = false;
 
                 Client.Send(string.Format("GA;901;{0};{1}", Client.Player.ID, character.ID));
                 character.NClient.Send(string.Format("GA;901;{0};{1}", character.ID, Client.Player.ID));
 
-                Client.Player.GetMap().AddFight(new SunDofus.World.Game.Maps.Fights.Fight
-                    (Client.Player, character, SunDofus.World.Game.Maps.Fights.Fight.FightType.Challenge, Client.Player.GetMap()));
+                Client.Player.GetMap().AddFight(new ChallengeFight
+                    (Client.Player, character, Client.Player.GetMap()));
             }
         }
 
@@ -1438,21 +1520,24 @@ namespace SunDofus.World.Network.Realm
         {
             var charid = 0;
 
-            if (!int.TryParse(datas.Substring(3), out charid))
+            if (!int.TryParse(datas, out charid))
                 return;
 
             if (World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == charid) && Client.Player.State.ChallengeAsker == charid)
             {
-                var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == charid);
+                Character asker = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.ChallengeAsker);
+                Character asked = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.ChallengeAsked);
 
-                Client.Player.State.ChallengeAsked = -1;
-                Client.Player.State.IsChallengeAsker = false;
+                asker.State.ChallengeAsked = -1;
+                asker.State.ChallengeAsker = -1;
+                asker.State.IsChallengeAsker = false;
 
-                character.State.ChallengeAsker = -1;
-                character.State.IsChallengeAsked = false;
+                asked.State.ChallengeAsker = -1;
+                asked.State.ChallengeAsked = -1;
+                asked.State.IsChallengeAsked = false;
 
-                Client.Send(string.Format("GA;902;{0};{1}", Client.Player.ID, character.ID));
-                character.NClient.Send(string.Format("GA;902;{0};{1}", character.ID, Client.Player.ID));
+                asker.NClient.Send(string.Format("GA;902;{0};{1}", asker.ID, asked.ID));
+                asked.NClient.Send(string.Format("GA;902;{0};{1}", asked.ID, asker.ID));
             }
         }
 
@@ -1514,17 +1599,17 @@ namespace SunDofus.World.Network.Realm
             {
                 case 11:
 
-                    if (Client.Player.CharactPoint < 1) 
+                    if (Client.Player.CharactPoint < 1)
                         return;
 
                     if (Client.Player.Class == 11)
                     {
-                        Client.Player.Stats.life.Bases += 2;
+                        Client.Player.Stats.GetStat(StatEnum.Vitalite).Base += 2;
                         Client.Player.Life += 2;
                     }
                     else
                     {
-                        Client.Player.Stats.life.Bases += 1;
+                        Client.Player.Stats.GetStat(StatEnum.Vitalite).Base += 1;
                         Client.Player.Life += 1;
                     }
 
@@ -1535,10 +1620,10 @@ namespace SunDofus.World.Network.Realm
 
                 case 12:
 
-                    if (Client.Player.CharactPoint < 3) 
+                    if (Client.Player.CharactPoint < 3)
                         return;
 
-                    Client.Player.Stats.wisdom.Bases += 1;
+                    Client.Player.Stats.GetStat(StatEnum.Sagesse).Base += 1;
                     Client.Player.CharactPoint -= 3;
                     Client.Player.SendChararacterStats();
 
@@ -1548,28 +1633,28 @@ namespace SunDofus.World.Network.Realm
 
                     if (Client.Player.Class == 1 | Client.Player.Class == 7 | Client.Player.Class == 2 | Client.Player.Class == 5)
                     {
-                        if (Client.Player.Stats.strenght.Bases < 51) count = 2;
-                        if (Client.Player.Stats.strenght.Bases > 50) count = 3;
-                        if (Client.Player.Stats.strenght.Bases > 150) count = 4;
-                        if (Client.Player.Stats.strenght.Bases > 250) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base < 51) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 50) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 150) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 250) count = 5;
                     }
 
                     else if (Client.Player.Class == 3 | Client.Player.Class == 9)
                     {
-                        if (Client.Player.Stats.strenght.Bases < 51) count = 1;
-                        if (Client.Player.Stats.strenght.Bases > 50) count = 2;
-                        if (Client.Player.Stats.strenght.Bases > 150) count = 3;
-                        if (Client.Player.Stats.strenght.Bases > 250) count = 4;
-                        if (Client.Player.Stats.strenght.Bases > 350) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 150) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 250) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 350) count = 5;
                     }
 
                     else if (Client.Player.Class == 4 | Client.Player.Class == 6 | Client.Player.Class == 8 | Client.Player.Class == 10)
                     {
-                        if (Client.Player.Stats.strenght.Bases < 101) count = 1;
-                        if (Client.Player.Stats.strenght.Bases > 100) count = 2;
-                        if (Client.Player.Stats.strenght.Bases > 200) count = 3;
-                        if (Client.Player.Stats.strenght.Bases > 300) count = 4;
-                        if (Client.Player.Stats.strenght.Bases > 400) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base < 101) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 100) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 300) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 400) count = 5;
                     }
 
                     else if (Client.Player.Class == 11)
@@ -1579,14 +1664,14 @@ namespace SunDofus.World.Network.Realm
 
                     else if (Client.Player.Class == 12)
                     {
-                        if (Client.Player.Stats.strenght.Bases < 51) count = 1;
-                        if (Client.Player.Stats.strenght.Bases > 50) count = 2;
-                        if (Client.Player.Stats.strenght.Bases > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Force).Base > 200) count = 3;
                     }
 
                     if (Client.Player.CharactPoint >= count)
                     {
-                        Client.Player.Stats.strenght.Bases += 1;
+                        Client.Player.Stats.GetStat(StatEnum.Force).Base += 1;
                         Client.Player.CharactPoint -= count;
                         Client.Player.SendChararacterStats();
                     }
@@ -1599,46 +1684,46 @@ namespace SunDofus.World.Network.Realm
 
                     if (Client.Player.Class == 1 | Client.Player.Class == 2 | Client.Player.Class == 5 | Client.Player.Class == 7 | Client.Player.Class == 10)
                     {
-                        if (Client.Player.Stats.intelligence.Bases < 101) count = 1;
-                        if (Client.Player.Stats.intelligence.Bases > 100) count = 2;
-                        if (Client.Player.Stats.intelligence.Bases > 200) count = 3;
-                        if (Client.Player.Stats.intelligence.Bases > 300) count = 4;
-                        if (Client.Player.Stats.intelligence.Bases > 400) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base < 101) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 100) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 300) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 400) count = 5;
                     }
 
                     else if (Client.Player.Class == 3)
                     {
-                        if (Client.Player.Stats.intelligence.Bases < 21) count = 1;
-                        if (Client.Player.Stats.intelligence.Bases > 20) count = 2;
-                        if (Client.Player.Stats.intelligence.Bases > 60) count = 3;
-                        if (Client.Player.Stats.intelligence.Bases > 100) count = 4;
-                        if (Client.Player.Stats.intelligence.Bases > 140) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base < 21) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 20) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 60) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 100) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 140) count = 5;
                     }
 
                     else if (Client.Player.Class == 4)
                     {
-                        if (Client.Player.Stats.intelligence.Bases < 51) count = 1;
-                        if (Client.Player.Stats.intelligence.Bases > 50) count = 2;
-                        if (Client.Player.Stats.intelligence.Bases > 150) count = 3;
-                        if (Client.Player.Stats.intelligence.Bases > 250) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 150) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 250) count = 4;
                     }
 
                     else if (Client.Player.Class == 6 | Client.Player.Class == 8)
                     {
-                        if (Client.Player.Stats.intelligence.Bases < 21) count = 1;
-                        if (Client.Player.Stats.intelligence.Bases > 20) count = 2;
-                        if (Client.Player.Stats.intelligence.Bases > 40) count = 3;
-                        if (Client.Player.Stats.intelligence.Bases > 60) count = 4;
-                        if (Client.Player.Stats.intelligence.Bases > 80) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base < 21) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 20) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 40) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 60) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 80) count = 5;
                     }
 
                     else if (Client.Player.Class == 9)
                     {
-                        if (Client.Player.Stats.intelligence.Bases < 51) count = 1;
-                        if (Client.Player.Stats.intelligence.Bases > 50) count = 2;
-                        if (Client.Player.Stats.intelligence.Bases > 150) count = 3;
-                        if (Client.Player.Stats.intelligence.Bases > 250) count = 4;
-                        if (Client.Player.Stats.intelligence.Bases > 350) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 150) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 250) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 350) count = 5;
                     }
 
                     else if (Client.Player.Class == 11)
@@ -1648,14 +1733,14 @@ namespace SunDofus.World.Network.Realm
 
                     else if (Client.Player.Class == 12)
                     {
-                        if (Client.Player.Stats.intelligence.Bases < 51) count = 1;
-                        if (Client.Player.Stats.intelligence.Bases > 50) count = 2;
-                        if (Client.Player.Stats.intelligence.Bases > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Intelligence).Base > 200) count = 3;
                     }
 
                     if (Client.Player.CharactPoint >= count)
                     {
-                        Client.Player.Stats.intelligence.Bases += 1;
+                        Client.Player.Stats.GetStat(StatEnum.Intelligence).Base += 1;
                         Client.Player.CharactPoint -= count;
                         Client.Player.SendChararacterStats();
                     }
@@ -1669,29 +1754,29 @@ namespace SunDofus.World.Network.Realm
                     if (Client.Player.Class == 1 | Client.Player.Class == 4 | Client.Player.Class == 5
                         | Client.Player.Class == 6 | Client.Player.Class == 7 | Client.Player.Class == 8 | Client.Player.Class == 9)
                     {
-                        if (Client.Player.Stats.luck.Bases < 21) count = 1;
-                        if (Client.Player.Stats.luck.Bases > 20) count = 2;
-                        if (Client.Player.Stats.luck.Bases > 40) count = 3;
-                        if (Client.Player.Stats.luck.Bases > 60) count = 4;
-                        if (Client.Player.Stats.luck.Bases > 80) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base < 21) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 20) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 40) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 60) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 80) count = 5;
                     }
 
                     else if (Client.Player.Class == 2 | Client.Player.Class == 10)
                     {
-                        if (Client.Player.Stats.luck.Bases < 101) count = 1;
-                        if (Client.Player.Stats.luck.Bases > 100) count = 2;
-                        if (Client.Player.Stats.luck.Bases > 200) count = 3;
-                        if (Client.Player.Stats.luck.Bases > 300) count = 4;
-                        if (Client.Player.Stats.luck.Bases > 400) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base < 101) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 100) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 300) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 400) count = 5;
                     }
 
                     else if (Client.Player.Class == 3)
                     {
-                        if (Client.Player.Stats.luck.Bases < 101) count = 1;
-                        if (Client.Player.Stats.luck.Bases > 100) count = 2;
-                        if (Client.Player.Stats.luck.Bases > 150) count = 3;
-                        if (Client.Player.Stats.luck.Bases > 230) count = 4;
-                        if (Client.Player.Stats.luck.Bases > 330) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base < 101) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 100) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 150) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 230) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 330) count = 5;
                     }
 
                     else if (Client.Player.Class == 11)
@@ -1701,14 +1786,14 @@ namespace SunDofus.World.Network.Realm
 
                     else if (Client.Player.Class == 12)
                     {
-                        if (Client.Player.Stats.luck.Bases < 51) count = 1;
-                        if (Client.Player.Stats.luck.Bases > 50) count = 2;
-                        if (Client.Player.Stats.luck.Bases > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Chance).Base > 200) count = 3;
                     }
 
                     if (Client.Player.CharactPoint >= count)
                     {
-                        Client.Player.Stats.luck.Bases += 1;
+                        Client.Player.Stats.GetStat(StatEnum.Chance).Base += 1;
                         Client.Player.CharactPoint -= count;
                         Client.Player.SendChararacterStats();
                     }
@@ -1722,29 +1807,29 @@ namespace SunDofus.World.Network.Realm
                     if (Client.Player.Class == 1 | Client.Player.Class == 2 | Client.Player.Class == 3 | Client.Player.Class == 5
                         | Client.Player.Class == 7 | Client.Player.Class == 8 | Client.Player.Class == 10)
                     {
-                        if (Client.Player.Stats.agility.Bases < 21) count = 1;
-                        if (Client.Player.Stats.agility.Bases > 20) count = 2;
-                        if (Client.Player.Stats.agility.Bases > 40) count = 3;
-                        if (Client.Player.Stats.agility.Bases > 60) count = 4;
-                        if (Client.Player.Stats.agility.Bases > 80) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base < 21) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 20) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 40) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 60) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 80) count = 5;
                     }
 
                     else if (Client.Player.Class == 4)
                     {
-                        if (Client.Player.Stats.agility.Bases < 101) count = 1;
-                        if (Client.Player.Stats.agility.Bases > 100) count = 2;
-                        if (Client.Player.Stats.agility.Bases > 200) count = 3;
-                        if (Client.Player.Stats.agility.Bases > 300) count = 4;
-                        if (Client.Player.Stats.agility.Bases > 400) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base < 101) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 100) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 300) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 400) count = 5;
                     }
 
                     else if (Client.Player.Class == 6 | Client.Player.Class == 9)
                     {
-                        if (Client.Player.Stats.agility.Bases < 51) count = 1;
-                        if (Client.Player.Stats.agility.Bases > 50) count = 2;
-                        if (Client.Player.Stats.agility.Bases > 100) count = 3;
-                        if (Client.Player.Stats.agility.Bases > 150) count = 4;
-                        if (Client.Player.Stats.agility.Bases > 200) count = 5;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 100) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 150) count = 4;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 200) count = 5;
                     }
 
                     else if (Client.Player.Class == 11)
@@ -1754,14 +1839,14 @@ namespace SunDofus.World.Network.Realm
 
                     else if (Client.Player.Class == 12)
                     {
-                        if (Client.Player.Stats.agility.Bases < 51) count = 1;
-                        if (Client.Player.Stats.agility.Bases > 50) count = 2;
-                        if (Client.Player.Stats.agility.Bases > 200) count = 3;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base < 51) count = 1;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 50) count = 2;
+                        if (Client.Player.Stats.GetStat(StatEnum.Agilite).Base > 200) count = 3;
                     }
 
                     if (Client.Player.CharactPoint >= count)
                     {
-                        Client.Player.Stats.agility.Bases += 1;
+                        Client.Player.Stats.GetStat(StatEnum.Agilite).Base += 1;
                         Client.Player.CharactPoint -= count;
                         Client.Player.SendChararacterStats();
                     }
@@ -1799,7 +1884,8 @@ namespace SunDofus.World.Network.Realm
 
             Client.Player.SpellPoint -= level;
 
-            Client.Player.SpellsInventary.Spells.First(x => x.ID == spellID).Level++;
+            var spell = Client.Player.SpellsInventary.Spells.First(x => x.ID == spellID);
+            spell.ChangeLevel(spell.Level + 1);
 
             Client.Send(string.Format("SUK{0}~{1}", spellID, level + 1));
             Client.Player.SendChararacterStats();
@@ -2540,9 +2626,230 @@ namespace SunDofus.World.Network.Realm
 
         #endregion
 
-        #region Fights
+        #region Fights (out)
 
+        private void FightDetails(string packet)
+        {
+            int ID = 0;
 
+            if (!int.TryParse(packet, out ID))
+                return;
+
+            Fight fight = Client.Player.GetMap().Fights.Find(x => x.ID == ID);
+
+            if (fight != null)
+            {
+                StringBuilder builder = new StringBuilder("fD").Append(fight.ID).Append('|');
+
+                foreach (Fighter fighter in fight.Team1.GetAliveFighters())
+                    builder.Append(fighter.Name).Append('~').Append(fighter.Level).Append(';');
+
+                builder.Append('|');
+
+                foreach (Fighter fighter in fight.Team2.GetAliveFighters())
+                    builder.Append(fighter.Name).Append('~').Append(fighter.Level).Append(';');
+
+                Client.Send(builder.ToString());
+            }
+        }
+
+        private void FightList(string packet)
+        {
+            StringBuilder builder;
+            List<String> fights = new List<String>();
+
+            foreach (Fight fight in Client.Player.GetMap().Fights)
+            {
+                builder = new StringBuilder();
+
+                builder.Append(fight.ID).Append(';').Append(0).Append(';');
+                builder.Append("0,0,").Append(fight.Team1.GetAliveFighters().Length).Append(';');
+                builder.Append("0,0,").Append(fight.Team2.GetAliveFighters().Length).Append(';');
+                builder.Append('|');
+
+                fights.Add(builder.ToString());
+            }
+
+            Client.Send("fL" + string.Join("|", fights));
+        }
+
+        private void FightJoin(string packet)
+        {
+            if (Client.Player.State.Busy)
+                return;
+
+            if (!packet.Contains(";"))
+            {
+                int fightID;
+
+                if (!int.TryParse(packet, out fightID))
+                    return;
+
+                Fight fight = Client.Player.GetMap().Fights.First(x => x.ID == fightID);
+
+                if (fight == null)
+                    return;
+
+                if (fight.CanJoinSpectator())
+                    fight.PlayerJoinSpectator(Client.Player);
+            }
+            else
+            {
+                string[] data = packet.Split(';');
+
+                int fightID;
+
+                if (!int.TryParse(data[0], out fightID))
+                    return;
+
+                Fight fight = Client.Player.GetMap().Fights.First(x => x.ID == fightID);
+
+                if (fight == null)
+                    return;
+
+                int leaderID;
+
+                if (!int.TryParse(data[1], out leaderID))
+                    return;
+
+                FightTeam team = fight.GetTeam(leaderID);
+
+                if (fight.CanJoin(Client.Player, team))
+                    fight.PlayerJoin(Client.Player, team.ID);
+            }
+        }
+
+        #endregion
+
+        #region Fights (toggle)
+
+        private void ToggleFightLock(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            Client.Player.Fight.Toggle(Client.Player.Fighter, ToggleType.LOCK);
+        }
+
+        private void ToggleFightHelp(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            Client.Player.Fight.Toggle(Client.Player.Fighter, ToggleType.HELP);
+        }
+
+        private void ToggleFightParty(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            Client.Player.Fight.Toggle(Client.Player.Fighter, ToggleType.PARTY);
+        }
+
+        private void ToggleFightSpectator(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            Client.Player.Fight.Toggle(Client.Player.Fighter, ToggleType.SPECTATOR);
+        }
+
+        #endregion
+
+        #region Fights (in)
+
+        private void FightReady(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            Client.Player.Fight.PlayerFightReady(Client.Player.Fighter, packet[0] == '0' ? false : true);
+        }
+
+        private void FightTurnReady(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            Client.Player.Fight.PlayerTurnReady(Client.Player.Fighter);
+        }
+
+        private void FightTurnPass(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            Client.Player.Fight.PlayerTurnPass(Client.Player.Fighter);
+        }
+
+        private void FightLeave(string packet)
+        {
+            if (!Client.Player.State.InFight & !Client.Player.State.IsSpectator)
+                return;
+
+            Fighter fighter = Client.Player.Fighter;
+
+            if (packet.Length > 0)
+            {
+                if (Client.Player.Fighter.Fight.State != FightState.STARTING)
+                    return;
+
+                if (Client.Player.Fighter != Client.Player.Fighter.Team.Leader)
+                    return;
+
+                int fighterID;
+
+                if (!int.TryParse(packet, out fighterID))
+                    return;
+
+                fighter = Client.Player.Fight.GetFighter(fighterID);
+
+                if (fighter.Team != Client.Player.Fighter.Team)
+                    return;
+            }
+
+            if (fighter == null)
+                Client.Player.Fight.SpectatorLeave(Client.Player);
+            else
+                Client.Player.Fight.PlayerLeave(fighter);
+        }
+
+        private void FightPlacement(string packet)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            int cell;
+
+            if (!int.TryParse(packet, out cell))
+                return;
+
+            Client.Player.Fight.PlayerPlace(Client.Player.Fighter, cell);
+        }
+
+        private void FightLaunchSpell(string datas)
+        {
+            if (!Client.Player.State.InFight)
+                return;
+
+            if (!datas.Contains(';'))
+                return;
+
+            string[] data = datas.Split(';');
+            int spellID;
+            int cell;
+
+            if (!int.TryParse(data[0], out spellID))
+                return;
+
+            if (!int.TryParse(data[1], out cell))
+                return;
+
+            CharacterSpell spell = Client.Player.SpellsInventary.Spells.Find(x => x.ID == spellID);
+
+            Client.Player.Fight.LaunchSpell(Client.Player.Fighter, spell, cell);
+        }
 
         #endregion
 

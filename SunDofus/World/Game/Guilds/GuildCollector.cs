@@ -54,7 +54,7 @@ namespace SunDofus.World.Game.Guilds
 
             var path = new Game.Maps.Pathfinding("", Map, Cell, Dir);
             var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
-            var newCell = path.NextCell(Cell, newDir);
+            var newCell = Game.Maps.Pathfinding.NextCell(Map, Cell, newDir);
 
             if (newCell <= 0)
                 return;
@@ -70,8 +70,8 @@ namespace SunDofus.World.Game.Guilds
 
             if (cellpath != "")
             {
-                Cell = path.Destination;
-                Dir = path.Direction;
+                Cell = path.destination;
+                Dir = path.direction;
 
                 var packet = string.Format("GA0;1;{0};{1}", ID, startpath + cellpath);
 

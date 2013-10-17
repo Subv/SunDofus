@@ -49,7 +49,7 @@ namespace SunDofus.World.Game.Maps.Monsters
 
             var path = new Game.Maps.Pathfinding("", map, cell, dir);
             var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
-            var newCell = path.NextCell(cell, newDir);
+            var newCell = Pathfinding.NextCell(map, cell, newDir);
 
             if (newCell <= 0)
                 return;
@@ -65,8 +65,8 @@ namespace SunDofus.World.Game.Maps.Monsters
 
             if (cellpath != "")
             {
-                cell = path.Destination;
-                dir = path.Direction;
+                cell = path.destination;
+                dir = path.direction;
 
                 var packet = string.Format("GA0;1;{0};{1}", ID, startpath + cellpath);
 

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using SunDofus.World.Entities.Models.Spells;
+using SunDofus.World.Entities.Requests;
 namespace SunDofus.World.Game.Characters.Spells
+
 {
     class CharacterSpell
     {
@@ -16,7 +18,19 @@ namespace SunDofus.World.Game.Characters.Spells
             ID = id;
             Level = lvl;
             Position = pos;
+
+            Model = SpellsRequests.SpellsList.First(x => x.ID == ID);
+            LevelModel = Model.Levels.First(x => x.Level == Level);
         }
+
+        public void ChangeLevel(int lvl)
+        {
+            Level = lvl;
+            LevelModel = Model.Levels.First(x => x.Level == Level);
+        }
+
+        public SpellModel Model;
+        public SpellLevelModel LevelModel;
 
         public override string ToString()
         {

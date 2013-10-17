@@ -59,7 +59,7 @@ namespace SunDofus.World.Game.Characters.NPC
 
             var path = new Game.Maps.Pathfinding("", map, MapCell, Dir);
             var newDir = Utilities.Basic.Rand(0, 3) * 2 + 1;
-            var newCell = path.NextCell(MapCell, newDir);
+            var newCell = Game.Maps.Pathfinding.NextCell(map, MapCell, newDir);
 
             if (newCell <= 0)
                 return;
@@ -75,8 +75,8 @@ namespace SunDofus.World.Game.Characters.NPC
 
             if (cellpath != "")
             {
-                MapCell = path.Destination;
-                Dir = path.Direction;
+                MapCell = path.destination;
+                Dir = path.direction;
 
                 var packet = string.Format("GA0;1;{0};{1}", ID, startpath + cellpath);
 

@@ -32,6 +32,12 @@ namespace SunDofus.World.Game.Characters
         public int ActualTraider { get; set; }
         public int ActualPlayerExchange { get; set; }
 
+        public long SitStartTime { get; set; }
+        public bool IsSitted { get; set; }
+
+        public bool InFight { get; set; }
+        public bool IsSpectator { get; set; }
+
         public bool OnWaitingParty { get; set; }
         public int SenderInviteParty { get; set; }
         public int ReceiverInviteParty{ get; set; }
@@ -59,7 +65,7 @@ namespace SunDofus.World.Game.Characters
         {
             get
             {
-                return (OnMove || OnExchange || OnWaitingParty || OnDialoging || IsChallengeAsked || IsChallengeAsker || OnExchangeWithBank);
+                return (OnMove || OnExchange || OnWaitingParty || OnDialoging || IsChallengeAsked || IsChallengeAsker || OnExchangeWithBank || InFight || IsSpectator);
             }
         }
     }

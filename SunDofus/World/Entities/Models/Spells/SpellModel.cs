@@ -22,7 +22,7 @@ namespace SunDofus.World.Entities.Models.Spells
             SpriteInfos = "";
         }
 
-        public void ParseLevel(string datas)
+        public void ParseLevel(string datas, int lvl)
         {
             if (datas == "-1")
                 return;
@@ -38,6 +38,8 @@ namespace SunDofus.World.Entities.Models.Spells
             else
                 level.Cost = 6;
 
+            level.Level = lvl;
+
             level.MinRP = int.Parse(stats[3]);
             level.MaxRP = int.Parse(stats[4]);
             level.CC = int.Parse(stats[5]);
@@ -51,7 +53,7 @@ namespace SunDofus.World.Entities.Models.Spells
             level.MaxPerTurn = int.Parse(stats[12]);
             level.MaxPerPlayer = int.Parse(stats[13]);
             level.TurnNumber = int.Parse(stats[14]);
-            level.Type = stats[15];
+            level.Type = stats[15].Substring(1);
             level.isECEndTurn = (stats[19] == "true" ? true : false);
 
             level.ParseEffect(effect, false);

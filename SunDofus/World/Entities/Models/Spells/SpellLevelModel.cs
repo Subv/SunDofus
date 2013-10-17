@@ -72,35 +72,35 @@ namespace SunDofus.World.Entities.Models.Spells
                     effect.Round = int.Parse(infos[4]);
                     effect.Chance = int.Parse(infos[5]);
                     effect.Effect = infos[6];
-                    effect.Target = new Target(int.Parse(infos[7]));
+                    effect.Target = new Game.Effects.EffectSpellTarget(int.Parse(infos[7]));
                 }
                 else if (infos.Length >= 7)
                 {
                     effect.Round = int.Parse(infos[4]);
                     effect.Chance = int.Parse(infos[5]);
                     effect.Effect = infos[6];
-                    effect.Target = new Target(23);
+                    effect.Target = new Game.Effects.EffectSpellTarget(23);
                 }
                 else if (infos.Length >= 6)
                 {
                     effect.Round = int.Parse(infos[4]);
                     effect.Chance = int.Parse(infos[5]);
                     effect.Effect = "0d0+0";
-                    effect.Target = new Target(23);
+                    effect.Target = new Game.Effects.EffectSpellTarget(23);
                 }
                 else if (infos.Length >= 5)
                 {
                     effect.Round = int.Parse(infos[4]);
                     effect.Chance = -1;
                     effect.Effect = "0d0+0";
-                    effect.Target = new Target(23);
+                    effect.Target = new Game.Effects.EffectSpellTarget(23);
                 }
                 else
                 {
                     effect.Round = 0;
                     effect.Chance = -1;
                     effect.Effect = "0d0+0";
-                    effect.Target = new Target(23);
+                    effect.Target = new Game.Effects.EffectSpellTarget(23);
                 }
 
                 if (CC == true)

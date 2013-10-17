@@ -12,6 +12,10 @@ namespace SunDofus.Utilities
         private static int startTime;
         private static Random randomizer = new Random();
 
+        public static List<char> HASH = new List<char>() {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+                't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+                'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'};
+
         public static int Uptime
         {
             get
@@ -46,18 +50,14 @@ namespace SunDofus.Utilities
             return date;
         }
 
-        private static char[] hash = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-                't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-                'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'};
-
         public static string RandomString(int lenght)
         {
             var str = string.Empty;
 
             for (var i = 1; i <= lenght; i++)
             {
-                var randomInt = randomizer.Next(0, hash.Length);
-                str += hash[randomInt];
+                var randomInt = randomizer.Next(0, HASH.Count);
+                str += HASH[randomInt];
             }
 
             return str;
@@ -78,11 +78,11 @@ namespace SunDofus.Utilities
                 var PKey = key[i];
                 var APass = (int)PPass / 16;
                 var AKey = (int)PPass % 16;
-                var ANB = (APass + (int)PKey) % hash.Length;
-                var ANB2 = (AKey + (int)PKey) % hash.Length;
+                var ANB = (APass + (int)PKey) % HASH.Count;
+                var ANB2 = (AKey + (int)PKey) % HASH.Count;
 
-                _Crypted += hash[ANB];
-                _Crypted += hash[ANB2];
+                _Crypted += HASH[ANB];
+                _Crypted += HASH[ANB2];
 
             }
 
