@@ -45,6 +45,10 @@ namespace SunDofus.Utilities
         {
             return long.Parse(config.Values[value.ToUpper()]);
         }
+        public static double GetDoubleElement(string value)
+        {
+            return double.Parse(config.Values[value.ToUpper()]);
+        }
 
         private class Configuration
         {

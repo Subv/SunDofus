@@ -38,6 +38,9 @@ $ServerCom 0;
 $MinMembers_ToWatchOut_Guilds 1;
 $MinGMLevel_ToTeleportWith_Geoposition 1;
 
+$EnableExpInPvPFight true;
+$RatePvP 1;
+
 $AntiSpamTrade 60000;
 $AntiSpamRecruitment 60000;
 
