@@ -779,5 +779,13 @@ namespace SunDofus.World.Game.Maps.Fights.Effects
 
             cast.Caster.Fight.Send("GA;130;" + cast.Caster.ID + ';' + cast.Jet);
         }
+
+        public static void EffectDoom(EffectCast cast)
+        {
+            if (cast.Target != null || cast.Caster.Character == null || cast.Target.Character == null)
+                return;
+
+
+        }
     }
 }

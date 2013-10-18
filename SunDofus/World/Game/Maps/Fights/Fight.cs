@@ -63,6 +63,14 @@ namespace SunDofus.World.Game.Maps.Fights
         private long myTurnTimeOut;
         private long myWaitingTimeOut;
 
+        public long EndTime
+        {
+            get
+            {
+                return (Environment.TickCount - myStartTimeOut);
+            }
+        }
+
         private Map myMap;
         private List<Character> mySpectators = new List<Character>();
 

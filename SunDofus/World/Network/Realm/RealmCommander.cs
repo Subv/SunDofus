@@ -89,6 +89,11 @@ namespace SunDofus.World.Network.Realm
                         Game.Bank.BanksManager.OpenBank(Client.Player);
                         break;
 
+                    case "rmlife":
+                        Client.Player.Life = 1;
+                        Client.Player.SendChararacterStats();
+                        break;
+
                     default:
                         Client.SendConsoleMessage("Cannot parse your ChatCommand !");
                         break;

@@ -172,3 +172,5 @@ SunDofus v0.3.2.195
 SunDofus v0.3.3.X
 -> [17.10.2013] Gestion complète des droits de guilde (impossible d'effectuer ce qui n'est pas possible avec WPEPro par exemple)
 -> [17.10.2013] Rectification de l'update des groupes lors d'un changement d'items (ne se lance que lorsque l'item est sur le personnage et non plus simplement "bougé")
+-> [17.10.2013] Ajout des défis (et une grosse partie des combats : merci Persi2, les effets de sort sont à tester)
+-> [18.10.2013] Ajout du temps en fin de combat

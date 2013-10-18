@@ -90,7 +90,7 @@ namespace SunDofus.World.Game.Maps.Fights
 
             StringBuilder builder = new StringBuilder("GE");
 
-            builder.Append(StartTime()).Append('|');
+            builder.Append(EndTime).Append('|');
             builder.Append(ID).Append('|');
             builder.Append(Type == FightType.AGRESSION ? 1 : 0);
 
@@ -102,8 +102,19 @@ namespace SunDofus.World.Game.Maps.Fights
                 builder.Append(fighter.Level).Append(';');
                 builder.Append(fighter.Dead ? 1 : 0).Append(';');
 
-                builder.Append(";;;;;;");
-                builder.Append(';');
+                if (Utilities.Config.GetBoolElement("EnableExpInPvPFight") && (fighter.Team == winners))
+                {
+                    var exp = (int)(GetFighters().ToList().FindAll(x => x.Team != fighter.Team).Count * Utilities.Formulas.ExpPvp(fighter.Character.Level, fighter.Team.GetFighters().Sum
+                        (x => x.Level), GetFighters().ToList().FindAll(x => x.Team != fighter.Team).Sum(x => x.Level)));
+
+                    fighter.Character.AddExp(exp);
+
+                    builder.Append(Entities.Requests.LevelsRequests.ReturnLevel(fighter.Character.Level).Character).Append(";").Append(fighter.Character.Exp).Append(";");
+                    builder.Append((fighter.Character.Level != Entities.Requests.LevelsRequests.MaxLevel() ? Entities.Requests.LevelsRequests.ReturnLevel(fighter.Character.Level + 1).Character.ToString() : "-1")).Append(";");
+                    builder.Append(exp).Append(";;;;");
+                }
+                else
+                    builder.Append(";;;;;;;");
             }
 
             Send(builder.ToString());
