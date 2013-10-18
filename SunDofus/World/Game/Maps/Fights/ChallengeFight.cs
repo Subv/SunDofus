@@ -90,7 +90,7 @@ namespace SunDofus.World.Game.Maps.Fights
 
             StringBuilder builder = new StringBuilder("GE");
 
-            builder.Append(StartTime()).Append('|');
+            builder.Append(EndTime).Append('|');
             builder.Append(ID).Append('|');
             builder.Append(Type == FightType.AGRESSION ? 1 : 0);
 
