@@ -28,9 +28,7 @@ namespace SunDofus.World.Game.Characters
 
         public int MoveToCell { get; set; }
         public int ActualNPC { get; set; }
-        public int ActualTraided { get; set; }
-        public int ActualTraider { get; set; }
-        public int ActualPlayerExchange { get; set; }
+        public int CurrentPlayerTrade { get; set; }
 
         public long SitStartTime { get; set; }
         public bool IsSitted { get; set; }
