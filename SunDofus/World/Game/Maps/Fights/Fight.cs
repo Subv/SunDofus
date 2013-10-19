@@ -729,9 +729,7 @@ namespace SunDofus.World.Game.Maps.Fights
             Fighter[] NoReadyFighters = GetFighters().Where(x => !x.TurnReady).ToArray();
 
             if (NoReadyFighters.Length == 1)
-            {
-                Send("Im128;" + NoReadyFighters[0]);
-            }
+                Send("Im128;" + NoReadyFighters[0].Name);
             else if (NoReadyFighters.Length > 1)
             {
                 string names = String.Empty;
