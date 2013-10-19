@@ -28,11 +28,8 @@ namespace SunDofus.World.Entities.Requests
                         Faction = sqlReader.GetInt32("zone"),
                     };
 
-                    lock (ZaapisList)
-                    {
-                        if (ParseZaapis(zaapis))
-                            ZaapisList.Add(zaapis);
-                    }
+                    if (ParseZaapis(zaapis))
+                        ZaapisList.Add(zaapis);
                 }
 
                 sqlReader.Close();
