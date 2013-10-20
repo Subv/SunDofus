@@ -12,10 +12,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadMonsters()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM creatures";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
@@ -64,10 +64,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadMonstersLevels()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM creatures_levels";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 

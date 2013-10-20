@@ -14,10 +14,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadCharacters()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM characters";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlResult = sqlCommand.ExecuteReader();
 
@@ -91,25 +91,25 @@ namespace SunDofus.World.Entities.Requests
             if (character.SaveState == EntityState.Unchanged)
                 return;
 
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 MySqlCommand command = null;
                 if (character.SaveState == EntityState.New)
                 {
                     if (create == null)
-                        create = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewCharacter), DatabaseProvider.Connection);
+                        create = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewCharacter), connection);
                     command = create;
                 }
                 else if (character.SaveState == EntityState.Modified)
                 {
                     if (update == null)
-                        update = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateCharacter), DatabaseProvider.Connection);
+                        update = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateCharacter), connection);
                     command = update;
                 }
                 else
                 {
                     if (delete == null)
-                        delete = new MySqlCommand(PreparedStatements.GetQuery(Queries.DeleteCharacter), DatabaseProvider.Connection);
+                        delete = new MySqlCommand(PreparedStatements.GetQuery(Queries.DeleteCharacter), connection);
                     command = delete;
                 }
 

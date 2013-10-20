@@ -13,10 +13,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadBanks()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM banks";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlResult = sqlCommand.ExecuteReader();
 
@@ -45,19 +45,19 @@ namespace SunDofus.World.Entities.Requests
             if (bank.SaveState == EntityState.Unchanged)
                 return;
 
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 MySqlCommand command = null;
                 if (bank.SaveState == EntityState.New)
                 {
                     if (createCommand == null)
-                        createCommand = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewBank), DatabaseProvider.Connection);
+                        createCommand = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewBank), connection);
                     command = createCommand;
                 }
                 else
                 {
                     if (updateCommand == null)
-                        updateCommand = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateBank), DatabaseProvider.Connection);
+                        updateCommand = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateBank), connection);
                     command = updateCommand;
                 }
                 

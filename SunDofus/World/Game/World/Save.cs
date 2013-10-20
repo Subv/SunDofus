@@ -22,9 +22,6 @@ namespace SunDofus.World.Game.World
 
         public static void SaveWorld()
         {
-            if (!Utilities.Config.GetBoolElement("DEBUG"))
-                Entities.DatabaseProvider.Open();
-
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StartMaintenancePacket().GetPacket());
             SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.IsConnected).ToList().ForEach(x => x.NClient.Send("Im1164"));
 
@@ -35,9 +32,6 @@ namespace SunDofus.World.Game.World
 
             SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.IsConnected).ToList().ForEach(x => x.NClient.Send("Im1165"));
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StopMaintenancePacket().GetPacket());
-
-            if (!Utilities.Config.GetBoolElement("DEBUG"))
-                Entities.DatabaseProvider.Close();
 
             Utilities.Loggers.Status.Write("Save of the World successfully !");
         }

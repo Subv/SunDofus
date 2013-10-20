@@ -12,10 +12,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadTriggers()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM triggers";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
@@ -45,11 +45,11 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadTriggers(int map)
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM triggers WHERE MapID=@mapid";
 
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
                 sqlCommand.Parameters.Add(new MySqlParameter("@mapid", map));
 
                 var sqlReader = sqlCommand.ExecuteReader();
@@ -78,10 +78,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void InsertTrigger(Models.Maps.TriggerModel trigger)
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "INSERT INTO triggers VALUES(@mapid, @cellid, @action, @args, @condi)";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var P = sqlCommand.Parameters;
 

@@ -13,10 +13,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadCollectors()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM collectors";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlResult = sqlCommand.ExecuteReader();
 
@@ -56,25 +56,25 @@ namespace SunDofus.World.Entities.Requests
             if (collector.SaveState == EntityState.Unchanged)
                 return;
 
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 MySqlCommand command = null;
                 if (collector.SaveState == EntityState.New)
                 {
                     if (create == null)
-                        create = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewCollector), DatabaseProvider.Connection);
+                        create = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewCollector), connection);
                     command = create;
                 }
                 else if (collector.SaveState == EntityState.Modified)
                 {
                     if (update == null)
-                        update = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateCollector), DatabaseProvider.Connection);
+                        update = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateCollector), connection);
                     command = update;
                 }
                 else
                 {
                     if (delete == null)
-                        delete = new MySqlCommand(PreparedStatements.GetQuery(Queries.DeleteCollector), DatabaseProvider.Connection);
+                        delete = new MySqlCommand(PreparedStatements.GetQuery(Queries.DeleteCollector), connection);
                     command = delete;
                 }
 
@@ -95,40 +95,6 @@ namespace SunDofus.World.Entities.Requests
                 command.Parameters["@GuildID"].Value = collector.Guild.ID;
 
                 command.ExecuteNonQuery();
-            }
-        }
-
-        private static void DeleteCollector(int collectorID)
-        {
-            lock (DatabaseProvider.Locker)
-            {
-                var sqlText = "DELETE FROM collectors WHERE ID=@ID";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                sqlCommand.Parameters.Add(new MySqlParameter("@ID", collectorID));
-
-                sqlCommand.ExecuteNonQuery();
-            }
-        }
-
-        private static void CreateCollector(Game.Guilds.GuildCollector collector)
-        {
-            lock (DatabaseProvider.Locker)
-            {
-                var sqlText = "INSERT INTO collectors VALUES(@ID, @Owner, @Mappos, @Name, @GuildID)";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                var P = sqlCommand.Parameters;
-
-                P.Add(new MySqlParameter("@ID", collector.ID));
-                P.Add(new MySqlParameter("@Name", string.Join(";", collector.Name)));
-                P.Add(new MySqlParameter("@Owner", collector.Owner));
-                P.Add(new MySqlParameter("@Mappos", string.Concat(collector.Map.Model.ID, ";", collector.Cell, ";", collector.Dir)));
-                P.Add(new MySqlParameter("@GuildID", collector.Guild.ID));
-
-                sqlCommand.ExecuteNonQuery();
-
-                collector.SaveState = EntityState.Unchanged;
             }
         }
     }

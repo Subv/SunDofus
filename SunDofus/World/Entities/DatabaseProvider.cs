@@ -8,40 +8,25 @@ namespace SunDofus.World.Entities
 {
     class DatabaseProvider
     {
-        public static MySqlConnection Connection { get; set; }
-        public static object Locker { get; set; }
+        static MySqlConnectionStringBuilder ConnectionString;
 
-        public static void InitializeConnection()
+        public static void Initialize()
         {
-            Connection = new MySqlConnection();
-            Locker = new object();
-
-            Connection.ConnectionString = string.Format("server={0};uid={1};pwd='{2}';database={3};IgnorePrepare=false",
-                Utilities.Config.GetStringElement("WORLD_DATABASE_SERVER"),
-                Utilities.Config.GetStringElement("WORLD_DATABASE_USER"),
-                Utilities.Config.GetStringElement("WORLD_DATABASE_PASS"),
-                Utilities.Config.GetStringElement("WORLD_DATABASE_NAME"));
-            
-            lock (Locker)
-                Connection.Open();
-
-            Utilities.Loggers.Status.Write("Connected to the Worlds' Database !");
+            ConnectionString = new MySqlConnectionStringBuilder();
+            ConnectionString.Server = Utilities.Config.GetStringElement("WORLD_DATABASE_SERVER");
+            ConnectionString.UserID = Utilities.Config.GetStringElement("WORLD_DATABASE_USER");
+            ConnectionString.Password = Utilities.Config.GetStringElement("WORLD_DATABASE_PASS");
+            ConnectionString.Database = Utilities.Config.GetStringElement("WORLD_DATABASE_NAME");
+            ConnectionString.IgnorePrepare = false;
+            ConnectionString.MinimumPoolSize = 1;
+            ConnectionString.MaximumPoolSize = 10;
         }
 
-        public static void Open()
+        public static MySqlConnection CreateConnection()
         {
-            lock (Locker)
-                Connection.Open();
-
-            Utilities.Loggers.Status.Write("Reconnected to the Worlds' Database !");
-        }
-
-        public static void Close()
-        {
-            lock (Locker)
-                Connection.Close();
-
-            Utilities.Loggers.Status.Write("Diconnected from the Worlds 'Database !");
+            var connection = new MySqlConnection(ConnectionString.ConnectionString);
+            connection.Open();
+            return connection;
         }
     }
 }

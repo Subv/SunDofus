@@ -14,10 +14,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadNPCs()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM npcs";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
@@ -83,10 +83,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadNPCsQuestions()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM npcs_questions";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
@@ -139,10 +139,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadNPCsAnswers()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM npcs_answers";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
