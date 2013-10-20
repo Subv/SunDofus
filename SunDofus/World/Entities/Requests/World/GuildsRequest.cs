@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
+using SunDofus.Databases;
 using MySql.Data.MySqlClient;
 
 namespace SunDofus.World.Entities.Requests
@@ -14,10 +15,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadGuilds()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM guilds";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlResult = sqlCommand.ExecuteReader();
 
@@ -30,7 +31,7 @@ namespace SunDofus.World.Entities.Requests
                         Level = sqlResult.GetInt32("Level"),
                         Exp = sqlResult.GetInt64("Exp"),
 
-                        IsNewGuild = false,
+                        SaveState = EntityState.Unchanged
                     };
 
                     guild.ParseEmblem(sqlResult.GetString("Emblem"));
@@ -46,74 +47,58 @@ namespace SunDofus.World.Entities.Requests
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' guilds from the database !", GuildsList.Count));
         }
 
-        public static void SaveGuild(Game.Guilds.Guild guild)
+        public static void SaveGuild(Game.Guilds.Guild guild, ref MySqlCommand create, ref MySqlCommand update, ref MySqlCommand delete)
         {
-            if (guild.IsNewGuild && !guild.MustDelete)
-            {
-                CreateGuild(guild);
+            if (guild.SaveState == EntityState.Unchanged)
                 return;
-            }
-            else if (guild.MustDelete)
+
+            using (var connection = DatabaseProvider.CreateConnection())
             {
-                DeleteGuild(guild.ID);
-                return;
-            }
-            else if (!guild.MustDelete && !guild.IsNewGuild)
-            {
-                lock (DatabaseProvider.Locker)
+                MySqlCommand command = null;
+                if (guild.SaveState == EntityState.New)
                 {
-                    var sqlText = "UPDATE guilds SET ID=@ID, Name=@Name, Level=@Level, Exp=@Exp, Stats=@Stats," +
-                        " Members=@Members, Emblem=@Emblem WHERE ID=@ID";
-                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                    var P = sqlCommand.Parameters;
-                    P.Add(new MySqlParameter("@ID", guild.ID));
-                    P.Add(new MySqlParameter("@Name", guild.Name));
-                    P.Add(new MySqlParameter("@Level", guild.Level));
-                    P.Add(new MySqlParameter("@Exp", guild.Exp));
-                    P.Add(new MySqlParameter("@Stats", guild.GetSqlStats()));
-                    P.Add(new MySqlParameter("@Members", guild.GetSqlMembers()));
-                    P.Add(new MySqlParameter("@Emblem", guild.GetSqlEmblem()));
-
-                    sqlCommand.ExecuteNonQuery();
+                    if (create == null)
+                        create = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewGuild), connection);
+                    command = create;
                 }
+                else if (guild.SaveState == EntityState.Modified)
+                {
+                    if (update == null)
+                        update = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateGuild), connection);
+                    command = update;
+                }
+                else
+                {
+                    if (delete == null)
+                        delete = new MySqlCommand(PreparedStatements.GetQuery(Queries.DeleteGuild), connection);
+                    command = delete;
+                }
+
+                // Prepare the command for faster execution on further queries
+                if (!command.IsPrepared)
+                {
+                    command.Parameters.Add("@ID", MySqlDbType.Int32);
+                    command.Parameters.Add("@Name", MySqlDbType.Text);
+                    command.Parameters.Add("@Level", MySqlDbType.Int32);
+                    command.Parameters.Add("@Exp", MySqlDbType.Int64);
+                    command.Parameters.Add("@Stats", MySqlDbType.VarChar, 255);
+                    command.Parameters.Add("@Members", MySqlDbType.Text);
+                    command.Parameters.Add("@Emblem", MySqlDbType.VarChar, 255);
+                    command.Prepare();
+                }
+
+                command.Parameters["@ID"].Value = guild.ID;
+                command.Parameters["@Name"].Value = guild.Name;
+                command.Parameters["@Level"].Value = guild.Level;
+                command.Parameters["@Exp"].Value = guild.Exp;
+                command.Parameters["@Stats"].Value = guild.GetSqlStats();
+                command.Parameters["@Members"].Value = guild.GetSqlMembers();
+                command.Parameters["@Emblem"].Value = guild.GetSqlEmblem();
+
+                command.ExecuteNonQuery();
             }
-        }
-
-        private static void DeleteGuild(int guildID)
-        {
-            lock (DatabaseProvider.Locker)
-            {
-                var sqlText = "DELETE FROM guilds WHERE ID=@ID";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                sqlCommand.Parameters.Add(new MySqlParameter("@ID", guildID));
-
-                sqlCommand.ExecuteNonQuery();
-            }
-        }
-
-        private static void CreateGuild(Game.Guilds.Guild guild)
-        {
-            lock (DatabaseProvider.Locker)
-            {
-                var sqlText = "INSERT INTO guilds VALUES(@ID, @Name, @Emblem, @Level, @Exp, @Members, @Stats)";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                var P = sqlCommand.Parameters;
-
-                P.Add(new MySqlParameter("@ID", guild.ID));
-                P.Add(new MySqlParameter("@Name", guild.Name));
-                P.Add(new MySqlParameter("@Level", guild.Level));
-                P.Add(new MySqlParameter("@Exp", guild.Exp));
-                P.Add(new MySqlParameter("@Stats", guild.GetSqlStats()));
-                P.Add(new MySqlParameter("@Members", guild.GetSqlMembers()));
-                P.Add(new MySqlParameter("@Emblem", guild.GetSqlEmblem()));
-                
-                sqlCommand.ExecuteNonQuery();
-
-                guild.IsNewGuild = false;
-            }
+            
+            guild.SaveState = EntityState.Unchanged;
         }
     }
 }

@@ -11,10 +11,10 @@ namespace SunDofus.World.Entities.Requests
     {
         public static void LoadAuths()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM authservers";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 

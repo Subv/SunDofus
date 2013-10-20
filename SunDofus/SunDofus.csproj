@@ -51,6 +51,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,6 +70,7 @@
     <Compile Include="Auth\Network\Sync\Packets\PHelloConnectSuccess.cs" />
     <Compile Include="Auth\Network\Sync\Packets\MasterPacket.cs" />
     <Compile Include="Auth\Network\Sync\Packets\PTransfer.cs" />
+    <Compile Include="Databases\PreparedStatements.cs" />
     <Compile Include="Master\TCPClient.cs" />
     <Compile Include="Master\TCPServer.cs" />
     <Compile Include="Auth\Network\Auth\AuthClient.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Utilities\Config.cs" />
     <Compile Include="Utilities\Formulas.cs" />
     <Compile Include="Utilities\Loggers.cs" />
+    <Compile Include="World\Entities\DatabaseEntity.cs" />
     <Compile Include="World\Entities\Requests\Client\AuthsRequests.cs" />
     <Compile Include="World\Entities\Requests\Client\CharactersRequests.cs" />
     <Compile Include="World\Entities\Requests\Client\ItemsRequests.cs" />

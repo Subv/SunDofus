@@ -328,7 +328,7 @@ namespace SunDofus.World.Network.Realm
                     }
 
                     character.SpellsInventary.LearnSpells();
-                    character.IsNewCharacter = true;
+                    character.SaveState = EntityState.New;
 
                     lock (World.Entities.Requests.CharactersRequests.CharactersList)
                         World.Entities.Requests.CharactersRequests.CharactersList.Add(character);
@@ -377,7 +377,7 @@ namespace SunDofus.World.Network.Realm
                     Client.Characters.Remove(character);
 
                 Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.DeletedCharacterPacket().GetPacket(Client.Infos.ID, character.Name));
-                character.IsDeletedCharacter = true;
+                character.SaveState = EntityState.Deleted;
 
                 SendCharacterList("");
             }
@@ -673,7 +673,7 @@ namespace SunDofus.World.Network.Realm
 
         private void CreateGuild(string datas)
         {
-            //TODO VERIF IF HAST THE CLIENT A GILDAOGEME
+            // TODO Verify if the client has a guild gem
 
             if (Client.Player.Guild != null)
             {
@@ -732,7 +732,7 @@ namespace SunDofus.World.Network.Realm
                 CollectorProspection = 0,
                 CollectorWisdom = 0,
                 CollectorPods = 0,
-                IsNewGuild = true
+                SaveState = EntityState.New
             };
 
             guild.AddMember(new Game.Guilds.GuildMember(Client.Player));
@@ -764,7 +764,7 @@ namespace SunDofus.World.Network.Realm
             {
                 Client.Send("BN");
                 return;
-            }            
+            }
 
             if (datas == Client.Player.Name)
             {
@@ -775,6 +775,7 @@ namespace SunDofus.World.Network.Realm
                 }
 
                 var guild = Client.Player.Guild;
+                guild.SaveState = EntityState.Modified;
 
                 if (guild.Members.Count < 2)
                 {
@@ -812,6 +813,7 @@ namespace SunDofus.World.Network.Realm
                 }
                 
                 var guild = Client.Player.Guild;
+                guild.SaveState = EntityState.Modified;
 
                 if (!guild.Members.First(x => x.Character == Client.Player).CanBann)
                 {
@@ -890,6 +892,8 @@ namespace SunDofus.World.Network.Realm
                 return;
             }
 
+            guild.SaveState = EntityState.Modified;
+
             if (expgived > 90)
                 expgived = 90;
             else if (expgived < 0)
@@ -936,6 +940,8 @@ namespace SunDofus.World.Network.Realm
                 Client.Send("Im1101");
                 return;
             }
+            
+            guild.SaveState = EntityState.Modified;
 
             switch (datas[0])
             {
@@ -1009,6 +1015,8 @@ namespace SunDofus.World.Network.Realm
 
             guild.Spells[spellID]++;
             guild.BoostPoints -= 5;
+            
+            guild.SaveState = EntityState.Modified;
 
             GetGuildInfos("B");
         }
@@ -1047,11 +1055,13 @@ namespace SunDofus.World.Network.Realm
 
             var collector = new Game.Guilds.GuildCollector(map, Client.Player, ID)
             {
-                IsNewCollector = true
+                SaveState = EntityState.New
             };
 
             guild.Collectors.Add(collector);
             Entities.Requests.CollectorsRequests.CollectorsList.Add(collector);
+            
+            guild.SaveState = EntityState.Modified;
 
             Client.Player.Guild.SendMessage(string.Format("Un percepteur vient d'être posé par <b>{0}</b> en [{1},{2}] !", Client.Player.Name, Client.Player.GetMap().Model.PosX, Client.Player.GetMap().Model.PosY));
             GetGuildInfos("B");

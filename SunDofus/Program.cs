@@ -49,7 +49,7 @@ namespace SunDofus
                         {
                             Console.Title = string.Format("{0} | Server '{1}'", Console.Title, Config.GetIntElement("ServerID"));
 
-                            World.Entities.DatabaseProvider.InitializeConnection();
+                            World.Entities.DatabaseProvider.Initialize();
 
                             World.Entities.Requests.LevelsRequests.LoadLevels();
 
@@ -85,9 +85,6 @@ namespace SunDofus
                             World.Entities.Requests.AuthsRequests.LoadAuths();
 
                             World.Game.World.Save.InitSaveThread();
-
-                            if(!Utilities.Config.GetBoolElement("DEBUG"))
-                                World.Entities.DatabaseProvider.Close();
 
                             Loggers.Debug.Write(string.Format("World started in '{0}'s !", Basic.GetUpTime()[2]));
                         }

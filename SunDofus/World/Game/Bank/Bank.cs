@@ -5,18 +5,17 @@ using System.Text;
 
 namespace SunDofus.World.Game.Bank
 {
-    class Bank
+    class Bank : DatabaseEntity
     {
         public int Owner { get; set; }
         public long Kamas { get; set; }
-
-        public bool IsNewBank { get; set; }
 
         public List<Characters.Items.CharacterItem> Items { get; set; }
 
         public Bank()
         {
             Items = new List<Characters.Items.CharacterItem>();
+            SaveState = EntityState.New;
         }
 
         public void ParseItems(string items)

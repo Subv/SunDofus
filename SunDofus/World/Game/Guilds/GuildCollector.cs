@@ -6,7 +6,7 @@ using System.Timers;
 
 namespace SunDofus.World.Game.Guilds
 {
-    class GuildCollector
+    class GuildCollector : DatabaseEntity
     {
         public int ID { get; set; }
         public int Owner { get; set; }
@@ -16,8 +16,6 @@ namespace SunDofus.World.Game.Guilds
         public int[] Name { get; set; }
 
         public bool IsInFight { get; set; }
-        public bool IsNewCollector { get; set; }
-        public bool MustDelete { get; set; }
 
         public Guild Guild { get; set; }
         public Maps.Map Map { get; set; }

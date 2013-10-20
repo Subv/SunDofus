@@ -44,6 +44,8 @@ namespace SunDofus.World.Game.Bank
                 Character.SendChararacterStats();
                 Character.NClient.Send(string.Concat("EsKG", Bank.Kamas));
             }
+
+            Bank.SaveState = EntityState.Modified;
         }
 
         public void MoveItem(SunDofus.World.Game.Characters.Items.CharacterItem item, int quantity, bool add = true)
@@ -93,6 +95,8 @@ namespace SunDofus.World.Game.Bank
                     Character.ItemsInventary.AddItem(newitem, false);
                 }
             }
+
+            Bank.SaveState = EntityState.Modified;
         }
     }
 }

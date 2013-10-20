@@ -12,10 +12,10 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadZaapis()
         {
-            lock (DatabaseProvider.Locker)
+            using (var connection = DatabaseProvider.CreateConnection())
             {
                 var sqlText = "SELECT * FROM zaapis";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                var sqlCommand = new MySqlCommand(sqlText, connection);
 
                 var sqlReader = sqlCommand.ExecuteReader();
 
