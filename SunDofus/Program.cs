@@ -23,7 +23,7 @@ namespace SunDofus
 
             if (Config.GetBoolElement("REALM"))
             {
-                var realmthread = new Thread(new ThreadStart(new Action(delegate()
+                var realmthread = new Thread(() =>
                     {
                         try
                         {
@@ -36,14 +36,14 @@ namespace SunDofus
                         {
                             Console.WriteLine(error);
                         }
-                    })));
+                    });
 
                 realmthread.Start();
             }
 
             if (Config.GetBoolElement("WORLD"))
             {
-                var gamethread = new Thread(new ThreadStart(new Action(delegate()
+                var gamethread = new Thread(() =>
                     {
                         try
                         {
@@ -95,7 +95,7 @@ namespace SunDofus
                         {
                             Console.WriteLine(error);
                         }
-                    })));
+                    });
 
                 gamethread.Start();
             }

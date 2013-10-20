@@ -49,15 +49,11 @@ namespace SunDofus.World.Entities.Requests
                         if (infos.Length < 3)
                             continue;
 
-                        lock (newMonsters.Items)
-                        {
-                            newMonsters.Items.Add(new Models.Monsters.MonsterModel.MonsterItem(int.Parse(infos[0]),
-                                double.Parse(infos[1]), int.Parse(infos[2])));
-                        }
+                        newMonsters.Items.Add(new Models.Monsters.MonsterModel.MonsterItem(int.Parse(infos[0]),
+                            double.Parse(infos[1]), int.Parse(infos[2])));
                     }
 
-                    lock(MonstersList)
-                        MonstersList.Add(newMonsters);
+                    MonstersList.Add(newMonsters);
                 }
 
                 sqlReader.Close();
@@ -112,19 +108,14 @@ namespace SunDofus.World.Entities.Requests
 
                         var infos = newSpell.Split('@');
 
-                        lock (newLevel.Spells)
-                        {
-                            newLevel.Spells.Add(new Game.Characters.Spells.CharacterSpell
-                                (int.Parse(infos[0]), int.Parse(infos[1]), -1));
-                        }
+                        newLevel.Spells.Add(new Game.Characters.Spells.CharacterSpell
+                            (int.Parse(infos[0]), int.Parse(infos[1]), -1));
                     }
 
                     if (MonstersList.Any(x => x.ID == newLevel.CreatureID))
                     {
                         var monster = MonstersList.First(x => x.ID == newLevel.CreatureID);
-
-                        lock(monster.Levels)           
-                            monster.Levels.Add(newLevel);
+                        monster.Levels.Add(newLevel);
                     }
                 }
 

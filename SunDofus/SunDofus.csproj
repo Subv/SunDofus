@@ -124,10 +124,12 @@
     <Compile Include="World\Game\Characters\CharacterFriends.cs" />
     <Compile Include="World\Game\Characters\CharacterJobs.cs" />
     <Compile Include="World\Game\Characters\Jobs\Job.cs" />
+    <Compile Include="World\Game\Characters\Stats\AbstractStats.cs" />
     <Compile Include="World\Game\Characters\Stats\EffectEnum.cs" />
     <Compile Include="World\Game\Characters\Stats\GenericStat.cs" />
     <Compile Include="World\Game\Characters\Stats\GenericStats.cs" />
     <Compile Include="World\Game\Characters\Stats\StatEnum.cs" />
+    <Compile Include="World\Game\Characters\Stats\Stats.cs" />
     <Compile Include="World\Game\Effects\EffectSpellTarget.cs" />
     <Compile Include="World\Game\Exchanges\ExchangePlayer.cs" />
     <Compile Include="World\Game\Guilds\Guild.cs" />
@@ -182,8 +184,6 @@
     <Compile Include="World\Game\Characters\NPC\NPCMap.cs" />
     <Compile Include="World\Game\Characters\Spells\Char\ChararcterSpell.cs" />
     <Compile Include="World\Game\Characters\Spells\InventarySpells.cs" />
-    <Compile Include="World\Game\Characters\Stats\AbstractStats.cs" />
-    <Compile Include="World\Game\Characters\Stats\Stats.cs" />
     <Compile Include="World\Game\Effects\EffectAction.cs" />
     <Compile Include="World\Game\Effects\EffectItem.cs" />
     <Compile Include="World\Game\Effects\EffectSpell.cs" />

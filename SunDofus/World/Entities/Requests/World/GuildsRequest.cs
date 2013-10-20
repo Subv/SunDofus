@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
@@ -8,7 +9,8 @@ namespace SunDofus.World.Entities.Requests
 {
     class GuildsRequest
     {
-        public static List<Game.Guilds.Guild> GuildsList = new List<Game.Guilds.Guild>();
+        // We need to use a ConcurrentBag here as the Save thread will be accessing this list while we might still be writing to it.
+        public static ConcurrentBag<Game.Guilds.Guild> GuildsList = new ConcurrentBag<Game.Guilds.Guild>();
 
         public static void LoadGuilds()
         {

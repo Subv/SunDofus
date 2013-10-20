@@ -60,8 +60,7 @@ namespace SunDofus.World.Entities.Models.Clients
                 gift.ItemID = int.Parse(giftDatas[3]);
                 gift.Image = giftDatas[4];
 
-                lock(Gifts)
-                    Gifts.Add(gift);
+                Gifts.Add(gift);
             }
         }
     }

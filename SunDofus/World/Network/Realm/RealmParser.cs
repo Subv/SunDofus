@@ -1936,7 +1936,7 @@ namespace SunDofus.World.Network.Realm
             switch (ID)
             {
                 case 0://NPC BUY/SELL
-
+                {
                     var NPC = Client.Player.GetMap().Npcs.First(x => x.ID == receiverID);
 
                     if (NPC.Model.SellingList.Count == 0)
@@ -1961,9 +1961,9 @@ namespace SunDofus.World.Network.Realm
                     Client.Send(newPacket.Substring(0, newPacket.Length - 1));
 
                     break;
-
+                }
                 case 1://Player
-
+                {
                     if (World.Entities.Requests.CharactersRequests.CharactersList.Any(x => x.ID == receiverID))
                     {
                         var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == receiverID);
@@ -1977,14 +1977,20 @@ namespace SunDofus.World.Network.Realm
                         character.NClient.Send(string.Format("ERK{0}|{1}|1", Client.Player.ID, character.ID));
                         Client.Send(string.Format("ERK{0}|{1}|1", Client.Player.ID, character.ID));
 
-                        character.State.ActualTraider = Client.Player.ID;
+                        character.State.CurrentPlayerTrade = Client.Player.ID;
                         character.State.OnExchange = true;
 
-                        Client.Player.State.ActualTraided = character.ID;
+                        Client.Player.State.CurrentPlayerTrade = character.ID;
                         Client.Player.State.OnExchange = true;
                     }
 
                     break;
+                }
+                case 2: // Trade with NPC
+                {
+
+                    break;
+                }
             }
         }
 
@@ -2101,9 +2107,9 @@ namespace SunDofus.World.Network.Realm
                         return;
                     }
 
-                    var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.ActualPlayerExchange);
+                    var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.CurrentPlayerTrade);
 
-                    if (!Client.Player.State.OnExchangePanel || !character.State.OnExchangePanel || character.State.ActualPlayerExchange != Client.Player.ID)
+                    if (!Client.Player.State.OnExchangePanel || !character.State.OnExchangePanel || character.State.CurrentPlayerTrade != Client.Player.ID)
                     {
                         Client.Send("EME");
                         return;
@@ -2112,7 +2118,7 @@ namespace SunDofus.World.Network.Realm
                     var actualExchange = SunDofus.World.Game.Exchanges.ExchangesManager.Exchanges.First(x => (x.memberOne.Character.ID == Client.Player.ID &&
                         x.memberTwo.Character.ID == character.ID) || (x.memberTwo.Character.ID == Client.Player.ID && x.memberOne.Character.ID == character.ID));
 
-                    var kamas = (long)0;
+                    long kamas = 0;
 
                     if (!long.TryParse(datas.Substring(1), out kamas))
                         return;
@@ -2176,9 +2182,9 @@ namespace SunDofus.World.Network.Realm
                         return;
                     }
 
-                    var character2 = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.ActualPlayerExchange);
+                    var character2 = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.CurrentPlayerTrade);
 
-                    if (!Client.Player.State.OnExchangePanel || !character2.State.OnExchangePanel || character2.State.ActualPlayerExchange != Client.Player.ID)
+                    if (!Client.Player.State.OnExchangePanel || !character2.State.OnExchangePanel || character2.State.CurrentPlayerTrade != Client.Player.ID)
                     {
                         Client.Send("EME");
                         return;
@@ -2210,10 +2216,10 @@ namespace SunDofus.World.Network.Realm
 
         private void ExchangeAccept(string datas)
         {
-            if (Client.Player.State.OnExchange && Client.Player.State.ActualTraider != -1)
+            if (Client.Player.State.OnExchange && Client.Player.State.CurrentPlayerTrade != -1)
             {
-                var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.ActualTraider);
-                if (character.State.ActualTraided == Client.Player.ID)
+                var character = SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.CurrentPlayerTrade);
+                if (character.State.CurrentPlayerTrade == Client.Player.ID)
                 {
                     SunDofus.World.Game.Exchanges.ExchangesManager.AddExchange(character, Client.Player);
                     return;
@@ -2232,9 +2238,9 @@ namespace SunDofus.World.Network.Realm
 
             Client.Player.State.OnExchangeAccepted = true;
 
-            var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.ActualPlayerExchange);
+            var character = World.Entities.Requests.CharactersRequests.CharactersList.First(x => x.ID == Client.Player.State.CurrentPlayerTrade);
 
-            if (!Client.Player.State.OnExchangePanel || !character.State.OnExchangePanel || character.State.ActualPlayerExchange != Client.Player.ID)
+            if (!Client.Player.State.OnExchangePanel || !character.State.OnExchangePanel || character.State.CurrentPlayerTrade != Client.Player.ID)
             {
                 Client.Send("EME");
                 return;

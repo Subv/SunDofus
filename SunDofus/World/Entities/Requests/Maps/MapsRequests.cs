@@ -47,20 +47,16 @@ namespace SunDofus.World.Entities.Requests
                         if (infos[1].Length < 1)
                             continue;
 
-                        lock (map.Monsters)
-                        {
-                            if (!map.Monsters.ContainsKey(int.Parse(infos[0])))
-                                map.Monsters.Add(int.Parse(infos[0]), new List<int>());
-                        }
+                        int creature = int.Parse(infos[0]);
+                        if (!map.Monsters.ContainsKey(creature))
+                                map.Monsters.Add(creature, new List<int>());
 
-                        lock(map.Monsters[int.Parse(infos[0])])
-                            map.Monsters[int.Parse(infos[0])].Add(int.Parse(infos[1]));
+                        map.Monsters[creature].Add(int.Parse(infos[1]));
                     }
 
                     map.ParsePos();
 
-                    lock(MapsList)
-                        MapsList.Add(new Game.Maps.Map(map));
+                    MapsList.Add(new Game.Maps.Map(map));
                 }
 
                 sqlReader.Close();

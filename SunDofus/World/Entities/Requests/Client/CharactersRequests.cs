@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
 using SunDofus.World.Game.Characters;
+
 namespace SunDofus.World.Entities.Requests
 {
     class CharactersRequests
     {
-        public static List<Character> CharactersList = new List<Character>();
+        // We need to use a ConcurrentBag here as the Save thread will be accessing this list while we might still be writing to it.
+        public static ConcurrentBag<Character> CharactersList = new ConcurrentBag<Character>();
 
         public static void LoadCharacters()
         {
@@ -74,8 +77,7 @@ namespace SunDofus.World.Entities.Requests
                     else
                         character.Faction.Level = Entities.Requests.LevelsRequests.LevelsList.Where(x => x.Alignment <= character.Faction.Honor).OrderByDescending(x => x.Alignment).ToArray()[0].ID;
 
-                    lock (CharactersList)
-                        CharactersList.Add(character);
+                    CharactersList.Add(character);
                 }
 
                 sqlResult.Close();
@@ -129,7 +131,7 @@ namespace SunDofus.World.Entities.Requests
                 DeleteCharacter(character.Name);
                 return;
             }
-            else if(!character.IsDeletedCharacter && !character.IsNewCharacter)
+            else if (!character.IsDeletedCharacter && !character.IsNewCharacter)
             {
                 lock (DatabaseProvider.Locker)
                 {

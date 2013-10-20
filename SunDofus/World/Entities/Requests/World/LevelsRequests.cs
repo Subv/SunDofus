@@ -31,8 +31,7 @@ namespace SunDofus.World.Entities.Requests
                         Guild = sqlReader.GetInt64("Guild"),
                     };
 
-                    lock(LevelsList)
-                        LevelsList.Add(level);
+                    LevelsList.Add(level);
                 }
 
                 sqlReader.Close();

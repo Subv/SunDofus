@@ -34,13 +34,14 @@ namespace SunDofus.World.Entities.Models.Maps
         public void ParsePos()
         {
             var datas = Mappos.Split(',');
-            try
+            if (datas.Length < 3)
             {
-                PosX = int.Parse(datas[0]);
-                PosY = int.Parse(datas[1]);
-                SubArea = int.Parse(datas[2]);
+                Utilities.Loggers.Errors.Write(String.Format("Map {0} has invalid position", ID));
+                return;
             }
-            catch { }
+            PosX = int.Parse(datas[0]);
+            PosY = int.Parse(datas[1]);
+            SubArea = int.Parse(datas[2]);
         }
     }
 }

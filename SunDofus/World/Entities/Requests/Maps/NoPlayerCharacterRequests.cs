@@ -45,8 +45,7 @@ namespace SunDofus.World.Entities.Requests
                         if (itemToSell == "")
                             continue;
 
-                        lock (npcModel.SellingList)
-                            npcModel.SellingList.Add(int.Parse(itemToSell));
+                        npcModel.SellingList.Add(int.Parse(itemToSell));
                     }
 
                     var infosMap = sqlReader.GetString("Mapinfos").Split(';');
@@ -65,14 +64,12 @@ namespace SunDofus.World.Entities.Requests
                         var map = MapsRequests.MapsList.First(x => x.Model.ID == npc.MapID);
                         npc.ID = MapsRequests.MapsList.First(x => x.Model.ID == npc.MapID).NextNpcID();
 
-                        lock (map.Npcs)
-                            map.Npcs.Add(npc);
+                        map.Npcs.Add(npc);
 
                         npc.StartMove();
                     }
 
-                    lock (NpcsList)
-                        NpcsList.Add(npc);
+                    NpcsList.Add(npc);
                 }
 
                 sqlReader.Close();
@@ -103,8 +100,7 @@ namespace SunDofus.World.Entities.Requests
                         if (answer == "")
                             continue;
 
-                        lock(question.Answers)
-                            question.Answers.Add(AnswersList.First(x => x.AnswerID == int.Parse(answer)));
+                        question.Answers.Add(AnswersList.First(x => x.AnswerID == int.Parse(answer)));
                     }
 
                     foreach (var condi in sqlReader.GetString("conditions").Split('&'))
@@ -118,14 +114,12 @@ namespace SunDofus.World.Entities.Requests
                         condiObject.CondiID = int.Parse(condiInfos[0]);
                         condiObject.Args = condiInfos[1];
 
-                        lock(question.Conditions)
-                            question.Conditions.Add(condiObject);
+                        question.Conditions.Add(condiObject);
                     }
 
                     question.Params = sqlReader.GetString("params").Split(',').ToList();
 
-                    lock(QuestionsList)
-                        QuestionsList.Add(question);
+                    QuestionsList.Add(question);
                 }
 
                 sqlReader.Close();
@@ -165,12 +159,10 @@ namespace SunDofus.World.Entities.Requests
                         condiObject.CondiID = int.Parse(condiInfos[0]);
                         condiObject.Args = condiInfos[1];
 
-                        lock(answer.Conditions)
-                            answer.Conditions.Add(condiObject);
+                        answer.Conditions.Add(condiObject);
                     }
 
-                    lock(AnswersList)
-                        AnswersList.Add(answer);
+                    AnswersList.Add(answer);
                 }
 
                 sqlReader.Close();
