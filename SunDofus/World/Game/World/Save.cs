@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using MySql.Data.MySqlClient;
 
 namespace SunDofus.World.Game.World
 {
@@ -61,8 +62,10 @@ namespace SunDofus.World.Game.World
 
         private static void SaveBanks()
         {
+            MySqlCommand update = null;
+            MySqlCommand create = null;
             foreach (var bank in Entities.Requests.BanksRequests.BanksList)
-                Entities.Requests.BanksRequests.SaveBank(bank);
+                Entities.Requests.BanksRequests.SaveBank(bank, ref update, ref create);
         }
     }
 }

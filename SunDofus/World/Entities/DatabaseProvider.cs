@@ -16,12 +16,12 @@ namespace SunDofus.World.Entities
             Connection = new MySqlConnection();
             Locker = new object();
 
-            Connection.ConnectionString = string.Format("server={0};uid={1};pwd='{2}';database={3}",
+            Connection.ConnectionString = string.Format("server={0};uid={1};pwd='{2}';database={3};IgnorePrepare=false",
                 Utilities.Config.GetStringElement("WORLD_DATABASE_SERVER"),
                 Utilities.Config.GetStringElement("WORLD_DATABASE_USER"),
                 Utilities.Config.GetStringElement("WORLD_DATABASE_PASS"),
                 Utilities.Config.GetStringElement("WORLD_DATABASE_NAME"));
-
+            
             lock (Locker)
                 Connection.Open();
 

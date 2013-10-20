@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
+using SunDofus.Databases;
 
 namespace SunDofus.World.Entities.Requests
 {
@@ -39,47 +40,38 @@ namespace SunDofus.World.Entities.Requests
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' banks from the database !", BanksList.Count));
         }
 
-        public static void SaveBank(Game.Bank.Bank bank)
-        {
-            if (bank.IsNewBank)
-            {
-                CreateBank(bank);
-                return;
-            }
-            else
-            {
-                lock (DatabaseProvider.Locker)
-                {
-                    var sqlText = "UPDATE banks SET Owner=@Owner, Kamas=@Kamas, Items=@Items WHERE Owner=@Owner";
-                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                    var P = sqlCommand.Parameters;
-
-                    P.Add(new MySqlParameter("@Owner", bank.Owner));
-                    P.Add(new MySqlParameter("@Kamas", bank.Kamas));
-                    P.Add(new MySqlParameter("@Items", bank.GetItems()));
-
-                    sqlCommand.ExecuteNonQuery();
-                }
-            }
-        }
-
-        private static void CreateBank(Game.Bank.Bank bank)
+        public static void SaveBank(Game.Bank.Bank bank, ref MySqlCommand updateCommand, ref MySqlCommand createCommand)
         {
             lock (DatabaseProvider.Locker)
             {
-                var sqlText = "INSERT INTO banks VALUES(@Owner, @Kamas, @Items)";
-                var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
+                MySqlCommand command = null;
+                if (bank.IsNewBank)
+                {
+                    if (createCommand == null)
+                        createCommand = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewBank), DatabaseProvider.Connection);
+                    command = createCommand;
+                }
+                else
+                {
+                    if (updateCommand == null)
+                        updateCommand = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateBank), DatabaseProvider.Connection);
+                    command = updateCommand;
+                }
+                
+                // Prepare the command for faster execution on further queries
+                if (!command.IsPrepared)
+                {
+                    command.Parameters.Add("@Owner", MySqlDbType.Int32);
+                    command.Parameters.Add("@Kamas", MySqlDbType.Int64);
+                    command.Parameters.Add("@Items", MySqlDbType.Text);
+                    command.Prepare();
+                }
 
-                var P = sqlCommand.Parameters;
+                command.Parameters["@Owner"].Value = bank.Owner;
+                command.Parameters["@Kamas"].Value = bank.Kamas;
+                command.Parameters["@Items"].Value = bank.GetItems();
 
-                P.Add(new MySqlParameter("@Owner", bank.Owner));
-                P.Add(new MySqlParameter("@Kamas", bank.Kamas));
-                P.Add(new MySqlParameter("@Items", bank.GetItems()));
-
-                sqlCommand.ExecuteNonQuery();
-
-                bank.IsNewBank = false;
+                command.ExecuteNonQuery();
             }
         }
     }

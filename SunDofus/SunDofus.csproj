@@ -69,6 +69,7 @@
     <Compile Include="Auth\Network\Sync\Packets\PHelloConnectSuccess.cs" />
     <Compile Include="Auth\Network\Sync\Packets\MasterPacket.cs" />
     <Compile Include="Auth\Network\Sync\Packets\PTransfer.cs" />
+    <Compile Include="Databases\PreparedStatements.cs" />
     <Compile Include="Master\TCPClient.cs" />
     <Compile Include="Master\TCPServer.cs" />
     <Compile Include="Auth\Network\Auth\AuthClient.cs" />
