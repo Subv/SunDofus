@@ -37,8 +37,7 @@ namespace SunDofus.World.Entities.Requests
                     item.ParseWeaponInfos(sqlReader.GetString("WeaponInfo"));
                     item.ParseRandomJet();
 
-                    lock(ItemsList)
-                        ItemsList.Add(item);
+                    ItemsList.Add(item);
                 }
 
                 sqlReader.Close();
@@ -66,8 +65,7 @@ namespace SunDofus.World.Entities.Requests
                     set.ParseBonus(sqlReader.GetString("bonus"));
                     set.ParseItems(sqlReader.GetString("items"));
 
-                    lock(SetsList)
-                        SetsList.Add(set);
+                    SetsList.Add(set);
                 }
 
                 sqlReader.Close();
@@ -100,8 +98,7 @@ namespace SunDofus.World.Entities.Requests
 
                     item.AttributeItem();
 
-                    lock(UsablesList)
-                        UsablesList.Add(item);
+                    UsablesList.Add(item);
                 }
 
                 sqlReader.Close();

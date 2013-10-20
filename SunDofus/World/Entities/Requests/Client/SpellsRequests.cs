@@ -32,8 +32,7 @@ namespace SunDofus.World.Entities.Requests
                     for (int i = 1; i <= 6; i++)
                         spell.ParseLevel(sqlReader.GetString("lvl" + i), i);
 
-                    lock(SpellsList)
-                        SpellsList.Add(spell);
+                    SpellsList.Add(spell);
                 }
 
                 sqlReader.Close();
@@ -61,8 +60,7 @@ namespace SunDofus.World.Entities.Requests
                         Pos = sqlReader.GetInt16("Position"),
                     };
 
-                    lock(SpellsToLearnList)
-                        SpellsToLearnList.Add(spell);
+                    SpellsToLearnList.Add(spell);
                 }
 
                 sqlReader.Close();

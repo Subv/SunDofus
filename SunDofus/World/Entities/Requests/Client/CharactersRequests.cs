@@ -74,8 +74,7 @@ namespace SunDofus.World.Entities.Requests
                     else
                         character.Faction.Level = Entities.Requests.LevelsRequests.LevelsList.Where(x => x.Alignment <= character.Faction.Honor).OrderByDescending(x => x.Alignment).ToArray()[0].ID;
 
-                    lock (CharactersList)
-                        CharactersList.Add(character);
+                    CharactersList.Add(character);
                 }
 
                 sqlResult.Close();
@@ -129,7 +128,7 @@ namespace SunDofus.World.Entities.Requests
                 DeleteCharacter(character.Name);
                 return;
             }
-            else if(!character.IsDeletedCharacter && !character.IsNewCharacter)
+            else if (!character.IsDeletedCharacter && !character.IsNewCharacter)
             {
                 lock (DatabaseProvider.Locker)
                 {

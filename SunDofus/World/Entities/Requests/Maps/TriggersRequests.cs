@@ -30,11 +30,8 @@ namespace SunDofus.World.Entities.Requests
                         Conditions = sqlReader.GetString("Conditions"),
                     };                    
 
-                    lock (TriggersList)
-                    {
-                        if(ParseTrigger(trigger))
-                            TriggersList.Add(trigger);
-                    }
+                    if (ParseTrigger(trigger))
+                        TriggersList.Add(trigger);
                 }
 
                 sqlReader.Close();

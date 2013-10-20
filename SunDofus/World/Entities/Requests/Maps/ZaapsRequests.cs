@@ -27,11 +27,8 @@ namespace SunDofus.World.Entities.Requests
                         CellID = sqlReader.GetInt32("cellID"),
                     };
 
-                    lock (ZaapsList)
-                    {
-                        if (ParseZaap(zaap))
-                            ZaapsList.Add(zaap);
-                    }
+                    if (ParseZaap(zaap))
+                        ZaapsList.Add(zaap);
                 }
 
                 sqlReader.Close();
