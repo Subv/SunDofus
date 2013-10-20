@@ -81,8 +81,8 @@ namespace SunDofus.World.Game.Guilds
 
         public string PatternGuild()
         {
-            return string.Format("{0};{1};{2};{3};{4}", ID, string.Join(",", Name), Utilities.Basic.ToBase36(Map.Model.ID),
-                Map.Model.PosX, Map.Model.PosY, ";0;0;10000;7;?,?,1,2,3,4,5|");
+            return string.Format("{0};{1};{2};{3};{4};{5}", ID, string.Join(",", Name), Utilities.Basic.ToBase36(Map.Model.ID),
+                Map.Model.PosX, Map.Model.PosY, "0;0;10000;7;?,?,1,2,3,4,5|");
         }
 
         public string PatternMap()

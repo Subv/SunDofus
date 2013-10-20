@@ -806,7 +806,7 @@ namespace SunDofus.World.Game.Maps.Fights
 
                 bool isCritic = false;
 
-                if (spell.LevelModel.CC != 0 & spell.LevelModel.CriticalEffects.Count > 0)
+                if (spell.LevelModel.CC != 0 && spell.LevelModel.CriticalEffects.Count > 0)
                 {
                     int criticRate = spell.LevelModel.CC - fighter.Stats.GetStat(StatEnum.DamageCritic).Total;
 

@@ -56,7 +56,7 @@ namespace SunDofus.World.Entities.Models.Spells
 
             foreach (var actualEffect in List)
             {
-                if (actualEffect == "-1" | actualEffect == "") 
+                if (actualEffect == "-1" || actualEffect == "") 
                     continue;
 
                 var effect = new Game.Effects.EffectSpell();
