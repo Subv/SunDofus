@@ -5,11 +5,8 @@ using System.Text;
 
 namespace SunDofus.World.Game.Guilds
 {
-    class Guild
+    class Guild : DatabaseEntity
     {
-        public bool IsNewGuild { get; set; }
-        public bool MustDelete { get; set; }
-
         public string Emblem
         {
             get
@@ -61,6 +58,8 @@ namespace SunDofus.World.Game.Guilds
                 member.Rights = 0;
                 member.Rank = 0;
             }
+
+            SaveState = EntityState.Modified;
         }
 
         public void Send(string message)

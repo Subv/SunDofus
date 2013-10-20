@@ -39,25 +39,34 @@ namespace SunDofus.World.Game.World
             if (!Utilities.Config.GetBoolElement("DEBUG"))
                 Entities.DatabaseProvider.Close();
 
-            Utilities.Loggers.Status.Write("Save of the World successfull !");
+            Utilities.Loggers.Status.Write("Save of the World successfully !");
         }
 
         private static void SaveChararacters()
         {
+            MySqlCommand create = null;
+            MySqlCommand update = null;
+            MySqlCommand delete = null;
             foreach (var character in SunDofus.World.Entities.Requests.CharactersRequests.CharactersList)
-                Entities.Requests.CharactersRequests.SaveCharacter(character);
+                Entities.Requests.CharactersRequests.SaveCharacter(character, ref create, ref update, ref delete);
         }
 
         private static void SaveGuilds()
         {
+            MySqlCommand create = null;
+            MySqlCommand update = null;
+            MySqlCommand delete = null;
             foreach (var guild in Entities.Requests.GuildsRequest.GuildsList)
-                Entities.Requests.GuildsRequest.SaveGuild(guild);
+                Entities.Requests.GuildsRequest.SaveGuild(guild, ref create, ref update, ref delete);
         }
 
         private static void SaveCollectors()
         {
+            MySqlCommand create = null;
+            MySqlCommand update = null;
+            MySqlCommand delete = null;
             foreach (var collector in Entities.Requests.CollectorsRequests.CollectorsList)
-                Entities.Requests.CollectorsRequests.SaveCollector(collector);
+                Entities.Requests.CollectorsRequests.SaveCollector(collector, ref create, ref update, ref delete);
         }
 
         private static void SaveBanks()

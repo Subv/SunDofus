@@ -26,7 +26,7 @@ namespace SunDofus.World.Entities.Requests
                     {
                         Owner = sqlResult.GetInt32("Owner"),
                         Kamas = sqlResult.GetInt64("Kamas"),
-                        IsNewBank = false
+                        SaveState = EntityState.Unchanged
                     };
 
                     bank.ParseItems(sqlResult.GetString("Items"));
@@ -42,10 +42,13 @@ namespace SunDofus.World.Entities.Requests
 
         public static void SaveBank(Game.Bank.Bank bank, ref MySqlCommand updateCommand, ref MySqlCommand createCommand)
         {
+            if (bank.SaveState == EntityState.Unchanged)
+                return;
+
             lock (DatabaseProvider.Locker)
             {
                 MySqlCommand command = null;
-                if (bank.IsNewBank)
+                if (bank.SaveState == EntityState.New)
                 {
                     if (createCommand == null)
                         createCommand = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewBank), DatabaseProvider.Connection);
@@ -72,6 +75,8 @@ namespace SunDofus.World.Entities.Requests
                 command.Parameters["@Items"].Value = bank.GetItems();
 
                 command.ExecuteNonQuery();
+                
+                bank.SaveState = EntityState.Unchanged;
             }
         }
     }

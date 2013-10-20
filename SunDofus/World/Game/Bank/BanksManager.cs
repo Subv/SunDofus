@@ -17,7 +17,7 @@ namespace SunDofus.World.Game.Bank
                 {
                     Owner = character.NClient.Infos.ID,
                     Kamas = 0,
-                    IsNewBank = true
+                    SaveState = EntityState.New
                 };
 
                 Entities.Requests.BanksRequests.BanksList.Add(newBank);

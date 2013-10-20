@@ -11,7 +11,7 @@ using SunDofus.World.Game.Maps.Fights;
 
 namespace SunDofus.World.Game.Characters
 {
-    class Character
+    class Character : DatabaseEntity
     {
         public string Name { get; set; }
 
@@ -38,8 +38,6 @@ namespace SunDofus.World.Game.Characters
         public long Exp { get; set; }
         public long Kamas { get; set; }
 
-        public bool IsNewCharacter { get; set; }
-        public bool IsDeletedCharacter { get; set; }
         public bool IsConnected { get; set; }
 
         private long quotaRecruitment;
@@ -81,7 +79,7 @@ namespace SunDofus.World.Game.Characters
 
             Energy = 10000;
             IsConnected = false;
-            IsDeletedCharacter = false;
+            SaveState = EntityState.Unchanged;
 
             quotaRecruitment = 0;
             quotaTrade = 0;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
+using SunDofus.Databases;
 
 namespace SunDofus.World.Entities.Requests
 {
@@ -27,7 +28,7 @@ namespace SunDofus.World.Entities.Requests
 
                     var collector = new Game.Guilds.GuildCollector(map, character, sqlResult.GetInt32("ID"))
                     {
-                        IsNewCollector = false
+                        SaveState = EntityState.Unchanged
                     };
 
                     collector.Name[0] = int.Parse(sqlResult.GetString("Name").Split(';')[0]);
@@ -50,35 +51,50 @@ namespace SunDofus.World.Entities.Requests
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' collectors from the database !", CollectorsList.Count));
         }
 
-        public static void SaveCollector(Game.Guilds.GuildCollector collector)
+        public static void SaveCollector(Game.Guilds.GuildCollector collector, ref MySqlCommand create, ref MySqlCommand update, ref MySqlCommand delete)
         {
-            if (collector.IsNewCollector && !collector.MustDelete)
-            {
-                CreateCollector(collector);
+            if (collector.SaveState == EntityState.Unchanged)
                 return;
-            }
-            else if (collector.MustDelete)
+
+            lock (DatabaseProvider.Locker)
             {
-                DeleteCollector(collector.ID);
-                return;
-            }
-            else if (!collector.MustDelete && !collector.IsNewCollector)
-            {
-                lock (DatabaseProvider.Locker)
+                MySqlCommand command = null;
+                if (collector.SaveState == EntityState.New)
                 {
-                    var sqlText = "UPDATE collectors SET ID=@ID, Name=@Name, OwnerID=@Owner, Mappos=@Mappos, GuildID=@GuildID WHERE ID=@ID";
-                    var sqlCommand = new MySqlCommand(sqlText, DatabaseProvider.Connection);
-
-                    var P = sqlCommand.Parameters;
-
-                    P.Add(new MySqlParameter("@ID", collector.ID));
-                    P.Add(new MySqlParameter("@Name", string.Join(";", collector.Name)));
-                    P.Add(new MySqlParameter("@Owner", collector.Owner));
-                    P.Add(new MySqlParameter("@Mappos", string.Concat(collector.Map.Model.ID, ";", collector.Cell, ";", collector.Dir)));
-                    P.Add(new MySqlParameter("@GuildID", collector.Guild.ID));
-
-                    sqlCommand.ExecuteNonQuery();
+                    if (create == null)
+                        create = new MySqlCommand(PreparedStatements.GetQuery(Queries.InsertNewCollector), DatabaseProvider.Connection);
+                    command = create;
                 }
+                else if (collector.SaveState == EntityState.Modified)
+                {
+                    if (update == null)
+                        update = new MySqlCommand(PreparedStatements.GetQuery(Queries.UpdateCollector), DatabaseProvider.Connection);
+                    command = update;
+                }
+                else
+                {
+                    if (delete == null)
+                        delete = new MySqlCommand(PreparedStatements.GetQuery(Queries.DeleteCollector), DatabaseProvider.Connection);
+                    command = delete;
+                }
+
+                if (!command.IsPrepared)
+                {
+                    command.Parameters.Add("@ID", MySqlDbType.Int32);
+                    command.Parameters.Add("@Name", MySqlDbType.VarChar, 255);
+                    command.Parameters.Add("@Owner", MySqlDbType.Int32);
+                    command.Parameters.Add("@Mappos", MySqlDbType.VarChar, 255);
+                    command.Parameters.Add("@GuildID", MySqlDbType.Int32);
+                    command.Prepare();
+                }
+
+                command.Parameters["@ID"].Value = collector.ID;
+                command.Parameters["@Name"].Value = string.Join(";", collector.Name);
+                command.Parameters["@Owner"].Value = collector.Owner;
+                command.Parameters["@Mappos"].Value = string.Concat(collector.Map.Model.ID, ";", collector.Cell, ";", collector.Dir);
+                command.Parameters["@GuildID"].Value = collector.Guild.ID;
+
+                command.ExecuteNonQuery();
             }
         }
 
@@ -112,7 +128,7 @@ namespace SunDofus.World.Entities.Requests
 
                 sqlCommand.ExecuteNonQuery();
 
-                collector.IsNewCollector = false;
+                collector.SaveState = EntityState.Unchanged;
             }
         }
     }
