@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Transactions;
 using MySql.Data.MySqlClient;
 
 namespace SunDofus.World.Game.World
@@ -25,10 +26,22 @@ namespace SunDofus.World.Game.World
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StartMaintenancePacket().GetPacket());
             SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.IsConnected).ToList().ForEach(x => x.NClient.Send("Im1164"));
 
-            SaveChararacters();
-            SaveGuilds();
-            SaveCollectors();
-            SaveBanks();
+            try
+            {
+                // ToDo: Once we start using multiple queries for saving individual entities (several tables), then a transaction should be created for each entity to be saved.
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    SaveChararacters();
+                    SaveGuilds();
+                    SaveCollectors();
+                    SaveBanks();
+                    transaction.Complete();
+                }
+            }
+            catch (Exception ex)
+            {
+                Utilities.Loggers.Errors.Write("Could not save, performing a rollback");
+            }
 
             SunDofus.World.Entities.Requests.CharactersRequests.CharactersList.Where(x => x.IsConnected).ToList().ForEach(x => x.NClient.Send("Im1165"));
             Network.ServersHandler.AuthLinks.Send(new Network.Auth.Packets.StopMaintenancePacket().GetPacket());
