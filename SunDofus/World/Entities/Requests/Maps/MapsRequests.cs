@@ -12,55 +12,53 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadMaps()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM maps";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM maps";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var map = new Models.Maps.MapModel()
                 {
-                    var map = new Models.Maps.MapModel()
-                    {
-                        ID = sqlReader.GetInt32("id"),
-                        Date = sqlReader.GetString("date"),
-                        Width = sqlReader.GetInt16("width"),
-                        Height = sqlReader.GetInt16("heigth"),
-                        Capabilities = sqlReader.GetInt16("capabilities"),
-                        Mappos = sqlReader.GetString("mappos"),
-                        MapData = sqlReader.GetString("mapData"),
-                        Key = sqlReader.GetString("key"),
-                        MaxMonstersGroup = sqlReader.GetInt16("numgroup"),
-                        MaxGroupSize = sqlReader.GetInt16("groupsize"),
-                    };
+                    ID = sqlReader.GetInt32("id"),
+                    Date = sqlReader.GetString("date"),
+                    Width = sqlReader.GetInt16("width"),
+                    Height = sqlReader.GetInt16("heigth"),
+                    Capabilities = sqlReader.GetInt16("capabilities"),
+                    Mappos = sqlReader.GetString("mappos"),
+                    MapData = sqlReader.GetString("mapData"),
+                    Key = sqlReader.GetString("key"),
+                    MaxMonstersGroup = sqlReader.GetInt16("numgroup"),
+                    MaxGroupSize = sqlReader.GetInt16("groupsize"),
+                };
 
-                    foreach (var newMonster in sqlReader.GetString("monsters").Split('|'))
-                    {
-                        if (newMonster == "")
-                            continue;
+                foreach (var newMonster in sqlReader.GetString("monsters").Split('|'))
+                {
+                    if (newMonster == "")
+                        continue;
 
-                        var infos = newMonster.Split(',');
+                    var infos = newMonster.Split(',');
 
-                        if (infos.Length < 2)
-                            continue;
-                        if (infos[1].Length < 1)
-                            continue;
+                    if (infos.Length < 2)
+                        continue;
+                    if (infos[1].Length < 1)
+                        continue;
 
-                        int creature = int.Parse(infos[0]);
-                        if (!map.Monsters.ContainsKey(creature))
-                                map.Monsters.Add(creature, new List<int>());
+                    int creature = int.Parse(infos[0]);
+                    if (!map.Monsters.ContainsKey(creature))
+                            map.Monsters.Add(creature, new List<int>());
 
-                        map.Monsters[creature].Add(int.Parse(infos[1]));
-                    }
-
-                    map.ParsePos();
-
-                    MapsList.Add(new Game.Maps.Map(map));
+                    map.Monsters[creature].Add(int.Parse(infos[1]));
                 }
 
-                sqlReader.Close();
+                map.ParsePos();
+
+                MapsList.Add(new Game.Maps.Map(map));
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' maps from the database !", MapsList.Count));
         }

@@ -14,95 +14,89 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadItems()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM items";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM items";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var item = new Models.Items.ItemModel()
                 {
-                    var item = new Models.Items.ItemModel()
-                    {
-                        ID = sqlReader.GetInt32("ID"),
-                        Pods = sqlReader.GetInt16("Weight"),
-                        Price = sqlReader.GetInt32("Price"),
-                        Type = sqlReader.GetInt16("Type"),
-                        Level = sqlReader.GetInt16("Level"),
-                        Jet = sqlReader.GetString("Stats"),
-                        Condistr = sqlReader.GetString("Conditions"),
-                    };
+                    ID = sqlReader.GetInt32("ID"),
+                    Pods = sqlReader.GetInt16("Weight"),
+                    Price = sqlReader.GetInt32("Price"),
+                    Type = sqlReader.GetInt16("Type"),
+                    Level = sqlReader.GetInt16("Level"),
+                    Jet = sqlReader.GetString("Stats"),
+                    Condistr = sqlReader.GetString("Conditions"),
+                };
 
-                    item.ParseWeaponInfos(sqlReader.GetString("WeaponInfo"));
-                    item.ParseRandomJet();
+                item.ParseWeaponInfos(sqlReader.GetString("WeaponInfo"));
+                item.ParseRandomJet();
 
-                    ItemsList.Add(item);
-                }
-
-                sqlReader.Close();
+                ItemsList.Add(item);
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' items from the database !", ItemsList.Count));
         }
 
         public static void LoadItemsSets()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM items_sets";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM items_sets";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var set = new Models.Items.SetModel()
                 {
-                    var set = new Models.Items.SetModel()
-                    {
-                        ID = sqlReader.GetInt16("ID"),
-                    };
+                    ID = sqlReader.GetInt16("ID"),
+                };
 
-                    set.ParseBonus(sqlReader.GetString("bonus"));
-                    set.ParseItems(sqlReader.GetString("items"));
+                set.ParseBonus(sqlReader.GetString("bonus"));
+                set.ParseItems(sqlReader.GetString("items"));
 
-                    SetsList.Add(set);
-                }
-
-                sqlReader.Close();
+                SetsList.Add(set);
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' items sets from the database !", SetsList.Count));
         }
 
         public static void LoadUsablesItems()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM items_usables";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM items_usables";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var item = new Models.Items.ItemUsableModel()
                 {
-                    var item = new Models.Items.ItemUsableModel()
-                    {
-                        Base = sqlReader.GetInt16("ID"),
-                        Args = sqlReader.GetString("Args"),
-                    };
+                    Base = sqlReader.GetInt16("ID"),
+                    Args = sqlReader.GetString("Args"),
+                };
 
-                    if (sqlReader.GetInt16("MustDelete") == 1)
-                        item.MustDelete = true;
-                    else
-                        item.MustDelete = false;
+                if (sqlReader.GetInt16("MustDelete") == 1)
+                    item.MustDelete = true;
+                else
+                    item.MustDelete = false;
 
-                    item.AttributeItem();
+                item.AttributeItem();
 
-                    UsablesList.Add(item);
-                }
-
-                sqlReader.Close();
+                UsablesList.Add(item);
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' items usables from the database !", UsablesList.Count));
         }

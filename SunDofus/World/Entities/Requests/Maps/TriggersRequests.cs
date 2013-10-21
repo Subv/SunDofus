@@ -12,84 +12,78 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadTriggers()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM triggers";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM triggers";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var trigger = new Entities.Models.Maps.TriggerModel()
                 {
-                    var trigger = new Entities.Models.Maps.TriggerModel()
-                    {
-                        MapID = sqlReader.GetInt32("MapID"),
-                        CellID = sqlReader.GetInt32("CellID"),
-                        ActionID = sqlReader.GetInt16("ActionID"),
-                        Args = sqlReader.GetString("Args"),
-                        Conditions = sqlReader.GetString("Conditions"),
-                    };                    
+                    MapID = sqlReader.GetInt32("MapID"),
+                    CellID = sqlReader.GetInt32("CellID"),
+                    ActionID = sqlReader.GetInt16("ActionID"),
+                    Args = sqlReader.GetString("Args"),
+                    Conditions = sqlReader.GetString("Conditions"),
+                };                    
 
-                    if (ParseTrigger(trigger))
-                        TriggersList.Add(trigger);
-                }
-
-                sqlReader.Close();
+                if (ParseTrigger(trigger))
+                    TriggersList.Add(trigger);
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' triggers from the database !", TriggersList.Count));
         }
 
         public static void LoadTriggers(int map)
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM triggers WHERE MapID=@mapid";
+
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+            sqlCommand.Parameters.Add(new MySqlParameter("@mapid", map));
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM triggers WHERE MapID=@mapid";
-
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-                sqlCommand.Parameters.Add(new MySqlParameter("@mapid", map));
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var trigger = new Entities.Models.Maps.TriggerModel()
                 {
-                    var trigger = new Entities.Models.Maps.TriggerModel()
-                    {
-                        MapID = sqlReader.GetInt32("MapID"),
-                        CellID = sqlReader.GetInt32("CellID"),
-                        ActionID = sqlReader.GetInt16("ActionID"),
-                        Args = sqlReader.GetString("Args"),
-                        Conditions = sqlReader.GetString("Conditions"),
-                    };
+                    MapID = sqlReader.GetInt32("MapID"),
+                    CellID = sqlReader.GetInt32("CellID"),
+                    ActionID = sqlReader.GetInt16("ActionID"),
+                    Args = sqlReader.GetString("Args"),
+                    Conditions = sqlReader.GetString("Conditions"),
+                };
 
-                    lock (TriggersList)
-                    {
-                        if (ParseTrigger(trigger))
-                            TriggersList.Add(trigger);
-                    }
+                lock (TriggersList)
+                {
+                    if (ParseTrigger(trigger))
+                        TriggersList.Add(trigger);
                 }
-
-                sqlReader.Close();
             }
+
+            sqlReader.Close();
         }
 
         public static void InsertTrigger(Models.Maps.TriggerModel trigger)
         {
-            using (var connection = DatabaseProvider.CreateConnection())
-            {
-                var sqlText = "INSERT INTO triggers VALUES(@mapid, @cellid, @action, @args, @condi)";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "INSERT INTO triggers VALUES(@mapid, @cellid, @action, @args, @condi)";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
 
-                var P = sqlCommand.Parameters;
+            var P = sqlCommand.Parameters;
 
-                P.Add(new MySqlParameter("@mapid", trigger.MapID));
-                P.Add(new MySqlParameter("@cellid", trigger.CellID));
-                P.Add(new MySqlParameter("@action", trigger.ActionID));
-                P.Add(new MySqlParameter("@args", trigger.Args));
-                P.Add(new MySqlParameter("@condi", trigger.Conditions));
+            P.Add(new MySqlParameter("@mapid", trigger.MapID));
+            P.Add(new MySqlParameter("@cellid", trigger.CellID));
+            P.Add(new MySqlParameter("@action", trigger.ActionID));
+            P.Add(new MySqlParameter("@args", trigger.Args));
+            P.Add(new MySqlParameter("@condi", trigger.Conditions));
 
-                sqlCommand.ExecuteNonQuery();
-            }
+            sqlCommand.ExecuteNonQuery();
         }
 
         public static bool ParseTrigger(Entities.Models.Maps.TriggerModel trigger)

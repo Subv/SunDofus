@@ -12,28 +12,26 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadZaapis()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM zaapis";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM zaapis";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var zaapis = new World.Game.Maps.Zaapis.Zaapis()
                 {
-                    var zaapis = new World.Game.Maps.Zaapis.Zaapis()
-                    {
-                        MapID = sqlReader.GetInt32("mapid"),
-                        CellID = sqlReader.GetInt32("cellid"),
-                        Faction = sqlReader.GetInt32("zone"),
-                    };
+                    MapID = sqlReader.GetInt32("mapid"),
+                    CellID = sqlReader.GetInt32("cellid"),
+                    Faction = sqlReader.GetInt32("zone"),
+                };
 
-                    if (ParseZaapis(zaapis))
-                        ZaapisList.Add(zaapis);
-                }
-
-                sqlReader.Close();
+                if (ParseZaapis(zaapis))
+                    ZaapisList.Add(zaapis);
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' zaapis from the database !", ZaapisList.Count));
         }

@@ -50,6 +50,7 @@ namespace SunDofus
                             Console.Title = string.Format("{0} | Server '{1}'", Console.Title, Config.GetIntElement("ServerID"));
 
                             World.Entities.DatabaseProvider.Initialize();
+                            Databases.PreparedStatements.PrepareStatements();
 
                             World.Entities.Requests.LevelsRequests.LoadLevels();
 

@@ -12,30 +12,28 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadLevels()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM levels";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM levels";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var level = new Models.Levels.LevelModel()
                 {
-                    var level = new Models.Levels.LevelModel()
-                    {
-                        ID = sqlReader.GetInt16("Level"),
-                        Character = sqlReader.GetInt64("Character"),
-                        Job = sqlReader.GetInt64("Job"),
-                        Mount = sqlReader.GetInt64("Mount"),
-                        Alignment = sqlReader.GetInt64("Pvp"),
-                        Guild = sqlReader.GetInt64("Guild"),
-                    };
+                    ID = sqlReader.GetInt16("Level"),
+                    Character = sqlReader.GetInt64("Character"),
+                    Job = sqlReader.GetInt64("Job"),
+                    Mount = sqlReader.GetInt64("Mount"),
+                    Alignment = sqlReader.GetInt64("Pvp"),
+                    Guild = sqlReader.GetInt64("Guild"),
+                };
 
-                    LevelsList.Add(level);
-                }
-
-                sqlReader.Close();
+                LevelsList.Add(level);
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' levels from the database !", LevelsList.Count));
         }

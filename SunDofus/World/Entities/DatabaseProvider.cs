@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SunDofus.Databases;
 using MySql.Data.MySqlClient;
 
 namespace SunDofus.World.Entities
@@ -9,6 +10,7 @@ namespace SunDofus.World.Entities
     class DatabaseProvider
     {
         static MySqlConnectionStringBuilder ConnectionString;
+        static MySqlConnection Connection; // Should never be closed, and is never accessed by two threads at the same time.
 
         public static void Initialize()
         {
@@ -18,15 +20,24 @@ namespace SunDofus.World.Entities
             ConnectionString.Password = Utilities.Config.GetStringElement("WORLD_DATABASE_PASS");
             ConnectionString.Database = Utilities.Config.GetStringElement("WORLD_DATABASE_NAME");
             ConnectionString.IgnorePrepare = false;
-            ConnectionString.MinimumPoolSize = 1;
-            ConnectionString.MaximumPoolSize = 10;
+            ConnectionString.Pooling = false;
+
+            Connection = new MySqlConnection(ConnectionString.ConnectionString);
+            Connection.Open();
         }
 
         public static MySqlConnection CreateConnection()
         {
-            var connection = new MySqlConnection(ConnectionString.ConnectionString);
-            connection.Open();
-            return connection;
+            if (Connection.State == System.Data.ConnectionState.Broken)
+            {
+                // Re-establish the connection
+                Connection.Close();
+                Connection.Open();
+                // Prepare all the statements again
+                PreparedStatements.PrepareStatements();
+            }
+
+            return Connection;
         }
     }
 }

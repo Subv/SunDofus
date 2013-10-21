@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Transactions;
+using SunDofus.World.Entities;
 using MySql.Data.MySqlClient;
 
 namespace SunDofus.World.Game.World
@@ -17,8 +18,8 @@ namespace SunDofus.World.Game.World
             timer = new Timer((e) =>
             {
                 SaveWorld();
-                timer.Change(Utilities.Config.GetIntElement("AUTOSAVETIME") * 60 * 1000, Timeout.Infinite);
-            }, null, Utilities.Config.GetIntElement("AUTOSAVETIME") * 60 * 1000, Timeout.Infinite);
+                timer.Change(Utilities.Config.GetIntElement("AUTOSAVETIME") * 1 * 1000, Timeout.Infinite);
+            }, null, Utilities.Config.GetIntElement("AUTOSAVETIME") * 1 * 1000, Timeout.Infinite);
         }
 
         public static void SaveWorld()
@@ -31,6 +32,8 @@ namespace SunDofus.World.Game.World
                 // ToDo: Once we start using multiple queries for saving individual entities (several tables), then a transaction should be created for each entity to be saved.
                 using (TransactionScope transaction = new TransactionScope())
                 {
+                    // Enlist the connection into our current transaction
+                    DatabaseProvider.CreateConnection().EnlistTransaction(Transaction.Current);
                     SaveChararacters();
                     SaveGuilds();
                     SaveCollectors();
@@ -51,37 +54,26 @@ namespace SunDofus.World.Game.World
 
         private static void SaveChararacters()
         {
-            MySqlCommand create = null;
-            MySqlCommand update = null;
-            MySqlCommand delete = null;
             foreach (var character in SunDofus.World.Entities.Requests.CharactersRequests.CharactersList)
-                Entities.Requests.CharactersRequests.SaveCharacter(character, ref create, ref update, ref delete);
+                Entities.Requests.CharactersRequests.SaveCharacter(character);
         }
 
         private static void SaveGuilds()
         {
-            MySqlCommand create = null;
-            MySqlCommand update = null;
-            MySqlCommand delete = null;
             foreach (var guild in Entities.Requests.GuildsRequest.GuildsList)
-                Entities.Requests.GuildsRequest.SaveGuild(guild, ref create, ref update, ref delete);
+                Entities.Requests.GuildsRequest.SaveGuild(guild);
         }
 
         private static void SaveCollectors()
         {
-            MySqlCommand create = null;
-            MySqlCommand update = null;
-            MySqlCommand delete = null;
             foreach (var collector in Entities.Requests.CollectorsRequests.CollectorsList)
-                Entities.Requests.CollectorsRequests.SaveCollector(collector, ref create, ref update, ref delete);
+                Entities.Requests.CollectorsRequests.SaveCollector(collector);
         }
 
         private static void SaveBanks()
         {
-            MySqlCommand update = null;
-            MySqlCommand create = null;
             foreach (var bank in Entities.Requests.BanksRequests.BanksList)
-                Entities.Requests.BanksRequests.SaveBank(bank, ref update, ref create);
+                Entities.Requests.BanksRequests.SaveBank(bank);
         }
     }
 }

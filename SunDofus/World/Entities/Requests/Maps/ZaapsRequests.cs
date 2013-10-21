@@ -12,27 +12,25 @@ namespace SunDofus.World.Entities.Requests
 
         public static void LoadZaaps()
         {
-            using (var connection = DatabaseProvider.CreateConnection())
+            var connection = DatabaseProvider.CreateConnection();
+            var sqlText = "SELECT * FROM zaaps";
+            var sqlCommand = new MySqlCommand(sqlText, connection);
+
+            var sqlReader = sqlCommand.ExecuteReader();
+
+            while (sqlReader.Read())
             {
-                var sqlText = "SELECT * FROM zaaps";
-                var sqlCommand = new MySqlCommand(sqlText, connection);
-
-                var sqlReader = sqlCommand.ExecuteReader();
-
-                while (sqlReader.Read())
+                var zaap = new World.Game.Maps.Zaaps.Zaap()
                 {
-                    var zaap = new World.Game.Maps.Zaaps.Zaap()
-                    {
-                        MapID = sqlReader.GetInt32("mapID"),
-                        CellID = sqlReader.GetInt32("cellID"),
-                    };
+                    MapID = sqlReader.GetInt32("mapID"),
+                    CellID = sqlReader.GetInt32("cellID"),
+                };
 
-                    if (ParseZaap(zaap))
-                        ZaapsList.Add(zaap);
-                }
-
-                sqlReader.Close();
+                if (ParseZaap(zaap))
+                    ZaapsList.Add(zaap);
             }
+
+            sqlReader.Close();
 
             Utilities.Loggers.Status.Write(string.Format("Loaded '{0}' zaaps from the database !", ZaapsList.Count));
         }
